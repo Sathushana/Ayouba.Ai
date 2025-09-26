@@ -1,4 +1,3 @@
-// components/Navbar.js (Header Component)
 "use client";
 import React from "react";
 import Link from "next/link";
@@ -120,10 +119,10 @@ export default function Header() {
           </Link>
           <Link
             href="/try"
-            className="mt-2 bg-[#e72638] text-white px-4 py-2 rounded-lg font-semibold text-center hover:bg-[#c71f40] transition"
+            className="mt-2 bg-[#e72638] text-white px-4 py-2 rounded-lg font-semibold text-center hover:bg-white hover:text-[#e72638] transition"
             onClick={handleLinkClick}
           >
-            Try Ayouba
+            Try Ayubo
           </Link>
         </nav>
       </div>
