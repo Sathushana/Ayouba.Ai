@@ -488,10 +488,6 @@ export default function Questionnaire() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="w-full bg-white py-3 text-center border-t border-gray-200 text-xs text-gray-500">
-        Copyright © 2025 {APP_NAME}. All rights reserved.
-      </div>
     </section>
   );
 }
