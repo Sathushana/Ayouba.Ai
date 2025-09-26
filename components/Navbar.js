@@ -43,7 +43,7 @@ export default function Header() {
             scrolled ? "text-gray-900" : "text-gray-900"
           }`}
         >
-          Ayouba.Ai
+          Ayubo.Ai
         </Link>
 
         {/* Desktop Nav */}
