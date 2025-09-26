@@ -34,21 +34,193 @@ const questions = [
     ],
     required: true,
   },
-  // Step 4: Goals (The initial multi-select step)
+  // Step 4: Physical Activity
   {
     id: 4,
-    type: "multiselect",
-    title: "What would you like to accomplish?",
-    description: "Select all that apply.",
-    key: "goals",
+    type: "radio", 
+    title: "Physical Activity",
+    description: "Everyone moves differently. How would you describe your activity in a typical week?",
+    key: "activityLevel",
     options: [
-      { id: "eatHealthier", label: "Eat and live healthier", icon: "🍎" },
-      { id: "boostEnergy", label: "Boost my energy and mood", icon: "☀️" },
-      { id: "stayConsistent", label: "Stay motivated and consistent", icon: "💪" },
-      { id: "feelBetter", label: "Feel better about my body", icon: "✨" },
+      "Mostly sedentary",
+      "Light activity (short walks, household work)",
+      "Moderate activity (brisk walking, cycling, sports 3–4 days/week)",
+      "Active (≥5 days/week or vigorous exercise)",
+    ],
+    required: true,
+  },
+  // --- NEW Step 5: Nutrition ---
+  {
+    id: 5,
+    type: "radio", 
+    title: "Nutrition Habits",
+    description: "How often do you have sugary drinks or processed foods?",
+    key: "sugarIntake",
+    options: [
+      "Daily",
+      "Several times a week",
+      "Occasionally",
+      "Rarely",
     ],
     required: true,
   },
 ];
+
+// --- CONDITIONAL FOLLOW-UP DATA ---
+export const conditionalFollowUps = {
+  // --- Physical Activity Follow-ups (Unchanged) ---
+  "Mostly sedentary": [
+    {
+      subKey: "barrier",
+      subTitle: "What usually prevents you from being more active?",
+      subType: "multiselect",
+      options: [
+        { id: "lackTime", label: "Lack of time" },
+        { id: "lackMotivation", label: "Lack of motivation" },
+        { id: "physicalLimitations", label: "Physical limitations / Injuries" },
+        { id: "dontKnow", label: "Don’t know what to do" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "beginnerSuggestion",
+      subTitle: "Would you like us to suggest short, simple exercises you can do at home?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Light activity (short walks, household work)": [
+    {
+      subKey: "preference",
+      subTitle: "Which type of activity do you enjoy most?",
+      subType: "radio", 
+      options: [
+        "Walking",
+        "Cycling",
+        "Sports (e.g., cricket, badminton)",
+        "Gym / Resistance training",
+        "Home exercises",
+      ],
+      required: true,
+    },
+    {
+      subKey: "increaseIntensity",
+      subTitle: "Would you like to gradually increase intensity or duration?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Moderate activity (brisk walking, cycling, sports 3–4 days/week)": [
+    {
+      subKey: "strengthTraining",
+      subTitle: "Are you interested in adding strength or resistance training?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+    {
+      subKey: "enduranceFlexibility",
+      subTitle: "Do you want suggestions for improving endurance or flexibility?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Active (≥5 days/week or vigorous exercise)": [
+    {
+      subKey: "newChallenges",
+      subTitle: "Would you like to set new fitness challenges?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+    {
+      subKey: "advancedGuidance",
+      subTitle: "Are you interested in advanced guidance for recovery, stretching, or nutrition for active adults?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  
+  // --- NEW Nutrition Follow-ups ---
+  "Daily": [
+    {
+      subKey: "sugarBarrier",
+      subTitle: "What usually makes it hard to reduce sugary drinks or processed foods?",
+      subType: "multiselect",
+      options: [
+        { id: "cravings", label: "Cravings" },
+        { id: "busySchedule", label: "Busy schedule" },
+        { id: "social", label: "Social occasions" },
+        { id: "dontKnow", label: "Don’t know alternatives" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "easySwaps",
+      subTitle: "Would you like us to suggest easy swaps or low-sugar alternatives?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Several times a week": [
+    {
+      subKey: "sugarOccasions",
+      subTitle: "Which occasions usually involve sugary drinks or processed foods?",
+      subType: "multiselect",
+      options: [
+        { id: "work", label: "Work" },
+        { id: "social", label: "Social gatherings" },
+        { id: "home", label: "Home" },
+        { id: "outings", label: "Outings" },
+        { id: "other", label: "Other" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "sugarReductionTips",
+      subTitle: "Would you like tips for reducing sugar a few times a week without feeling restricted?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Occasionally": [
+    {
+      subKey: "maintainLowSugar",
+      subTitle: "Do you want ideas to maintain low sugar and processed food habits?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+    {
+      subKey: "occasionalIndulgence",
+      subTitle: "Are you interested in learning advanced strategies for occasional indulgences?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Rarely": [
+    {
+      subKey: "optimizeNutrition",
+      subTitle: "Would you like advanced tips for optimizing overall nutrition and minimizing hidden sugars?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+    {
+      subKey: "trackQuality",
+      subTitle: "Are you interested in tracking nutrition quality to maintain excellent habits?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+};
 
 export default questions;
