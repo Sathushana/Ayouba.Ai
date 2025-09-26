@@ -1,5 +1,3 @@
-// data/questions.js
-
 const questions = [
   // Step 1: Age
   {
@@ -21,7 +19,7 @@ const questions = [
     options: ["Male", "Female", "Prefer not to say"],
     required: true,
   },
-  // Step 3: Height and Weight
+  // Step 3: Height and Weight (BMI)
   {
     id: 3,
     type: "measurements",
@@ -34,9 +32,26 @@ const questions = [
     ],
     required: true,
   },
-  // Step 4: Physical Activity
+  // Step 4: Primary Health Goal (New, Non-Branching)
   {
     id: 4,
+    type: "radio",
+    title: "Primary Health Goal",
+    description: "Select your primary health goal (choose one):",
+    key: "primaryGoal",
+    options: [
+      "Physical Activity",
+      "Nutrition",
+      "Tobacco",
+      "Alcohol",
+      "Mental Health",
+      "Sleep"
+    ],
+    required: true,
+  },
+  // Step 5: Physical Activity (Previously Step 4, now branching)
+  {
+    id: 5,
     type: "radio", 
     title: "Physical Activity",
     description: "Everyone moves differently. How would you describe your activity in a typical week?",
@@ -49,9 +64,9 @@ const questions = [
     ],
     required: true,
   },
-  // --- NEW Step 5: Nutrition ---
+  // Step 6: Nutrition (Previously Step 5, now branching)
   {
-    id: 5,
+    id: 6,
     type: "radio", 
     title: "Nutrition Habits",
     description: "How often do you have sugary drinks or processed foods?",
@@ -66,9 +81,9 @@ const questions = [
   },
 ];
 
-// --- CONDITIONAL FOLLOW-UP DATA ---
+// --- CONDITIONAL FOLLOW-UP DATA (Unchanged from previous versions) ---
 export const conditionalFollowUps = {
-  // --- Physical Activity Follow-ups (Unchanged) ---
+  // --- Physical Activity Follow-ups ---
   "Mostly sedentary": [
     {
       subKey: "barrier",
@@ -145,7 +160,7 @@ export const conditionalFollowUps = {
     },
   ],
   
-  // --- NEW Nutrition Follow-ups ---
+  // --- Nutrition Follow-ups ---
   "Daily": [
     {
       subKey: "sugarBarrier",
