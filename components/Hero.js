@@ -123,7 +123,7 @@ export default function Hero() {
                   </p>
                 </div>
 
-                {/* Step 2: Health Check & Risk Assessment */}
+                {/* Step 2: Health Check & Risk Assessment for Person*/}
                 <div className="flex flex-col justify-center items-center text-center space-y-4 p-6 bg-white rounded-2xl shadow-md w-64 h-80">
                   <div className="bg-[#e72638] text-white p-4 rounded-full text-2xl">
                     2
