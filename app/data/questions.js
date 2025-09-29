@@ -1,6 +1,7 @@
 // data/questions.js
 
-const questions = [
+// Base questions that everyone answers
+const baseQuestions = [
   // Step 1: Age
   {
     id: 1,
@@ -46,136 +47,175 @@ const questions = [
       "Nutrition",
       "Tobacco",
       "Alcohol",
-      "Mental Health",
       "Sleep"
-    ],
-    required: true,
-  },
-  // Step 5: Physical Activity (Branching)
-  {
-    id: 5,
-    type: "radio", 
-    title: "Physical Activity",
-    description: "Everyone moves differently. How would you describe your activity in a typical week?",
-    key: "activityLevel",
-    options: [
-      "Mostly sedentary",
-      "Light activity (short walks, household work)",
-      "Moderate activity (brisk walking, cycling, sports 3–4 days/week)",
-      "Active (≥5 days/week or vigorous exercise)",
-    ],
-    required: true,
-  },
-  // Step 6: Nutrition (Sugary Foods, Branching)
-  {
-    id: 6,
-    type: "radio", 
-    title: "Nutrition Habits: Processed Foods",
-    description: "How often do you have sugary drinks or processed foods?",
-    key: "sugarIntake",
-    options: [
-      "Daily",
-      "Several times a week",
-      "Occasionally",
-      "Rarely",
-    ],
-    required: true,
-  },
-  // Step 7: Meal Regularity (Branching)
-  {
-    id: 7,
-    type: "radio", 
-    title: "Nutrition Habits: Meal Regularity",
-    description: "How regularly do you eat your meals each day?",
-    key: "mealRegularity",
-    options: [
-      "Skipped often",
-      "Mostly regular",
-      "Very regular",
-    ],
-    required: true,
-  },
-  // Step 8: Protein Intake
-  {
-    id: 8,
-    type: "radio", 
-    title: "Nutrition Habits: Protein",
-    description: "Do you regularly include protein-rich foods like eggs, fish, lentils, or meat?",
-    key: "proteinIntake",
-    options: [
-      "Yes",
-      "Sometimes",
-      "Rarely",
-      "No",
-    ],
-    required: true,
-  },
-  // Step 9: Water Intake
-  {
-    id: 9,
-    type: "radio", 
-    title: "Nutrition Habits: Water Intake",
-    description: "How many glasses of water do you drink on a typical day?",
-    key: "waterIntake",
-    options: [
-      "<4",
-      "4–6",
-      "6–8",
-      "8+",
-    ],
-    required: true,
-  },
-  // --- NEW Step 10: Tobacco Use (Branching) ---
-  {
-    id: 10,
-    type: "radio", 
-    title: "Tobacco Use",
-    description: "Do you currently use tobacco in any form (cigarettes, beedi, smokeless tobacco, betel, vaping)?",
-    key: "tobaccoUse",
-    options: [
-      "Never",
-      "Used in the past, but quit",
-      "Occasionally (less than daily)",
-      "Daily / Regular use",
-    ],
-    required: true,
-  },
-  // --- NEW Step 11: Alcohol Use (Branching) ---
-  {
-    id: 11,
-    type: "radio", 
-    title: "Alcohol Use",
-    description: "How often do you usually drink alcohol?",
-    key: "alcoholUse",
-    options: [
-      "Never",
-      "Used in the past, but quit",
-      "Occasionally (1–3 times per month)",
-      "Weekly (1–3 times per week)",
-      "Regular / Heavy use (4+ times per week or binge drinking)",
-    ],
-    required: true,
-  },
-  // --- NEW Step 12: Mental Health --- (FINAL STEP)
-  {
-    id: 12,
-    type: "radio", 
-    title: "Mental Health: Mood/Stress",
-    description: "Over the past 2 weeks, how often have you felt down, stressed, or anxious?",
-    key: "moodStress",
-    options: [
-      "Not at all",
-      "Several days",
-      "More than half the days",
-      "Nearly every day",
     ],
     required: true,
   },
 ];
 
-// --- CONDITIONAL FOLLOW-UP DATA (Tobacco & Alcohol Added) ---
+// Goal-specific questions
+const goalSpecificQuestions = {
+  // Physical Activity Questions
+  "Physical Activity": [
+    {
+      id: 5,
+      type: "radio",
+      title: "Physical Activity",
+      description: "Everyone moves differently. How would you describe your activity in a typical week?",
+      key: "activityLevel",
+      options: [
+        "Mostly sedentary",
+        "Light activity (short walks, household work)",
+        "Moderate activity (brisk walking, cycling, sports 3–4 days/week)",
+        "Active (≥5 days/week or vigorous exercise)",
+      ],
+      required: true,
+    },
+  ],
+
+  // Nutrition Questions
+  "Nutrition": [
+    // Step 5: Nutrition (Sugary Foods, Branching)
+    {
+      id: 5,
+      type: "radio",
+      title: "Nutrition Habits: Processed Foods",
+      description: "How often do you have sugary drinks or processed foods?",
+      key: "sugarIntake",
+      options: [
+        "Daily",
+        "Several times a week",
+        "Occasionally",
+        "Rarely",
+      ],
+      required: true,
+    },
+    // Step 6: Meal Regularity (Branching)
+    {
+      id: 6,
+      type: "radio",
+      title: "Nutrition Habits: Meal Regularity",
+      description: "How regularly do you eat your meals each day?",
+      key: "mealRegularity",
+      options: [
+        "Skipped often",
+        "Mostly regular",
+        "Very regular",
+      ],
+      required: true,
+    },
+    // Step 7: Protein Intake
+    {
+      id: 7,
+      type: "radio",
+      title: "Nutrition Habits: Protein",
+      description: "Do you regularly include protein-rich foods like eggs, fish, lentils, or meat?",
+      key: "proteinIntake",
+      options: [
+        "Yes",
+        "Sometimes",
+        "Rarely",
+        "No",
+      ],
+      required: true,
+    },
+    // Step 8: Water Intake
+    {
+      id: 8,
+      type: "radio",
+      title: "Nutrition Habits: Water Intake",
+      description: "How many glasses of water do you drink on a typical day?",
+      key: "waterIntake",
+      options: [
+        "<4",
+        "4–6",
+        "6–8",
+        "8+",
+      ],
+      required: true,
+    },
+  ],
+
+  // Tobacco Questions
+  "Tobacco": [
+    {
+      id: 5,
+      type: "radio",
+      title: "Tobacco Use",
+      description: "Do you currently use tobacco in any form (cigarettes, beedi, smokeless tobacco, betel, vaping)?",
+      key: "tobaccoUse",
+      options: [
+        "Never",
+        "Used in the past, but quit",
+        "Occasionally (less than daily)",
+        "Daily / Regular use",
+      ],
+      required: true,
+    },
+  ],
+
+  // Alcohol Questions
+  "Alcohol": [
+    {
+      id: 5,
+      type: "radio",
+      title: "Alcohol Use",
+      description: "How often do you usually drink alcohol?",
+      key: "alcoholUse",
+      options: [
+        "Never",
+        "Used in the past, but quit",
+        "Occasionally (1–3 times per month)",
+        "Weekly (1–3 times per week)",
+        "Regular / Heavy use (4+ times per week or binge drinking)",
+      ],
+      required: true,
+    },
+  ],
+
+  // Sleep Questions (placeholder - you can add specific sleep questions later)
+  "Sleep": [
+    {
+      id: 5,
+      type: "radio",
+      title: "Sleep Quality",
+      description: "How would you rate your overall sleep quality?",
+      key: "sleepQuality",
+      options: [
+        "Very poor",
+        "Poor",
+        "Fair",
+        "Good",
+        "Very good",
+      ],
+      required: true,
+    },
+  ],
+};
+
+// Function to get all questions based on primary goal
+const getQuestions = (primaryGoal = null) => {
+  if (!primaryGoal) {
+    return baseQuestions;
+  }
+  
+  const goalQuestions = goalSpecificQuestions[primaryGoal] || [];
+  
+  // Reassign IDs to maintain sequence
+  const allQuestions = [...baseQuestions];
+  goalQuestions.forEach((question, index) => {
+    allQuestions.push({
+      ...question,
+      id: baseQuestions.length + index + 1
+    });
+  });
+  
+  return allQuestions;
+};
+
+// --- CONDITIONAL FOLLOW-UP DATA ---
 export const conditionalFollowUps = {
-  // --- Physical Activity Follow-ups (Unchanged) ---
+  // --- Physical Activity Follow-ups ---
   "Mostly sedentary": [
     {
       subKey: "barrier",
@@ -185,7 +225,7 @@ export const conditionalFollowUps = {
         { id: "lackTime", label: "Lack of time" },
         { id: "lackMotivation", label: "Lack of motivation" },
         { id: "physicalLimitations", label: "Physical limitations / Injuries" },
-        { id: "dontKnow", label: "Don’t know what to do" },
+        { id: "dontKnow", label: "Don't know what to do" },
       ],
       required: false,
     },
@@ -201,7 +241,7 @@ export const conditionalFollowUps = {
     {
       subKey: "preference",
       subTitle: "Which type of activity do you enjoy most?",
-      subType: "radio", 
+      subType: "radio",
       options: [
         "Walking",
         "Cycling",
@@ -251,8 +291,8 @@ export const conditionalFollowUps = {
       required: true,
     },
   ],
-  
-  // --- Nutrition (Sugary Foods) Follow-ups (Unchanged) ---
+
+  // --- Nutrition (Sugary Foods) Follow-ups ---
   "Daily": [
     {
       subKey: "sugarBarrier",
@@ -262,7 +302,7 @@ export const conditionalFollowUps = {
         { id: "cravings", label: "Cravings" },
         { id: "busySchedule", label: "Busy schedule" },
         { id: "social", label: "Social occasions" },
-        { id: "dontKnow", label: "Don’t know alternatives" },
+        { id: "dontKnow", label: "Don't know alternatives" },
       ],
       required: false,
     },
@@ -328,8 +368,8 @@ export const conditionalFollowUps = {
       required: true,
     },
   ],
-  
-  // --- Nutrition (Meal Regularity) Follow-ups (Unchanged) ---
+
+  // --- Nutrition (Meal Regularity) Follow-ups ---
   "Skipped often": [
     {
       subKey: "skipBarrier",
@@ -383,8 +423,8 @@ export const conditionalFollowUps = {
       required: true,
     },
   ],
-  
-  // --- NEW Tobacco Use Follow-ups ---
+
+  // --- Tobacco Use Follow-ups ---
   "Never": [
     {
       subKey: "secondHandExposure",
@@ -443,7 +483,7 @@ export const conditionalFollowUps = {
       subKey: "quittingChallenge",
       subTitle: "What do you feel is the biggest challenge in quitting tobacco?",
       subType: "radio",
-      options: ["Cravings", "Stress relief", "Social circle", "Don’t feel ready"],
+      options: ["Cravings", "Stress relief", "Social circle", "Don't feel ready"],
       required: true,
     },
     {
@@ -455,7 +495,7 @@ export const conditionalFollowUps = {
     },
   ],
 
-  // --- NEW Alcohol Use Follow-ups ---
+  // --- Alcohol Use Follow-ups ---
   "Never": [
     {
       subKey: "pressureToDrink",
@@ -530,7 +570,7 @@ export const conditionalFollowUps = {
       subKey: "drinkingChallenge",
       subTitle: "What do you feel makes it hardest to cut down or stop drinking?",
       subType: "radio",
-      options: ["Stress", "Cravings", "Social circle", "Don’t feel ready"],
+      options: ["Stress", "Cravings", "Social circle", "Don't feel ready"],
       required: true,
     },
     {
@@ -543,4 +583,5 @@ export const conditionalFollowUps = {
   ],
 };
 
-export default questions;
+export { baseQuestions, goalSpecificQuestions, getQuestions };
+export default getQuestions;
