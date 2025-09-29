@@ -184,7 +184,7 @@ export default function Hero() {
           <div className="w-full md:w-2/5 flex justify-center">
             <img
               src="/hero_img_5.png"
-              alt="Build a happy life with Ayouba.AI"
+              alt="Build a happy life with Ayubo.AI"
               className="rounded-2xl shadow-lg w-full max-w-xs md:max-w-md"
             />
           </div>
@@ -193,7 +193,7 @@ export default function Hero() {
           <div className="w-full md:w-3/5 text-center md:text-left space-y-4 md:space-y-6">
             <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
               Build Your Happier, Healthier Life{" "}
-              <span className="text-[#e72638]">with Ayouba.AI</span>
+              <span className="text-[#e72638]">with Ayubo.AI</span>
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
               Your personal AI lifestyle coach helps you set goals, stay

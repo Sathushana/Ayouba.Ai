@@ -1,3 +1,5 @@
+// data/questions.js
+
 const questions = [
   // Step 1: Age
   {
@@ -32,7 +34,7 @@ const questions = [
     ],
     required: true,
   },
-  // Step 4: Primary Health Goal (New, Non-Branching)
+  // Step 4: Primary Health Goal
   {
     id: 4,
     type: "radio",
@@ -49,7 +51,7 @@ const questions = [
     ],
     required: true,
   },
-  // Step 5: Physical Activity (Previously Step 4, now branching)
+  // Step 5: Physical Activity (Branching)
   {
     id: 5,
     type: "radio", 
@@ -64,11 +66,11 @@ const questions = [
     ],
     required: true,
   },
-  // Step 6: Nutrition (Previously Step 5, now branching)
+  // Step 6: Nutrition (Sugary Foods, Branching)
   {
     id: 6,
     type: "radio", 
-    title: "Nutrition Habits",
+    title: "Nutrition Habits: Processed Foods",
     description: "How often do you have sugary drinks or processed foods?",
     key: "sugarIntake",
     options: [
@@ -79,11 +81,101 @@ const questions = [
     ],
     required: true,
   },
+  // Step 7: Meal Regularity (Branching)
+  {
+    id: 7,
+    type: "radio", 
+    title: "Nutrition Habits: Meal Regularity",
+    description: "How regularly do you eat your meals each day?",
+    key: "mealRegularity",
+    options: [
+      "Skipped often",
+      "Mostly regular",
+      "Very regular",
+    ],
+    required: true,
+  },
+  // Step 8: Protein Intake
+  {
+    id: 8,
+    type: "radio", 
+    title: "Nutrition Habits: Protein",
+    description: "Do you regularly include protein-rich foods like eggs, fish, lentils, or meat?",
+    key: "proteinIntake",
+    options: [
+      "Yes",
+      "Sometimes",
+      "Rarely",
+      "No",
+    ],
+    required: true,
+  },
+  // Step 9: Water Intake
+  {
+    id: 9,
+    type: "radio", 
+    title: "Nutrition Habits: Water Intake",
+    description: "How many glasses of water do you drink on a typical day?",
+    key: "waterIntake",
+    options: [
+      "<4",
+      "4–6",
+      "6–8",
+      "8+",
+    ],
+    required: true,
+  },
+  // --- NEW Step 10: Tobacco Use (Branching) ---
+  {
+    id: 10,
+    type: "radio", 
+    title: "Tobacco Use",
+    description: "Do you currently use tobacco in any form (cigarettes, beedi, smokeless tobacco, betel, vaping)?",
+    key: "tobaccoUse",
+    options: [
+      "Never",
+      "Used in the past, but quit",
+      "Occasionally (less than daily)",
+      "Daily / Regular use",
+    ],
+    required: true,
+  },
+  // --- NEW Step 11: Alcohol Use (Branching) ---
+  {
+    id: 11,
+    type: "radio", 
+    title: "Alcohol Use",
+    description: "How often do you usually drink alcohol?",
+    key: "alcoholUse",
+    options: [
+      "Never",
+      "Used in the past, but quit",
+      "Occasionally (1–3 times per month)",
+      "Weekly (1–3 times per week)",
+      "Regular / Heavy use (4+ times per week or binge drinking)",
+    ],
+    required: true,
+  },
+  // --- NEW Step 12: Mental Health --- (FINAL STEP)
+  {
+    id: 12,
+    type: "radio", 
+    title: "Mental Health: Mood/Stress",
+    description: "Over the past 2 weeks, how often have you felt down, stressed, or anxious?",
+    key: "moodStress",
+    options: [
+      "Not at all",
+      "Several days",
+      "More than half the days",
+      "Nearly every day",
+    ],
+    required: true,
+  },
 ];
 
-// --- CONDITIONAL FOLLOW-UP DATA (Unchanged from previous versions) ---
+// --- CONDITIONAL FOLLOW-UP DATA (Tobacco & Alcohol Added) ---
 export const conditionalFollowUps = {
-  // --- Physical Activity Follow-ups ---
+  // --- Physical Activity Follow-ups (Unchanged) ---
   "Mostly sedentary": [
     {
       subKey: "barrier",
@@ -160,7 +252,7 @@ export const conditionalFollowUps = {
     },
   ],
   
-  // --- Nutrition Follow-ups ---
+  // --- Nutrition (Sugary Foods) Follow-ups (Unchanged) ---
   "Daily": [
     {
       subKey: "sugarBarrier",
@@ -231,6 +323,219 @@ export const conditionalFollowUps = {
     {
       subKey: "trackQuality",
       subTitle: "Are you interested in tracking nutrition quality to maintain excellent habits?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  
+  // --- Nutrition (Meal Regularity) Follow-ups (Unchanged) ---
+  "Skipped often": [
+    {
+      subKey: "skipBarrier",
+      subTitle: "What usually causes you to skip meals?",
+      subType: "multiselect",
+      options: [
+        { id: "busySchedule", label: "Busy schedule" },
+        { id: "forget", label: "Forget to eat" },
+        { id: "lackAppetite", label: "Lack of appetite" },
+        { id: "irregular", label: "Irregular lifestyle" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "mealPrepTips",
+      subTitle: "Would you like tips for quick, healthy snacks or easy meal prep?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Mostly regular": [
+    {
+      subKey: "struggleMeal",
+      subTitle: "Which meal do you struggle with most to keep regular?",
+      subType: "radio",
+      options: ["Breakfast", "Lunch", "Dinner", "Snacks"],
+      required: true,
+    },
+    {
+      subKey: "improveRegularity",
+      subTitle: "Would you like suggestions to improve the regularity of that meal?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Very regular": [
+    {
+      subKey: "optimizeTiming",
+      subTitle: "Would you like advanced tips for optimizing meal timing, such as for energy or weight management?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+    {
+      subKey: "portionMindful",
+      subTitle: "Are you interested in learning about portion timing or mindful eating practices?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  
+  // --- NEW Tobacco Use Follow-ups ---
+  "Never": [
+    {
+      subKey: "secondHandExposure",
+      subTitle: "Do you feel exposed to second-hand smoke at home, work, or in public?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "Rarely", "No"],
+      required: true,
+    },
+    {
+      subKey: "stayTobaccoFree",
+      subTitle: "Would you like to learn strategies to continue staying tobacco-free?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Used in the past, but quit": [
+    {
+      subKey: "quittingHelp",
+      subTitle: "What helped you the most in quitting tobacco?",
+      subType: "radio",
+      options: ["Willpower", "Family support", "Medical advice", "Other"],
+      required: true,
+    },
+    {
+      subKey: "avoidRelapseTobacco",
+      subTitle: "Would you like tips to avoid relapse in the future?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Occasionally (less than daily)": [
+    {
+      subKey: "tobaccoSituations",
+      subTitle: "In what situations do you usually use tobacco?",
+      subType: "multiselect",
+      options: [
+        { id: "social", label: "Social gatherings" },
+        { id: "stress", label: "Stress" },
+        { id: "meals", label: "After meals" },
+        { id: "other", label: "Other" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "cutDownTobacco",
+      subTitle: "Would you like suggestions to cut down or quit completely?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Daily / Regular use": [
+    {
+      subKey: "quittingChallenge",
+      subTitle: "What do you feel is the biggest challenge in quitting tobacco?",
+      subType: "radio",
+      options: ["Cravings", "Stress relief", "Social circle", "Don’t feel ready"],
+      required: true,
+    },
+    {
+      subKey: "quitPlanTobacco",
+      subTitle: "Would you like us to guide you with a personalized quit plan or professional resources?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+
+  // --- NEW Alcohol Use Follow-ups ---
+  "Never": [
+    {
+      subKey: "pressureToDrink",
+      subTitle: "Have you ever felt pressured by friends, family, or work culture to drink?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "Rarely", "No"],
+      required: true,
+    },
+    {
+      subKey: "stayAlcoholFree",
+      subTitle: "Would you like strategies on how to confidently stay alcohol-free in social settings?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Used in the past, but quit": [
+    {
+      subKey: "motivationToQuitAlcohol",
+      subTitle: "What motivated you the most to stop drinking?",
+      subType: "radio",
+      options: ["Health reasons", "Family", "Financial", "Other"],
+      required: true,
+    },
+    {
+      subKey: "avoidRelapseAlcohol",
+      subTitle: "Would you like reminders and tips to stay alcohol-free long term?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Occasionally (1–3 times per month)": [
+    {
+      subKey: "alcoholSituations",
+      subTitle: "In what situations do you usually drink?",
+      subType: "multiselect",
+      options: [
+        { id: "social", label: "Social gatherings" },
+        { id: "stress", label: "Stress relief" },
+        { id: "celebrations", label: "Celebrations" },
+        { id: "other", label: "Other" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "healthierAlternatives",
+      subTitle: "Would you like to learn about healthier alternatives for those situations?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Weekly (1–3 times per week)": [
+    {
+      subKey: "drinkingImpact",
+      subTitle: "Do you ever feel your drinking affects your sleep, work, or relationships?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "Rarely", "No"],
+      required: true,
+    },
+    {
+      subKey: "reduceDrinking",
+      subTitle: "Would you like practical tips to reduce how much or how often you drink?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Regular / Heavy use (4+ times per week or binge drinking)": [
+    {
+      subKey: "drinkingChallenge",
+      subTitle: "What do you feel makes it hardest to cut down or stop drinking?",
+      subType: "radio",
+      options: ["Stress", "Cravings", "Social circle", "Don’t feel ready"],
+      required: true,
+    },
+    {
+      subKey: "quitPlanAlcohol",
+      subTitle: "Would you like help with a personalized quit plan or professional resources?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,

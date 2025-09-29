@@ -1,10 +1,14 @@
+// components/Questionnaire.js
 "use client";
 import React, { useState } from "react";
 import stepsData, { conditionalFollowUps } from "../data/questions"; 
 
-// The IDs for the branching steps (CORRECTED IDs)
+// The IDs for the branching steps (UPDATED)
 const ACTIVITY_STEP_ID = 5; 
 const NUTRITION_STEP_ID = 6; 
+const MEAL_REGULARITY_STEP_ID = 7; 
+const TOBACCO_STEP_ID = 10; // NEW BRANCHING STEP ID
+const ALCOHOL_STEP_ID = 11; // NEW BRANCHING STEP ID
 const APP_NAME = "Ayubo";
 
 export default function Questionnaire() {
@@ -12,20 +16,32 @@ export default function Questionnaire() {
   // subStep: 0 for base question, 1 for follow-up questions
   const [subStep, setSubStep] = useState(0); 
   const [answers, setAnswers] = useState({});
-  const totalSteps = stepsData.length; // totalSteps is now 6
+  const totalSteps = stepsData.length; // totalSteps is now 12
 
   const currentStepData = stepsData.find(step => step.id === currentStep);
   
+  // Define all branching steps for central logic checks
+  const branchingSteps = [ACTIVITY_STEP_ID, NUTRITION_STEP_ID, MEAL_REGULARITY_STEP_ID, TOBACCO_STEP_ID, ALCOHOL_STEP_ID];
+  const isBranchingStep = branchingSteps.includes(currentStep);
+
   // Dynamically determine the key and answer for conditional logic
   let baseConditionalKey = null;
   let baseConditionalAnswer = null;
 
   if (currentStep === ACTIVITY_STEP_ID) {
     baseConditionalKey = 'activityLevel';
-    baseConditionalAnswer = answers.activityLevel;
   } else if (currentStep === NUTRITION_STEP_ID) {
     baseConditionalKey = 'sugarIntake';
-    baseConditionalAnswer = answers.sugarIntake;
+  } else if (currentStep === MEAL_REGULARITY_STEP_ID) {
+    baseConditionalKey = 'mealRegularity';
+  } else if (currentStep === TOBACCO_STEP_ID) { // NEW
+    baseConditionalKey = 'tobaccoUse';
+  } else if (currentStep === ALCOHOL_STEP_ID) { // NEW
+    baseConditionalKey = 'alcoholUse';
+  }
+  
+  if (baseConditionalKey) {
+    baseConditionalAnswer = answers[baseConditionalKey];
   }
 
   const conditionalQuestions = baseConditionalAnswer ? conditionalFollowUps[baseConditionalAnswer] : [];
@@ -46,10 +62,9 @@ export default function Questionnaire() {
   const isStepValid = () => {
     if (!currentStepData) return false;
     const currentAnswer = answers[currentStepData.key];
-    const isBranchingStep = currentStep === ACTIVITY_STEP_ID || currentStep === NUTRITION_STEP_ID;
 
 
-    // Case 1: Validation for Branching Steps (Step 5 & 6)
+    // Case 1: Validation for Branching Steps (Step 5, 6, 7, 10, 11)
     if (isBranchingStep) {
         // subStep 0: Validate the base radio button
         if (subStep === 0) {
@@ -70,7 +85,7 @@ export default function Questionnaire() {
         }
     } 
     
-    // Case 2: Validation for NON-Branching Steps (Steps 1, 2, 3, 4)
+    // Case 2: Validation for NON-Branching Steps (Steps 1, 2, 3, 4, 8, 9, 12)
     else {
         if (!currentStepData.required) return true;
         
@@ -89,29 +104,28 @@ export default function Questionnaire() {
   };
 
   const handleNext = () => {
-    const isBranchingStep = currentStep === ACTIVITY_STEP_ID || currentStep === NUTRITION_STEP_ID;
     
-    // A. If on a Branching Step's Base Question (Step 5 or 6, subStep 0)
+    // A. If on a Branching Step's Base Question (subStep 0)
     if (isBranchingStep && subStep === 0) {
       if (isStepValid()) {
         setSubStep(1); // Move to follow-up questions
       }
     } 
-    // B. If on the FINAL STEP (Step 6) and on the follow-up questions (subStep 1)
-    else if (currentStep === totalSteps && subStep === 1) { 
+    // B. If on the FINAL STEP (Step 12) 
+    else if (currentStep === totalSteps) { 
         if (isStepValid()) {
             console.log("Questionnaire Complete! Final Answers:", answers);
             alert("Questionnaire Complete! Check console for final answers.");
         }
     } 
-    // C. If on a Branching Step's follow-ups (subStep 1) AND NOT the final step (i.e., Step 5)
+    // C. If on a Branching Step's follow-ups (subStep 1) AND NOT the final step (i.e., Step 5, 6, 7, 10, 11)
     else if (isBranchingStep && subStep === 1 && currentStep < totalSteps) {
          if (isStepValid()) {
             setCurrentStep(currentStep + 1);
             setSubStep(0); // Reset subStep for the next main step
          }
     }
-    // D. If on a NON-Branching Step (Steps 1, 2, 3, 4)
+    // D. If on a NON-Branching Step (Steps 1, 2, 3, 4, 8, 9, 12)
     else if (!isBranchingStep && currentStep < totalSteps) {
       if (isStepValid()) {
         setCurrentStep(currentStep + 1);
@@ -120,9 +134,7 @@ export default function Questionnaire() {
   };
   
   const handleBack = () => {
-    const isBranchingStep = currentStep === ACTIVITY_STEP_ID || currentStep === NUTRITION_STEP_ID;
-
-    // If on a Branching Step (5 or 6) and on follow-up questions, go back to base question
+    // If on a Branching Step (5, 6, 7, 10, or 11) and on follow-up questions, go back to base question
     if (isBranchingStep && subStep === 1) {
         setSubStep(0);
     } 
@@ -137,7 +149,6 @@ export default function Questionnaire() {
 
   const handleInputChange = (key, value, subKey = null, type = null) => {
     const currentKey = currentStepData.key;
-    const isBranchingStep = currentStep === ACTIVITY_STEP_ID || currentStep === NUTRITION_STEP_ID;
     
     // Conditional Follow-Ups (Stored under the 'followUps' key)
     if (subKey && isBranchingStep) {
@@ -184,7 +195,7 @@ export default function Questionnaire() {
             }
         }));
     } 
-    // Single-Value Steps (Age, Sex, Primary Goal, Base Activity Level, Base Sugar Intake)
+    // Single-Value Steps (Age, Sex, Primary Goal, Base Activity Level, Base Sugar Intake, Meal Regularity, etc.)
     else {
       setAnswers(prevAnswers => ({
         ...prevAnswers,
@@ -199,7 +210,7 @@ export default function Questionnaire() {
   // Renders Radio Buttons 
   const renderRadioButtons = (options, currentAnswer, subKey = null) => {
     return (
-      // Mobile Alignment Fix: Removing w-full here ensures proper width constraint from parent
+      // Mobile Alignment Fix: Removed w-full here to prevent overflow
       <div className="space-y-4"> 
         {options.map((option) => (
           <div
@@ -247,11 +258,11 @@ export default function Questionnaire() {
                 <div
                     key={option.id}
                     className={`
-                      flex items-center justify-between p-4 rounded-xl cursor-pointer transition 
+                      flex items-center justify-between p-4 rounded-xl cursor-pointer border-2 transition 
                       ${
                         isSelected
-                          ? "bg-[#e0e4ef] border-2 border-[#e72638] shadow-md"
-                          : "bg-white border border-gray-200 hover:bg-gray-50"
+                          ? "bg-[#e0e4ef] border-[#e72638] shadow-md"
+                          : "bg-white border-gray-200 hover:bg-gray-50"
                       }
                     `}
                     onClick={() => handleInputChange(option.id, isSelected, subKey, 'multiselect')}
@@ -327,7 +338,7 @@ export default function Questionnaire() {
     );
   };
   
-  // Renders the Conditional Follow-Up Questions (subStep 1 of Step 5 or 6)
+  // Renders the Conditional Follow-Up Questions (subStep 1 of branching steps)
   const renderConditionalFollowUps = () => {
     const followUpAnswers = answers.followUps || {};
 
@@ -367,8 +378,8 @@ export default function Questionnaire() {
   const renderStepContent = () => {
     if (!currentStepData) return <p>Step not found.</p>;
 
-    // Handle Branching Steps (Step 5 & 6)
-    if (currentStep === ACTIVITY_STEP_ID || currentStep === NUTRITION_STEP_ID) {
+    // Handle Branching Steps (Step 5, 6, 7, 10, 11)
+    if (isBranchingStep) {
         if (subStep === 0) {
             // Base Question (Radio)
             return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
@@ -379,7 +390,7 @@ export default function Questionnaire() {
         }
     }
     
-    // Handle all non-branching steps (Steps 1, 2, 3, 4)
+    // Handle all non-branching steps (Steps 1, 2, 3, 4, 8, 9, 12)
     switch (currentStepData.type) {
       case 'number':
         return (
@@ -406,31 +417,44 @@ export default function Questionnaire() {
 
   // Determine button text dynamically
   const getButtonText = () => {
-    // If it is the final main step (6) AND the final sub-step (1)
-    if (currentStep === totalSteps && subStep === 1) {
+    // If it is the final main step (12) AND is a non-branching step
+    if (currentStep === totalSteps) {
       return "Finish";
     }
-    // If it is any base step of a branching section (5 or 6)
-    if ((currentStep === ACTIVITY_STEP_ID || currentStep === NUTRITION_STEP_ID) && subStep === 0) {
+    // If it is any base step of a branching section (5, 6, 7, 10, 11)
+    if (isBranchingStep && subStep === 0) {
       return "Continue";
     }
-    // All other steps (Steps 1, 2, 3, 4)
+    // All other steps (including branching follow-ups)
     return "Next";
   };
   
-  // Check if it is the absolute final screen (Step 6, subStep 1)
-  const isFinalScreen = currentStep === totalSteps && subStep === 1;
+  // Check if it is the absolute final screen (Step 12)
+  const isFinalScreen = currentStep === totalSteps;
 
-  // The total number of sub-steps is 2*totalSteps (12 total virtual steps)
-  const currentVirtualStep = (currentStep - 1) * 2 + (subStep === 1 ? 2 : 1);
-  const totalVirtualSteps = totalSteps * 2;
+  // The total number of sub-steps calculation
+  const totalBranchingSteps = branchingSteps.length; // 5
+  const totalNonBranchingSteps = totalSteps - totalBranchingSteps; // 12 - 5 = 7
+  const totalVirtualSteps = totalNonBranchingSteps + (totalBranchingSteps * 2); // 7 + 10 = 17
+
+  let currentVirtualStep = 0;
+  for (let i = 1; i <= currentStep; i++) {
+    if (branchingSteps.includes(i)) {
+      currentVirtualStep += 1; // Add 1 for the base step
+      if (i === currentStep && subStep === 1) {
+        currentVirtualStep += 1; // Add 1 for the follow-up step
+      }
+    } else {
+      currentVirtualStep += 1;
+    }
+  }
 
 
   return (
     <section id="questionnaire" className="w-full min-h-screen bg-gray-50">
       {/* Header (Top progress bar and Skip button) */}
-      <div className="w-full bg-white shadow-sm pt-20">
-        {/* MODIFIED: Reverting to moderate py-5 padding for better vertical spacing */}
+      <div className="w-full bg-white shadow-sm">
+        {/* Padding set to py-5 for moderate vertical spacing */}
         <div className="max-w-3xl mx-auto py-5 px-4 flex justify-between items-center">
           <div className="text-xl font-bold text-[#e72638]">{APP_NAME}</div>
           <div className="flex-1 mx-4 h-2 bg-gray-200 rounded-full">
@@ -439,25 +463,25 @@ export default function Questionnaire() {
               style={{ width: `${(currentVirtualStep / totalVirtualSteps) * 100}%` }}
             ></div>
           </div>
-          {/* Skip button is ONLY visible if it's NOT the final screen */}
+          {/* Skip button logic */}
           {!isFinalScreen ? (
             <button 
                 onClick={handleNext}
                 className="text-gray-500 hover:text-[#e72638] font-medium"
-                // Simplified disabled check for Skip
-                disabled={currentStepData?.required && !isStepValid() && currentStep !== ACTIVITY_STEP_ID && currentStep !== NUTRITION_STEP_ID}
+                // Skip button should advance even if the current required step is invalid, UNLESS it's a branching base step (subStep 0)
+                disabled={currentStepData?.required && !isStepValid() && isBranchingStep && subStep === 0}
             >
                 Skip
             </button>
           ) : (
-            // Empty placeholder to keep layout consistent when Skip is hidden
+            // Hide Skip button on the final screen
             <span className="text-gray-500 font-medium opacity-0 select-none">Skip</span> 
           )}
         </div>
       </div>
 
       {/* Main Content Area */}
-      {/* MODIFIED: Increased pt-16 for desktop to push content below the header, ensuring no overlap */}
+      {/* Increased pt-16 for desktop to push content below the header */}
       <div className="flex flex-col items-center justify-center pt-10 md:pt-16 pb-10 px-4 md:pb-20 text-center">
         <div className="w-full max-w-lg mb-10">
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
@@ -465,9 +489,7 @@ export default function Questionnaire() {
           </h2>
           {/* Dynamic Description/Subtitle */}
           <p className="text-base text-gray-600 mb-6">
-            {currentStep === NUTRITION_STEP_ID && subStep === 1
-                ? `${currentStepData?.description} Answer: ${baseConditionalAnswer}`
-                : currentStep === ACTIVITY_STEP_ID && subStep === 1
+            {isBranchingStep && subStep === 1
                 ? `${currentStepData?.description} Answer: ${baseConditionalAnswer}`
                 : currentStepData?.description}
           </p>
@@ -489,7 +511,7 @@ export default function Questionnaire() {
           )}
           <button
             onClick={handleNext}
-            // Disable button if required and not valid, regardless of whether it's the final step
+            // Disable button if required and not valid
             disabled={currentStepData?.required && !isStepValid()}
             className={`flex-1 py-3 rounded-xl font-semibold transition 
               ${
@@ -503,7 +525,10 @@ export default function Questionnaire() {
         </div>
       </div>
 
-      
+      {/* Footer */}
+      <div className="w-full bg-white py-3 text-center border-t border-gray-200 text-xs text-gray-500">
+        Copyright © 2025 {APP_NAME}. All rights reserved.
+      </div>
     </section>
   );
 }
