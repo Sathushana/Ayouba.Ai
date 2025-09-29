@@ -1,28 +1,40 @@
+// data/questions.js
+
 // Base questions that everyone answers
 const baseQuestions = [
-  // Step 1: Age
+  // Step 1: Full Name
   {
     id: 1,
+    type: "text",
+    title: "What's your full name?",
+    description: "We use your name to personalize your health recommendations and create a better experience for you.",
+    key: "fullName",
+    placeholder: "Enter your full name",
+    required: true,
+  },
+  // Step 2: Age
+  {
+    id: 2,
     type: "number",
     title: "How old are you?",
-    description: "Your age helps us personalise your lifestyle recommendations and identify risk early. In Sri Lanka, certain conditions like diabetes, hypertension, and heart disease can develop earlier than in other populations, so knowing your age helps us guide you safely and effectively.",
+    description: "Your age helps us personalise your lifestyle recommendations and identify risk early. Knowing your age helps us guide you safely and effectively.",
     key: "age",
     placeholder: "Enter age in years (e.g., 35)",
     required: true,
   },
-  // Step 2: Sex
+  // Step 3: Sex
   {
-    id: 2,
+    id: 3,
     type: "radio",
     title: "What is your sex?",
     description: "Men and women have different health risks and reference ranges for lab values. This helps us give you personalized advice.",
     key: "sex",
-    options: ["Male", "Female", "Prefer not to say"],
+    options: ["Male", "Female"],
     required: true,
   },
-  // Step 3: Height and Weight (BMI)
+  // Step 4: Height and Weight (BMI)
   {
-    id: 3,
+    id: 4,
     type: "measurements",
     title: "What are your height and weight?",
     description: "This helps calculate your BMI, which is an important indicator of health risk in Sri Lankan adults. For South Asians, health risks can appear at lower BMI than in other populations.",
@@ -33,9 +45,9 @@ const baseQuestions = [
     ],
     required: true,
   },
-  // Step 4: Primary Health Goal
+  // Step 5: Primary Health Goal
   {
-    id: 4,
+    id: 5,
     type: "radio",
     title: "Primary Health Goal",
     description: "Select your primary health goal (choose one):",
@@ -56,7 +68,7 @@ const goalSpecificQuestions = {
   // Physical Activity Questions
   "Physical Activity": [
     {
-      id: 5,
+      id: 6,
       type: "radio",
       title: "Physical Activity",
       description: "Everyone moves differently. How would you describe your activity in a typical week?",
@@ -73,9 +85,9 @@ const goalSpecificQuestions = {
 
   // Nutrition Questions
   "Nutrition": [
-    // Step 5: Fruits and Vegetables Intake
+    // Step 6: Fruits and Vegetables Intake
     {
-      id: 5,
+      id: 6,
       type: "radio",
       title: "Fruits and Vegetables Intake",
       description: "We all eat differently. How many servings of fruits and vegetables do you usually have in a day?",
@@ -88,9 +100,9 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 6: Nutrition (Sugary Foods, Branching)
+    // Step 7: Nutrition (Sugary Foods, Branching)
     {
-      id: 6,
+      id: 7,
       type: "radio",
       title: "Nutrition Habits: Processed Foods",
       description: "How often do you have sugary drinks or processed foods?",
@@ -103,9 +115,9 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 7: Meal Regularity (Branching)
+    // Step 8: Meal Regularity (Branching)
     {
-      id: 7,
+      id: 8,
       type: "radio",
       title: "Nutrition Habits: Meal Regularity",
       description: "How regularly do you eat your meals each day?",
@@ -117,9 +129,9 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 8: Protein Intake
+    // Step 9: Protein Intake
     {
-      id: 8,
+      id: 9,
       type: "radio",
       title: "Nutrition Habits: Protein",
       description: "Do you regularly include protein-rich foods like eggs, fish, lentils, or meat?",
@@ -132,9 +144,9 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 9: Water Intake
+    // Step 10: Water Intake
     {
-      id: 9,
+      id: 10,
       type: "radio",
       title: "Nutrition Habits: Water Intake",
       description: "How many glasses of water do you drink on a typical day?",
@@ -152,7 +164,7 @@ const goalSpecificQuestions = {
   // Tobacco Questions
   "Tobacco": [
     {
-      id: 5,
+      id: 6,
       type: "radio",
       title: "Tobacco Use",
       description: "Do you currently use tobacco in any form (cigarettes, beedi, smokeless tobacco, betel, vaping)?",
@@ -170,7 +182,7 @@ const goalSpecificQuestions = {
   // Alcohol Questions
   "Alcohol": [
     {
-      id: 5,
+      id: 6,
       type: "radio",
       title: "Alcohol Use",
       description: "How often do you usually drink alcohol?",
@@ -189,7 +201,7 @@ const goalSpecificQuestions = {
   // Sleep Questions (placeholder - you can add specific sleep questions later)
   "Sleep": [
     {
-      id: 5,
+      id: 6,
       type: "radio",
       title: "Sleep Quality",
       description: "How would you rate your overall sleep quality?",

@@ -76,7 +76,7 @@ export default function Header() {
             href="/try"
             className="bg-[#e72638] text-white px-4 py-1 rounded-lg font-semibold hover:bg-[#c71f40] transition"
           >
-            Try Ayouba
+            Try Ayubo
           </Link>
         </nav>
 

@@ -63,46 +63,52 @@ export default function Questionnaire() {
   };
 
   // --- Validation and Navigation Handlers ---
-  const isStepValid = () => {
-    if (!currentStepData) return false;
-    const currentAnswer = answers[currentStepData.key];
+  // In the isStepValid() function, update the validation for text inputs:
+const isStepValid = () => {
+  if (!currentStepData) return false;
+  const currentAnswer = answers[currentStepData.key];
 
-    // Case 1: Validation for Branching Steps
-    if (isBranchingStep) {
-      // subStep 0: Validate the base radio button
-      if (subStep === 0) {
-        return !!baseConditionalAnswer;
-      }
-      // subStep 1: Validate all conditional questions
-      if (subStep === 1) {
-        const followUpAnswers = answers.followUps || {};
-        return conditionalQuestions.every(q => {
-          if (q.required) {
-            const answer = followUpAnswers[q.subKey];
-            // Check if a radio answer exists, or if a multiselect has any true value
-            if (q.subType === 'radio') return !!answer;
-            if (q.subType === 'multiselect') return Object.values(answer || {}).some(v => v === true);
-          }
-          return true;
-        });
-      }
+  // Case 1: Validation for Branching Steps
+  if (isBranchingStep) {
+    // subStep 0: Validate the base radio button
+    if (subStep === 0) {
+      return !!baseConditionalAnswer;
     }
-    // Case 2: Validation for NON-Branching Steps
-    else {
-      if (!currentStepData.required) return true;
-      if (currentStepData.type === 'number' || currentStepData.type === 'radio') {
-        return !!currentAnswer;
-      }
-      if (currentStepData.type === 'measurements') {
-        const { height, weight } = currentAnswer || {};
-        return !!height && !!weight && height > 0 && weight > 0;
-      }
-      if (currentStepData.type === 'multiselect') {
-        return Object.values(currentAnswer || {}).some(v => v === true);
-      }
-      return false;
+    // subStep 1: Validate all conditional questions
+    if (subStep === 1) {
+      const followUpAnswers = answers.followUps || {};
+      return conditionalQuestions.every(q => {
+        if (q.required) {
+          const answer = followUpAnswers[q.subKey];
+          // Check if a radio answer exists, or if a multiselect has any true value
+          if (q.subType === 'radio') return !!answer;
+          if (q.subType === 'multiselect') return Object.values(answer || {}).some(v => v === true);
+        }
+        return true;
+      });
     }
-  };
+  }
+  // Case 2: Validation for NON-Branching Steps
+  else {
+    if (!currentStepData.required) return true;
+    
+    // Handle different input types
+    if (currentStepData.type === 'text') {
+      return !!currentAnswer && currentAnswer.trim().length > 0; // Text must not be empty
+    }
+    if (currentStepData.type === 'number' || currentStepData.type === 'radio') {
+      return !!currentAnswer;
+    }
+    if (currentStepData.type === 'measurements') {
+      const { height, weight } = currentAnswer || {};
+      return !!height && !!weight && height > 0 && weight > 0;
+    }
+    if (currentStepData.type === 'multiselect') {
+      return Object.values(currentAnswer || {}).some(v => v === true);
+    }
+    return false;
+  }
+};
 
   const handleNext = () => {
     // A. If on a Branching Step's Base Question (subStep 0)
@@ -347,45 +353,56 @@ export default function Questionnaire() {
     );
   };
 
-  const renderStepContent = () => {
-    if (!currentStepData) return <p>Step not found.</p>;
+// In the renderStepContent function, add this case for 'text' type:
+const renderStepContent = () => {
+  if (!currentStepData) return <p>Step not found.</p>;
 
-    // Handle Branching Steps
-    if (isBranchingStep) {
-      if (subStep === 0) {
-        // Base Question (Radio)
-        return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
-      }
-      if (subStep === 1) {
-        // Conditional Follow-ups
-        return renderConditionalFollowUps();
-      }
+  // Handle Branching Steps
+  if (isBranchingStep) {
+    if (subStep === 0) {
+      // Base Question (Radio)
+      return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
     }
+    if (subStep === 1) {
+      // Conditional Follow-ups
+      return renderConditionalFollowUps();
+    }
+  }
 
-    // Handle all non-branching steps
-    switch (currentStepData.type) {
-      case 'number':
-        return (
-          <input
-            type="number"
-            value={answers[currentStepData.key] || ''}
-            onChange={(e) => handleInputChange(currentStepData.key, parseInt(e.target.value) || '')}
-            placeholder={currentStepData.placeholder}
-            className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
-            min="1"
-            max="120"
-          />
-        );
-      case 'radio':
-        return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
-      case 'measurements':
-        return renderMeasurements();
-      case 'multiselect':
-        return renderMultiselectOptions(currentStepData.options, answers[currentStepData.key]);
-      default:
-        return <p>Invalid step type.</p>;
-    }
-  };
+  // Handle all non-branching steps
+  switch (currentStepData.type) {
+    case 'text': // NEW: Handle text input for full name
+      return (
+        <input
+          type="text"
+          value={answers[currentStepData.key] || ''}
+          onChange={(e) => handleInputChange(currentStepData.key, e.target.value)}
+          placeholder={currentStepData.placeholder}
+          className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+        />
+      );
+    case 'number':
+      return (
+        <input
+          type="number"
+          value={answers[currentStepData.key] || ''}
+          onChange={(e) => handleInputChange(currentStepData.key, parseInt(e.target.value) || '')}
+          placeholder={currentStepData.placeholder}
+          className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+          min="1"
+          max="120"
+        />
+      );
+    case 'radio':
+      return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
+    case 'measurements':
+      return renderMeasurements();
+    case 'multiselect':
+      return renderMultiselectOptions(currentStepData.options, answers[currentStepData.key]);
+    default:
+      return <p>Invalid step type.</p>;
+  }
+};
 
   // Determine button text dynamically
   const getButtonText = () => {
