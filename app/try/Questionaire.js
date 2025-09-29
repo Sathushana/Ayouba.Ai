@@ -1,94 +1,27 @@
 // components/Questionnaire.js
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import stepsData, { conditionalFollowUps } from "../data/questions"; 
 
-// --- CONSTANTS ---
-// IDs for Initial Non-Branching Steps
-const INITIAL_STEP_IDS = [1, 2, 3, 4]; 
-// IDs for Branching Steps (Logic now controls which ones are included)
+// The IDs for the branching steps (UPDATED)
 const ACTIVITY_STEP_ID = 5; 
-const NUTRITION_SUGAR_STEP_ID = 6; 
+const NUTRITION_STEP_ID = 6; 
 const MEAL_REGULARITY_STEP_ID = 7; 
-const PROTEIN_STEP_ID = 8;
-const WATER_STEP_ID = 9;
-const TOBACCO_STEP_ID = 10;
-const ALCOHOL_STEP_ID = 11;
-const MENTAL_HEALTH_STEP_ID = 12;
-
+const TOBACCO_STEP_ID = 10; // NEW BRANCHING STEP ID
+const ALCOHOL_STEP_ID = 11; // NEW BRANCHING STEP ID
 const APP_NAME = "Ayubo";
-
-
-// --- CUSTOM HOOK: Dynamic Step Order Logic ---
-const useStepOrder = (primaryGoalAnswer) => {
-    // 1. Initial Steps (1, 2, 3, 4) are always included
-    let path = [...INITIAL_STEP_IDS];
-    
-    // 2. Define the goal-specific blocks of step IDs
-    const goalPaths = {
-        "Physical Activity": [
-            ACTIVITY_STEP_ID, 
-            PROTEIN_STEP_ID, WATER_STEP_ID, MENTAL_HEALTH_STEP_ID // Include other general health steps
-        ],
-        "Nutrition": [
-            NUTRITION_SUGAR_STEP_ID, 
-            MEAL_REGULARITY_STEP_ID, 
-            PROTEIN_STEP_ID, 
-            WATER_STEP_ID, 
-            MENTAL_HEALTH_STEP_ID // Include other general health steps
-        ],
-        "Tobacco": [
-            TOBACCO_STEP_ID, // Focus on tobacco
-            PROTEIN_STEP_ID, WATER_STEP_ID, MENTAL_HEALTH_STEP_ID
-        ],
-        "Alcohol": [
-            ALCOHOL_STEP_ID, // Focus on alcohol
-            PROTEIN_STEP_ID, WATER_STEP_ID, MENTAL_HEALTH_STEP_ID
-        ],
-        "Mental Health": [
-             MENTAL_HEALTH_STEP_ID, // Focus on Mental Health (Will add specific Qs later)
-             PROTEIN_STEP_ID, WATER_STEP_ID
-        ],
-        "Sleep": [
-             // Sleep questions and other general Qs
-             PROTEIN_STEP_ID, WATER_STEP_ID, MENTAL_HEALTH_STEP_ID
-        ]
-    };
-
-    // 3. Append the goal path if a goal is selected in Step 4
-    if (primaryGoalAnswer && goalPaths[primaryGoalAnswer]) {
-        path = [...path, ...goalPaths[primaryGoalAnswer]];
-        // Remove duplicates and maintain order
-        path = path.filter((id, index) => path.indexOf(id) === index);
-    } 
-    
-    // 4. If no goal is selected yet, just use initial steps + the full default path 
-    //    (Needed for initial rendering before Step 4 is answered)
-    if (path.length === INITIAL_STEP_IDS.length) {
-         path = [...path, ...goalPaths["Physical Activity"], ...goalPaths["Nutrition"], TOBACCO_STEP_ID, ALCOHOL_STEP_ID].filter((id, index, self) => self.indexOf(id) === index).sort((a,b) => a-b);
-         path = path.filter(id => id <= MENTAL_HEALTH_STEP_ID); // Filter to ensure valid IDs only
-    }
-
-    return path.sort((a, b) => a - b);
-};
-
 
 export default function Questionnaire() {
   const [currentStep, setCurrentStep] = useState(1);
+  // subStep: 0 for base question, 1 for follow-up questions
   const [subStep, setSubStep] = useState(0); 
   const [answers, setAnswers] = useState({});
-  
-  const primaryGoalAnswer = answers.primaryGoal;
-  const stepOrder = useStepOrder(primaryGoalAnswer);
-  const totalSteps = stepOrder.length; // Use the length of the dynamic order array
-
-  // Determine the index of the current step in the order
-  const currentStepIndex = stepOrder.indexOf(currentStep); 
+  const totalSteps = stepsData.length; // totalSteps is now 12
 
   const currentStepData = stepsData.find(step => step.id === currentStep);
   
-  // Define all branching steps
-  const branchingSteps = [ACTIVITY_STEP_ID, NUTRITION_SUGAR_STEP_ID, MEAL_REGULARITY_STEP_ID, TOBACCO_STEP_ID, ALCOHOL_STEP_ID];
+  // Define all branching steps for central logic checks
+  const branchingSteps = [ACTIVITY_STEP_ID, NUTRITION_STEP_ID, MEAL_REGULARITY_STEP_ID, TOBACCO_STEP_ID, ALCOHOL_STEP_ID];
   const isBranchingStep = branchingSteps.includes(currentStep);
 
   // Dynamically determine the key and answer for conditional logic
@@ -97,13 +30,13 @@ export default function Questionnaire() {
 
   if (currentStep === ACTIVITY_STEP_ID) {
     baseConditionalKey = 'activityLevel';
-  } else if (currentStep === NUTRITION_SUGAR_STEP_ID) {
+  } else if (currentStep === NUTRITION_STEP_ID) {
     baseConditionalKey = 'sugarIntake';
   } else if (currentStep === MEAL_REGULARITY_STEP_ID) {
     baseConditionalKey = 'mealRegularity';
-  } else if (currentStep === TOBACCO_STEP_ID) {
+  } else if (currentStep === TOBACCO_STEP_ID) { // NEW
     baseConditionalKey = 'tobaccoUse';
-  } else if (currentStep === ALCOHOL_STEP_ID) {
+  } else if (currentStep === ALCOHOL_STEP_ID) { // NEW
     baseConditionalKey = 'alcoholUse';
   }
   
@@ -130,7 +63,8 @@ export default function Questionnaire() {
     if (!currentStepData) return false;
     const currentAnswer = answers[currentStepData.key];
 
-    // Case 1: Validation for Branching Steps
+
+    // Case 1: Validation for Branching Steps (Step 5, 6, 7, 10, 11)
     if (isBranchingStep) {
         // subStep 0: Validate the base radio button
         if (subStep === 0) {
@@ -151,7 +85,7 @@ export default function Questionnaire() {
         }
     } 
     
-    // Case 2: Validation for NON-Branching Steps
+    // Case 2: Validation for NON-Branching Steps (Steps 1, 2, 3, 4, 8, 9, 12)
     else {
         if (!currentStepData.required) return true;
         
@@ -170,41 +104,43 @@ export default function Questionnaire() {
   };
 
   const handleNext = () => {
-    const isLastStepInOrder = currentStepIndex === totalSteps - 1;
-
+    
     // A. If on a Branching Step's Base Question (subStep 0)
     if (isBranchingStep && subStep === 0) {
       if (isStepValid()) {
         setSubStep(1); // Move to follow-up questions
       }
     } 
-    // B. If on the FINAL STEP of the personalized order
-    else if (isLastStepInOrder && (subStep === 1 || !isBranchingStep)) {
+    // B. If on the FINAL STEP (Step 12) 
+    else if (currentStep === totalSteps) { 
         if (isStepValid()) {
             console.log("Questionnaire Complete! Final Answers:", answers);
             alert("Questionnaire Complete! Check console for final answers.");
         }
     } 
-    // C. If moving to the NEXT STEP in the order
-    else if (currentStepIndex < totalSteps - 1) {
-        if (isStepValid()) {
-            // Determine the ID of the next step in the dynamic order
-            const nextStepId = stepOrder[currentStepIndex + 1]; 
-            setCurrentStep(nextStepId);
-            setSubStep(0); // Reset subStep for the new step
-        }
+    // C. If on a Branching Step's follow-ups (subStep 1) AND NOT the final step (i.e., Step 5, 6, 7, 10, 11)
+    else if (isBranchingStep && subStep === 1 && currentStep < totalSteps) {
+         if (isStepValid()) {
+            setCurrentStep(currentStep + 1);
+            setSubStep(0); // Reset subStep for the next main step
+         }
+    }
+    // D. If on a NON-Branching Step (Steps 1, 2, 3, 4, 8, 9, 12)
+    else if (!isBranchingStep && currentStep < totalSteps) {
+      if (isStepValid()) {
+        setCurrentStep(currentStep + 1);
+      }
     } 
   };
   
   const handleBack = () => {
-    // If on a Branching Step (subStep 1), go back to subStep 0
+    // If on a Branching Step (5, 6, 7, 10, or 11) and on follow-up questions, go back to base question
     if (isBranchingStep && subStep === 1) {
         setSubStep(0);
     } 
-    // If NOT on the first step, go back to the PREVIOUS step in the dynamic order
-    else if (currentStepIndex > 0) {
-      const prevStepId = stepOrder[currentStepIndex - 1];
-      setCurrentStep(prevStepId);
+    // Normal step navigation
+    else if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
       setSubStep(0);
     }
   };
@@ -259,7 +195,7 @@ export default function Questionnaire() {
             }
         }));
     } 
-    // Single-Value Steps (including Primary Goal)
+    // Single-Value Steps (Age, Sex, Primary Goal, Base Activity Level, Base Sugar Intake, Meal Regularity, etc.)
     else {
       setAnswers(prevAnswers => ({
         ...prevAnswers,
@@ -274,6 +210,7 @@ export default function Questionnaire() {
   // Renders Radio Buttons 
   const renderRadioButtons = (options, currentAnswer, subKey = null) => {
     return (
+      // Mobile Alignment Fix: Removed w-full here to prevent overflow
       <div className="space-y-4"> 
         {options.map((option) => (
           <div
@@ -453,7 +390,7 @@ export default function Questionnaire() {
         }
     }
     
-    // Handle all non-branching steps
+    // Handle all non-branching steps (Steps 1, 2, 3, 4, 8, 9, 12)
     switch (currentStepData.type) {
       case 'number':
         return (
@@ -480,48 +417,37 @@ export default function Questionnaire() {
 
   // Determine button text dynamically
   const getButtonText = () => {
-    const isLastStepInOrder = currentStepIndex === stepOrder.length - 1;
-    
-    // If it is the final step in the personalized order 
-    if (isLastStepInOrder && (subStep === 1 || !isBranchingStep)) {
+    // If it is the final main step (12) AND is a non-branching step
+    if (currentStep === totalSteps) {
       return "Finish";
     }
     // If it is any base step of a branching section (5, 6, 7, 10, 11)
     if (isBranchingStep && subStep === 0) {
       return "Continue";
     }
-    // All other steps (Steps 1, 2, 3, 4, 8, 9, 12 and branching follow-ups)
+    // All other steps (including branching follow-ups)
     return "Next";
   };
   
-  // Check if it is the absolute final screen 
-  const isLastStepInOrder = currentStepIndex === stepOrder.length - 1;
-  const isFinalScreen = isLastStepInOrder && (subStep === 1 || !isBranchingStep);
+  // Check if it is the absolute final screen (Step 12)
+  const isFinalScreen = currentStep === totalSteps;
 
-  // The total number of virtual steps calculation (based on the dynamic stepOrder)
-  const calculateVirtualStep = () => {
-    let virtualStep = 0;
-    for (let i = 0; i <= currentStepIndex; i++) {
-        const stepId = stepOrder[i];
-        if (branchingSteps.includes(stepId)) {
-            virtualStep += 1; // Base Q
-            if (i === currentStepIndex && subStep === 1) {
-                virtualStep += 1; // Follow-up Q
-            } else if (i < currentStepIndex) {
-                 virtualStep += 1; // Past follow-up Q
-            }
-        } else {
-            virtualStep += 1;
-        }
+  // The total number of sub-steps calculation
+  const totalBranchingSteps = branchingSteps.length; // 5
+  const totalNonBranchingSteps = totalSteps - totalBranchingSteps; // 12 - 5 = 7
+  const totalVirtualSteps = totalNonBranchingSteps + (totalBranchingSteps * 2); // 7 + 10 = 17
+
+  let currentVirtualStep = 0;
+  for (let i = 1; i <= currentStep; i++) {
+    if (branchingSteps.includes(i)) {
+      currentVirtualStep += 1; // Add 1 for the base step
+      if (i === currentStep && subStep === 1) {
+        currentVirtualStep += 1; // Add 1 for the follow-up step
+      }
+    } else {
+      currentVirtualStep += 1;
     }
-    return virtualStep;
-  };
-  
-  const totalVirtualSteps = stepOrder.reduce((acc, stepId) => {
-      return acc + (branchingSteps.includes(stepId) ? 2 : 1);
-  }, 0);
-  const currentVirtualStep = calculateVirtualStep();
-  const progressPercentage = (currentVirtualStep / totalVirtualSteps) * 100;
+  }
 
 
   return (
@@ -534,7 +460,7 @@ export default function Questionnaire() {
           <div className="flex-1 mx-4 h-2 bg-gray-200 rounded-full">
             <div
               className="h-2 bg-[#e72638] rounded-full transition-all duration-500"
-              style={{ width: `${progressPercentage}%` }}
+              style={{ width: `${(currentVirtualStep / totalVirtualSteps) * 100}%` }}
             ></div>
           </div>
           {/* Skip button logic */}
@@ -542,7 +468,7 @@ export default function Questionnaire() {
             <button 
                 onClick={handleNext}
                 className="text-gray-500 hover:text-[#e72638] font-medium"
-                // Simplified disabled check for Skip
+                // Skip button should advance even if the current required step is invalid, UNLESS it's a branching base step (subStep 0)
                 disabled={currentStepData?.required && !isStepValid() && isBranchingStep && subStep === 0}
             >
                 Skip
@@ -575,7 +501,7 @@ export default function Questionnaire() {
         {/* Navigation Buttons */}
         <div className="mt-10 flex gap-4 w-full max-w-lg">
           {/* Show Back button if not on Step 1 (or if on subStep 1 of branching step) */}
-          {(currentStepIndex > 0 || subStep === 1) && (
+          {(currentStep > 1 || subStep === 1) && (
             <button
               onClick={handleBack}
               className="flex-1 py-3 rounded-xl font-semibold border-2 border-[#e72638] text-[#e72638] bg-white hover:bg-[#e72638] hover:text-white transition"
