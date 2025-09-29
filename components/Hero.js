@@ -40,7 +40,7 @@ export default function Hero() {
                 Try Ayubo
               </a>
               <a
-                href="#learn"
+                href="/about"
                 className="border-[#e72638] text-[#e72638] px-6 py-3 rounded-xl font-semibold hover:bg-[#e72638] hover:text-white transition border-2 hover:border-[#c71f40] text-center"
               >
                 Learn More
