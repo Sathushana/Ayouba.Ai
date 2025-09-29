@@ -57,7 +57,7 @@ export default function Header() {
             Features
           </Link>
           <Link 
-            href="#about" 
+            href="/about" 
             className={`font-semibold transition ${
               scrolled ? "text-gray-700 hover:text-[#e72638]" : "text-gray-700 hover:text-[#e72638]"
             }`}
@@ -65,7 +65,7 @@ export default function Header() {
             About
           </Link>
           <Link 
-            href="#contact" 
+            href="/contact" 
             className={`font-semibold transition ${
               scrolled ? "text-gray-700 hover:text-[#e72638]" : "text-gray-700 hover:text-[#e72638]"
             }`}
@@ -104,14 +104,14 @@ export default function Header() {
             Features
           </Link>
           <Link
-            href="#about"
+            href="/about"
             className="px-2 py-2 font-medium text-gray-700 hover:text-white hover:bg-[#e72638] rounded-md transition"
             onClick={handleLinkClick}
           >
             About
           </Link>
           <Link
-            href="#contact"
+            href="/contact"
             className="px-2 py-2 font-medium text-gray-700 hover:text-white hover:bg-[#e72638] rounded-md transition"
             onClick={handleLinkClick}
           >

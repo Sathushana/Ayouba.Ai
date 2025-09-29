@@ -12,15 +12,12 @@ export default function Hero() {
             className="md:flex-2 w-full h-[250px] md:h-[600px] bg-[#e0e4ef] bg-no-repeat bg-cover relative"
             style={{
               backgroundImage: 'url("/hero_img_4.png")',
-              // Responsive background position fix
               backgroundPosition: "center 15%",
             }}
           ></div>
 
           {/* Right Text (With Improvements) */}
           <div
-            // Desktop Flex Ratio: md:flex-1 (1/3 width)
-            // Updated background color to better match the image's light gray tone
             className="md:flex-1 w-full flex flex-col justify-center bg-[#f4f4f4] px-6 md:px-8 py-10 md:py-16"
           >
             {/* HEADLINE CHANGE: Separated into 3 lines and increased font weight */}
@@ -58,7 +55,7 @@ export default function Hero() {
         <div className="max-w-7xl mx-auto flex flex-col items-center space-y-10 md:space-y-16 px-4 md:px-0">
           {/* Text and Image Row */}
           <div className="w-full flex flex-col md:flex-row gap-8">
-            <div className="md:flex-1 flex flex-col justify-center px-6 md:px-0 py-4 bg-white">
+            <div className="md:flex-1 flex flex-col justify-center px-4 md:px-0 py-4 bg-white">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black ">
                 AI Lifestyle Prevention & Wellness Coach
               </h2>
@@ -67,14 +64,14 @@ export default function Hero() {
                 coaching to reduce risk of noncommunicable diseases and mental
                 health disorders.
               </p>
-              <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
+              <ul className="list-disc list-inside space-y-2 text-black"> 
                 <li>Unhealthy diet & physical activity</li>
                 <li>Obesity & metabolic health</li>
                 <li>Tobacco & alcohol use</li>
                 <li>Mental health & stress management</li>
                 <li>Sleep & recovery</li>
               </ul>
-              <p className="mt-4 text-gray-700">
+              <p className="mt-4 text-black">
                 The AI uses behavioural science models (SCT, SDT,
                 Transtheoretical Model, Motivational Interviewing, Nudge Theory)
                 to assess, educate, set goals, support, and review progress for

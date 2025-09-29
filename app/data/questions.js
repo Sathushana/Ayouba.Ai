@@ -1,5 +1,3 @@
-// data/questions.js
-
 // Base questions that everyone answers
 const baseQuestions = [
   // Step 1: Age
@@ -75,9 +73,24 @@ const goalSpecificQuestions = {
 
   // Nutrition Questions
   "Nutrition": [
-    // Step 5: Nutrition (Sugary Foods, Branching)
+    // Step 5: Fruits and Vegetables Intake
     {
       id: 5,
+      type: "radio",
+      title: "Fruits and Vegetables Intake",
+      description: "We all eat differently. How many servings of fruits and vegetables do you usually have in a day?",
+      key: "fruitVegIntake",
+      options: [
+        "0 (Low intake)",
+        "1–2 (Low-moderate intake)",
+        "3–4 (Moderate intake)",
+        "5+ (High intake)",
+      ],
+      required: true,
+    },
+    // Step 6: Nutrition (Sugary Foods, Branching)
+    {
+      id: 6,
       type: "radio",
       title: "Nutrition Habits: Processed Foods",
       description: "How often do you have sugary drinks or processed foods?",
@@ -90,9 +103,9 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 6: Meal Regularity (Branching)
+    // Step 7: Meal Regularity (Branching)
     {
-      id: 6,
+      id: 7,
       type: "radio",
       title: "Nutrition Habits: Meal Regularity",
       description: "How regularly do you eat your meals each day?",
@@ -104,9 +117,9 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 7: Protein Intake
+    // Step 8: Protein Intake
     {
-      id: 7,
+      id: 8,
       type: "radio",
       title: "Nutrition Habits: Protein",
       description: "Do you regularly include protein-rich foods like eggs, fish, lentils, or meat?",
@@ -119,9 +132,9 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 8: Water Intake
+    // Step 9: Water Intake
     {
-      id: 8,
+      id: 9,
       type: "radio",
       title: "Nutrition Habits: Water Intake",
       description: "How many glasses of water do you drink on a typical day?",
@@ -215,6 +228,87 @@ const getQuestions = (primaryGoal = null) => {
 
 // --- CONDITIONAL FOLLOW-UP DATA ---
 export const conditionalFollowUps = {
+  // --- Fruits & Vegetables Intake Follow-ups ---
+  "0 (Low intake)": [
+    {
+      subKey: "fruitVegBarrier",
+      subTitle: "What usually makes it hard to eat more fruits and vegetables?",
+      subType: "multiselect",
+      options: [
+        { id: "tooExpensive", label: "Too expensive" },
+        { id: "hardToFind", label: "Hard to find" },
+        { id: "dontLikeTaste", label: "Don't like the taste" },
+        { id: "noTime", label: "Don't have time" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "fruitVegSuggestions",
+      subTitle: "Would you like us to suggest easy ways to include more fruits and vegetables in your meals?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "1–2 (Low-moderate intake)": [
+    {
+      subKey: "fruitVegBarrier",
+      subTitle: "What usually makes it hard to eat more fruits and vegetables?",
+      subType: "multiselect",
+      options: [
+        { id: "tooExpensive", label: "Too expensive" },
+        { id: "hardToFind", label: "Hard to find" },
+        { id: "dontLikeTaste", label: "Don't like the taste" },
+        { id: "noTime", label: "Don't have time" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "fruitVegSuggestions",
+      subTitle: "Would you like us to suggest easy ways to include more fruits and vegetables in your meals?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "3–4 (Moderate intake)": [
+    {
+      subKey: "foodPreferences",
+      subTitle: "Which type of foods would you like to include more in your diet?",
+      subType: "multiselect",
+      options: [
+        { id: "fruits", label: "Fruits" },
+        { id: "vegetables", label: "Vegetables" },
+        { id: "protein", label: "Protein-rich foods" },
+        { id: "wholeGrains", label: "Whole grains" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "mealSwapSuggestions",
+      subTitle: "Would you like personalized meal swap suggestions or portion tips?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "5+ (High intake)": [
+    {
+      subKey: "advancedNutritionTips",
+      subTitle: "Would you like new recipes or advanced tips to optimize nutrition?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+    {
+      subKey: "trackNutrition",
+      subTitle: "Are you interested in tracking your nutrient intake or hydration more closely?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+
   // --- Physical Activity Follow-ups ---
   "Mostly sedentary": [
     {

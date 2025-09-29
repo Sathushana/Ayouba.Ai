@@ -5,6 +5,7 @@ import getQuestions, { conditionalFollowUps } from "../data/questions";
 
 // Branching step IDs (will be dynamically determined based on selected goal)
 const BRANCHING_KEYS = {
+  'fruitVegIntake': 'Nutrition',
   'activityLevel': 'Physical Activity',
   'sugarIntake': 'Nutrition',
   'mealRegularity': 'Nutrition', 
