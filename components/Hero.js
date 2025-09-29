@@ -180,7 +180,7 @@ export default function Hero() {
           {/* Image */}
           <div className="w-full md:w-2/5 flex justify-center">
             <img
-              src="/hero_img_5.png"
+              src="/hero_img_51.png"
               alt="Build a happy life with Ayubo.AI"
               className="rounded-2xl shadow-lg w-full max-w-xs md:max-w-md"
             />
