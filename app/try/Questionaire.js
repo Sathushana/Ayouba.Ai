@@ -5,8 +5,8 @@ import getQuestions, {
     conditionalFollowUps, 
     healthConditionFollowUps, 
     cancerYesFollowUp, 
-    medicationQuestion,     // Import new question
-    medicationDetailsFollowUp // Import new medication details
+    medicationQuestion,     
+    medicationDetailsFollowUp 
 } from "../data/questions";
 
 // Branching step IDs (will be dynamically determined based on selected goal)
@@ -73,6 +73,13 @@ export default function Questionnaire() {
       return Object.entries(healthConditions || {})
           .some(([key, isSelected]) => isSelected && key !== 'none');
   };
+  
+  // Helper to check if any substance (excluding 'none') is selected
+  const isAnySubstanceSelected = (substanceUse) => {
+      return Object.entries(substanceUse || {})
+          .some(([key, isSelected]) => isSelected && key !== 'none');
+  };
+
 
   // Handle health conditions multiselect conditional logic (UPDATED FOR MEDICATION AND CANCER)
   useEffect(() => {
@@ -230,6 +237,19 @@ export default function Questionnaire() {
             }
         }
         
+        // Special logic for substanceUse (NEW ADDITION)
+        if (currentStepData.key === 'substanceUse') {
+            const selectedSubstances = answers.substanceUse || {};
+            const anySubstanceSelected = isAnySubstanceSelected(selectedSubstances);
+            
+            // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
+            if (!anySubstanceSelected) {
+                setCurrentStep(currentStep + 1);
+                setSubStep(0);
+                return;
+            }
+        }
+
         // Skip follow-ups for Diet Type's Balanced/Mediterranean and No specific diet
         if (currentStepData.key === 'dietType' && 
             (baseConditionalAnswer === "A mix of vegetables, fruits, grains, and some meat or fish (Balanced / Mediterranean)" ||
@@ -351,21 +371,25 @@ export default function Questionnaire() {
     }
     // Simple Multi-Select (FIXED: Wrapped in setAnswers callback)
     else if (currentStepData.type === 'multiselect') {
-      setAnswers(prevAnswers => { // <--- FIX: start of functional update
+      setAnswers(prevAnswers => { 
           // Logic for selecting 'none' to deselect all others, and vice versa
           let newSelections = prevAnswers[currentKey] || {};
           
           if (key === 'none') {
-              // If 'none' is selected, clear all others
-              newSelections = { none: !newSelections.none };
+              // If 'none' is selected, clear all others and toggle 'none'
+              const isCurrentlySelected = !!newSelections.none;
+              newSelections = { none: !isCurrentlySelected };
+              
           } else {
               // If any other option is selected/deselected, ensure 'none' is deselected
               newSelections = { ...newSelections, [key]: !newSelections[key], none: false };
               
-              // Re-check: if no other conditions are selected, automatically check 'none'
+              // Re-check: if no other options are selected, automatically check 'none'
               const selectedKeys = Object.keys(newSelections).filter(k => k !== 'none' && newSelections[k]);
-              if (selectedKeys.length === 0 && !newSelections[key]) {
+              if (selectedKeys.length === 0) {
                   newSelections.none = true;
+              } else {
+                   newSelections.none = false;
               }
           }
 
@@ -373,7 +397,7 @@ export default function Questionnaire() {
               ...prevAnswers,
               [currentKey]: newSelections
           };
-      }); // <--- FIX: end of functional update
+      }); 
     }
     // Single-Value Steps (Radio, Text, Number)
     else {
