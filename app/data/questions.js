@@ -45,7 +45,7 @@ const baseQuestions = [
     ],
     required: true,
   },
-  // Step 5: Primary Health Goal
+  // Step 5: Primary Health Goal (UPDATED OPTIONS)
   {
     id: 5,
     type: "radio",
@@ -67,19 +67,19 @@ const baseQuestions = [
 
 // Goal-specific questions
 const goalSpecificQuestions = {
-  // Physical Activity Questions
+  // Physical Activity Questions - COMPLETELY UPDATED
   "Physical Activity": [
-    // Q1: Baseline Activity
+    // Q1: Baseline Activity Level
     {
       id: 6,
       type: "radio",
-      title: "Baseline Activity",
+      title: "Physical Activity",
       description: "In a normal week, how active are you?",
       key: "activityLevel",
       options: [
         "Mostly sitting (little or no exercise)",
         "Light movement (walks, chores, light activity)",
-        "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)",
+        "Moderate activity (exercise 3-4 days/week, brisk walking, cycling, sports)",
         "Very active (exercise most days / vigorous workouts/sports)"
       ],
       required: true,
@@ -88,13 +88,13 @@ const goalSpecificQuestions = {
     {
       id: 7,
       type: "radio",
-      title: "Health & Safety Check",
+      title: "Health & Safety",
       description: "Do you have any medical conditions or injuries that affect your ability to exercise?",
-      key: "hasConditions",
+      key: "hasMedicalConditions",
       options: ["Yes", "No"],
       required: true,
     },
-    // Q3 Step 1: Exercise Location
+    // Q3: Exercise Preferences & Environment
     {
       id: 8,
       type: "radio",
@@ -109,13 +109,13 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Q3 Step 2: Activity Type Preference
+    // Q4: Activity Type Preference
     {
       id: 9,
       type: "multiselect",
-      title: "Activity Type Preference",
+      title: "Activity Preferences",
       description: "Which types of activities do you enjoy most or would like to try?",
-      key: "activityType",
+      key: "activityPreferences",
       options: [
         { id: "walking", label: "Walking / Hiking" },
         { id: "running", label: "Running / Jogging" },
@@ -126,9 +126,9 @@ const goalSpecificQuestions = {
         { id: "sports", label: "Sports (Football, Basketball, Tennis, etc.)" },
         { id: "other", label: "Other / Not sure" }
       ],
-      required: false,
+      required: true,
     },
-    // Q3 Step 4: Time Availability
+    // Q5: Time Availability
     {
       id: 10,
       type: "radio",
@@ -137,19 +137,19 @@ const goalSpecificQuestions = {
       key: "timeAvailability",
       options: [
         "<10 minutes",
-        "10–20 minutes",
-        "20–40 minutes",
+        "10-20 minutes",
+        "20-40 minutes",
         "40+ minutes"
       ],
       required: true,
     },
-    // Q4 Step 1: Main Goal
+    // Q6: Main Fitness Goal
     {
       id: 11,
       type: "radio",
-      title: "Goals & Motivation",
+      title: "Fitness Goals",
       description: "What is your primary goal for your physical activity or fitness?",
-      key: "primaryFitnessGoal",
+      key: "fitnessGoal",
       options: [
         "Lose weight / Fat reduction",
         "Improve stamina / Cardiovascular fitness",
@@ -161,25 +161,25 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Q4 Step 2: Motivation & Readiness
+    // Q7: Motivation & Readiness
     {
       id: 12,
       type: "radio",
       title: "Motivation & Readiness",
       description: "How ready are you to make changes and follow a physical activity plan?",
-      key: "readiness",
+      key: "readinessLevel",
       options: [
-        "Very ready → I’m ready to start now",
+        "Very ready → I'm ready to start now",
         "Somewhat ready → I can start small and gradually increase",
         "Not ready → I want to explore and prepare first"
       ],
       required: true,
     },
-    // Q4 Step 3: Preferred Feedback & Motivation Style
+    // Q8: Motivation Style
     {
       id: 13,
       type: "multiselect",
-      title: "Preferred Feedback & Motivation Style",
+      title: "Motivation Style",
       description: "What motivates you most to stay consistent?",
       key: "motivationStyle",
       options: [
@@ -188,12 +188,13 @@ const goalSpecificQuestions = {
         { id: "rewards", label: "Rewards / Gamification / Badges" },
         { id: "visual", label: "Visual feedback / Charts / App reminders" }
       ],
-      required: false,
+      required: true,
     },
   ],
 
-  // Nutrition Questions
+  // Nutrition Questions (UNCHANGED)
   "Nutrition": [
+    // Q1: Diet Type
     {
       id: 6,
       type: "radio",
@@ -209,6 +210,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
+    // Q2: Health Conditions
     {
       id: 7,
       type: "multiselect",
@@ -226,6 +228,7 @@ const goalSpecificQuestions = {
       ],
       required: false,
     },
+    // Q3: Substance Use
     {
       id: 8,
       type: "multiselect",
@@ -240,6 +243,7 @@ const goalSpecificQuestions = {
       ],
       required: false,
     },
+    // Q4: Meal Patterns
     {
       id: 9,
       type: "radio",
@@ -254,6 +258,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
+    // Q5: Water Intake
     {
       id: 10,
       type: "radio",
@@ -262,11 +267,12 @@ const goalSpecificQuestions = {
       key: "waterIntake",
       options: [
         "Less than 1 liter",
-        "1–2 liters",
+        "1-2 liters",
         "More than 2 liters"
       ],
       required: true,
     },
+    // Q6: Fruits & Vegetables
     {
       id: 11,
       type: "radio",
@@ -280,6 +286,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
+    // Q7: Nutrition Focus
     {
       id: 12,
       type: "multiselect",
@@ -295,6 +302,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
+    // Q8: Main Nutrition Goal
     {
       id: 13,
       type: "multiselect",
@@ -311,7 +319,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Tobacco Questions
+  // Tobacco Questions (UNCHANGED)
   "Tobacco": [
     {
       id: 6,
@@ -329,7 +337,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Alcohol Questions
+  // Alcohol Questions (UNCHANGED)
   "Alcohol": [
     {
       id: 6,
@@ -340,15 +348,15 @@ const goalSpecificQuestions = {
       options: [
         "Never",
         "Used in the past, but quit",
-        "Occasionally (1–3 times per month)",
-        "Weekly (1–3 times per week)",
+        "Occasionally (1-3 times per month)",
+        "Weekly (1-3 times per week)",
         "Regular / Heavy use (4+ times per week or binge drinking)",
       ],
       required: true,
     },
   ],
 
-  // Sleep Questions
+  // Sleep Questions (UNCHANGED)
   "Sleep": [
     {
       id: 6,
@@ -366,8 +374,8 @@ const goalSpecificQuestions = {
       required: true,
     },
   ],
-
-  // Mental Health Questions
+  
+  // Mental Health Questions (UNCHANGED)
   "Mental health": [
     {
       id: 6,
@@ -384,8 +392,8 @@ const goalSpecificQuestions = {
       required: true,
     },
   ],
-
-  // Prevent Diseases Questions
+  
+  // Prevent diseases Questions (UNCHANGED)
   "Prevent diseases": [
     {
       id: 6,
@@ -412,9 +420,9 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
   if (!primaryGoal) {
     return baseQuestions;
   }
-
+  
   const goalQuestions = goalSpecificQuestions[goalKey] || [];
-
+  
   const allQuestions = [...baseQuestions];
   goalQuestions.forEach((question, index) => {
     allQuestions.push({
@@ -422,13 +430,333 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
       id: baseQuestions.length + index + 1
     });
   });
-
+  
   return allQuestions;
 };
 
 // --- CONDITIONAL FOLLOW-UP DATA ---
 const conditionalFollowUps = {
-  // --- Diet Type Follow-ups ---
+  // --- Physical Activity Follow-ups (COMPLETELY UPDATED) ---
+  "Mostly sitting (little or no exercise)": [
+    {
+      subKey: "barriers",
+      subTitle: "What usually makes it hard for you to be more active?",
+      subType: "multiselect",
+      options: [
+        { id: "lackTime", label: "Lack of time" },
+        { id: "lackMotivation", label: "Lack of motivation" },
+        { id: "physicalLimitations", label: "Physical limitations / health issues" },
+        { id: "dontKnow", label: "Don't know what to do" },
+        { id: "nothing", label: "Nothing" }
+      ],
+      required: false,
+    },
+  ],
+  "Light movement (walks, chores, light activity)": [
+    {
+      subKey: "frequencyDuration",
+      subTitle: "How many days per week do you exercise?",
+      subType: "radio",
+      options: ["0-1", "2-3", "4-5", "6-7"],
+      required: true,
+    },
+    {
+      subKey: "sessionDuration",
+      subTitle: "On days you exercise, how long do you usually spend being active?",
+      subType: "radio",
+      options: ["<15 min", "15-30 min", "30-60 min", "60+ min"],
+      required: true,
+    },
+    {
+      subKey: "intensity",
+      subTitle: "How challenging do you feel your exercise is?",
+      subType: "radio",
+      options: ["Very easy", "Moderate", "Hard", "Very hard"],
+      required: true,
+    },
+    {
+      subKey: "barriers",
+      subTitle: "What usually makes it hard for you to be more active?",
+      subType: "multiselect",
+      options: [
+        { id: "lackTime", label: "Lack of time" },
+        { id: "lackMotivation", label: "Lack of motivation" },
+        { id: "physicalLimitations", label: "Physical limitations / health issues" },
+        { id: "dontKnow", label: "Don't know what to do" },
+        { id: "nothing", label: "Nothing" }
+      ],
+      required: false,
+    },
+  ],
+  "Moderate activity (exercise 3-4 days/week, brisk walking, cycling, sports)": [
+    {
+      subKey: "frequencyDuration",
+      subTitle: "How many days per week do you exercise?",
+      subType: "radio",
+      options: ["0-1", "2-3", "4-5", "6-7"],
+      required: true,
+    },
+    {
+      subKey: "sessionDuration",
+      subTitle: "On days you exercise, how long do you usually spend being active?",
+      subType: "radio",
+      options: ["<15 min", "15-30 min", "30-60 min", "60+ min"],
+      required: true,
+    },
+    {
+      subKey: "intensity",
+      subTitle: "How challenging do you feel your exercise is?",
+      subType: "radio",
+      options: ["Very easy", "Moderate", "Hard", "Very hard"],
+      required: true,
+    },
+    {
+      subKey: "satisfaction",
+      subTitle: "Do you feel your current routine gives you the results you want?",
+      subType: "radio",
+      options: ["Yes, I'm happy", "No, I feel stuck / not improving", "Not sure"],
+      required: true,
+    },
+  ],
+  "Very active (exercise most days / vigorous workouts/sports)": [
+    {
+      subKey: "frequencyDuration",
+      subTitle: "How many days per week do you exercise?",
+      subType: "radio",
+      options: ["0-1", "2-3", "4-5", "6-7"],
+      required: true,
+    },
+    {
+      subKey: "sessionDuration",
+      subTitle: "On days you exercise, how long do you usually spend being active?",
+      subType: "radio",
+      options: ["<15 min", "15-30 min", "30-60 min", "60+ min"],
+      required: true,
+    },
+    {
+      subKey: "intensity",
+      subTitle: "How challenging do you feel your exercise is?",
+      subType: "radio",
+      options: ["Very easy", "Moderate", "Hard", "Very hard"],
+      required: true,
+    },
+    {
+      subKey: "satisfaction",
+      subTitle: "Do you feel your current routine gives you the results you want?",
+      subType: "radio",
+      options: ["Yes, I'm happy", "No, I feel stuck / not improving", "Not sure"],
+      required: true,
+    },
+  ],
+
+  // --- Medical Conditions Follow-ups ---
+  "Yes": [
+    {
+      subKey: "medicalConditions",
+      subTitle: "Please select any conditions or injuries you have that may affect your exercise.",
+      subType: "multiselect",
+      options: [
+        { id: "heartDisease", label: "Heart disease / High blood pressure" },
+        { id: "diabetes", label: "Diabetes / Blood sugar issues" },
+        { id: "jointIssues", label: "Joint or mobility issues (knees, hips, back)" },
+        { id: "respiratory", label: "Respiratory issues (asthma, COPD)" },
+        { id: "surgery", label: "Recent surgery or injury" },
+        { id: "tobacco", label: "Tobacco use" },
+        { id: "alcohol", label: "Alcohol use" },
+        { id: "drugs", label: "Recreational drug use" },
+        { id: "other", label: "Other / Not listed" }
+      ],
+      required: true,
+    },
+  ],
+
+  // --- Exercise Location Follow-ups ---
+  "At home": [
+    {
+      subKey: "homeEquipment",
+      subTitle: "Would you like suggestions for short routines that don't need equipment?",
+      subType: "radio",
+      options: ["Yes", "No", "Maybe"],
+      required: true,
+    },
+  ],
+  "Outdoors (park, streets, trails)": [
+    {
+      subKey: "outdoorActivities",
+      subTitle: "Would you like walking, running, or bodyweight exercises?",
+      subType: "radio",
+      options: ["Yes", "No", "Maybe"],
+      required: true,
+    },
+  ],
+  "Gym or fitness center": [
+    {
+      subKey: "gymEquipment",
+      subTitle: "Do you have access to machines, weights, or classes?",
+      subType: "multiselect",
+      options: [
+        { id: "machines", label: "Machines" },
+        { id: "freeWeights", label: "Free weights" },
+        { id: "classes", label: "Classes" },
+        { id: "mixed", label: "Mixed" }
+      ],
+      required: true,
+    },
+  ],
+
+  // --- Fitness Goals Follow-ups ---
+  "Lose weight / Fat reduction": [
+    {
+      subKey: "weightNutrition",
+      subTitle: "Would you like combined guidance on both exercise and nutrition?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  "Improve stamina / Cardiovascular fitness": [
+    {
+      subKey: "staminaPreference",
+      subTitle: "Would you prefer endurance workouts (running, cycling) or interval-style workouts?",
+      subType: "radio",
+      options: ["Endurance", "Interval", "Mixed"],
+      required: true,
+    },
+  ],
+  "Build strength / Muscle tone": [
+    {
+      subKey: "strengthEquipment",
+      subTitle: "Do you have access to weights or prefer bodyweight workouts?",
+      subType: "radio",
+      options: ["Weights", "Bodyweight", "Both"],
+      required: true,
+    },
+  ],
+  "Improve flexibility / Mobility": [
+    {
+      subKey: "mobilityRoutines",
+      subTitle: "Would you like mobility and stretching routines to relieve discomfort?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  "Reduce stress / Improve mental health": [
+    {
+      subKey: "stressPreference",
+      subTitle: "Would you prefer calming exercises (yoga, stretching) or energy-boosting ones (cardio, dance)?",
+      subType: "radio",
+      options: ["Calming", "Energy-boosting", "Mixed"],
+      required: true,
+    },
+  ],
+  "Maintain overall fitness / health": [
+    {
+      subKey: "maintenanceGuidance",
+      subTitle: "Would you like guidance on keeping your routine consistent and challenging?",
+      subType: "radio",
+      options: ["Yes", "No", "Maybe"],
+      required: true,
+    },
+  ],
+  "Other": [
+    {
+      subKey: "otherGoalDetails",
+      subTitle: "Please describe your fitness goal:",
+      subType: "text",
+      placeholder: "e.g., Train for a marathon, improve sports performance, etc.",
+      required: true,
+    },
+  ],
+
+  // --- Barrier-specific Follow-ups ---
+  "lackTime": [
+    {
+      subKey: "shortWorkouts",
+      subTitle: "Would short 5-10 min workouts at home be easier for you to try?",
+      subType: "radio",
+      options: ["Yes", "No", "Maybe"],
+      required: true,
+    },
+  ],
+  "lackMotivation": [
+    {
+      subKey: "motivationSupport",
+      subTitle: "Would you like us to set small daily challenges or reminders to help you stay consistent?",
+      subType: "radio",
+      options: ["Yes", "No", "Maybe"],
+      required: true,
+    },
+  ],
+  "physicalLimitations": [
+    {
+      subKey: "lowImpactPlan",
+      subTitle: "Would you like a safe low-impact plan (walking, stretching, mobility)?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  "dontKnow": [
+    {
+      subKey: "beginnerRoutines",
+      subTitle: "Would you like us to suggest simple beginner routines you can follow?",
+      subType: "radio",
+      options: ["Yes", "No", "Maybe"],
+      required: true,
+    },
+  ],
+
+  // --- Satisfaction Follow-ups ---
+  "Yes, I'm happy": [
+    {
+      subKey: "maintenanceDirection",
+      subTitle: "Do you want to maintain or push further with new challenges?",
+      subType: "radio",
+      options: ["Maintain", "Push further", "Not sure"],
+      required: true,
+    },
+  ],
+  "No, I feel stuck / not improving": [
+    {
+      subKey: "improvementFocus",
+      subTitle: "Would you like to focus more on strength, stamina, or flexibility?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  "Not sure": [
+    {
+      subKey: "varietySuggestions",
+      subTitle: "Would you like us to suggest a variety to keep it interesting?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // --- Maintenance Direction Follow-ups ---
+  "Maintain": [
+    {
+      subKey: "advancedGuidance",
+      subTitle: "Would you like advanced guidance on recovery, stretching, or nutrition?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Push further": [
+    {
+      subKey: "structuredTraining",
+      subTitle: "Would you like structured training (advanced strength, endurance, or sports-specific programs)?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+
+  // --- Diet Type Follow-ups (UNCHANGED) ---
   "Mostly vegetables and no meat (Vegetarian)": [
     {
       subKey: "vegetarianProtein",
@@ -457,7 +785,7 @@ const conditionalFollowUps = {
     },
   ],
 
-  // --- Substance Use Follow-ups ---
+  // --- Substance Use Follow-ups (UNCHANGED) ---
   "alcohol": [
     {
       subKey: "alcoholFrequency",
@@ -465,8 +793,8 @@ const conditionalFollowUps = {
       subType: "radio",
       options: [
         "Rarely (special occasions)",
-        "Sometimes (1–2 times a week)",
-        "Frequently (3–5 times a week)",
+        "Sometimes (1-2 times a week)",
+        "Frequently (3-5 times a week)",
         "Daily"
       ],
       required: true,
@@ -475,7 +803,7 @@ const conditionalFollowUps = {
       subKey: "alcoholQuantity",
       subTitle: "On days you drink, how many drinks do you usually have?",
       subType: "radio",
-      options: ["1–2", "3–4", "5 or more"],
+      options: ["1-2", "3-4", "5 or more"],
       required: true,
     },
   ],
@@ -486,8 +814,8 @@ const conditionalFollowUps = {
       subType: "radio",
       options: [
         "Rarely (less than once a week)",
-        "Sometimes (1–5 cigarettes per day)",
-        "Frequently (6–10 cigarettes per day)",
+        "Sometimes (1-5 cigarettes per day)",
+        "Frequently (6-10 cigarettes per day)",
         "Heavy (more than 10 per day)"
       ],
       required: true,
@@ -508,7 +836,7 @@ const conditionalFollowUps = {
     },
   ],
 
-  // --- Tobacco Use Follow-ups ---
+  // --- Tobacco Use Follow-ups (UNCHANGED) ---
   "Never": [
     {
       subKey: "secondHandExposure",
@@ -527,20 +855,15 @@ const conditionalFollowUps = {
   ],
   "Used in the past, but quit": [
     {
-      subKey: "timeSinceQuit",
-      subTitle: "How long ago did you quit smoking?",
+      subKey: "quittingHelp",
+      subTitle: "What helped you the most in quitting tobacco?",
       subType: "radio",
-      options: [
-        "Less than 6 months",
-        "6–12 months",
-        "1–2 years",
-        "More than 2 years"
-      ],
+      options: ["Willpower", "Family support", "Medical advice", "Other"],
       required: true,
     },
     {
-      subKey: "quitSupport",
-      subTitle: "Would you like support to stay tobacco-free?",
+      subKey: "avoidRelapseTobacco",
+      subTitle: "Would you like tips to avoid relapse in the future?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -548,8 +871,20 @@ const conditionalFollowUps = {
   ],
   "Occasionally (less than daily)": [
     {
-      subKey: "reduceTobacco",
-      subTitle: "Are you interested in reducing or quitting tobacco use?",
+      subKey: "tobaccoSituations",
+      subTitle: "In what situations do you usually use tobacco?",
+      subType: "multiselect",
+      options: [
+        { id: "social", label: "Social gatherings" },
+        { id: "stress", label: "Stress" },
+        { id: "meals", label: "After meals" },
+        { id: "other", label: "Other" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "cutDownTobacco",
+      subTitle: "Would you like suggestions to cut down or quit completely?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -557,76 +892,86 @@ const conditionalFollowUps = {
   ],
   "Daily / Regular use": [
     {
-      subKey: "tobaccoAmount",
-      subTitle: "How many cigarettes, beedis, or equivalent do you use per day?",
+      subKey: "quittingChallenge",
+      subTitle: "What do you feel is the biggest challenge in quitting tobacco?",
       subType: "radio",
-      options: [
-        "1–5",
-        "6–10",
-        "11–20",
-        "More than 20"
-      ],
+      options: ["Cravings", "Stress relief", "Social circle", "Don't feel ready"],
       required: true,
     },
     {
-      subKey: "quitInterest",
-      subTitle: "Are you interested in quitting or cutting down?",
+      subKey: "quitPlanTobacco",
+      subTitle: "Would you like us to guide you with a personalized quit plan or professional resources?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
     },
   ],
 
-  // --- Alcohol Use Follow-ups ---
-  "Used in the past, but quit": [
+  // --- Alcohol Use Follow-ups (UNCHANGED) ---
+  "Never": [
     {
-      subKey: "timeSinceAlcoholQuit",
-      subTitle: "How long ago did you quit drinking alcohol?",
+      subKey: "pressureToDrink",
+      subTitle: "Have you ever felt pressured by friends, family, or work culture to drink?",
       subType: "radio",
-      options: [
-        "Less than 6 months",
-        "6–12 months",
-        "1–2 years",
-        "More than 2 years"
-      ],
+      options: ["Yes", "Sometimes", "Rarely", "No"],
       required: true,
     },
     {
-      subKey: "alcoholQuitSupport",
-      subTitle: "Would you like support to stay alcohol-free?",
+      subKey: "stayAlcoholFree",
+      subTitle: "Would you like strategies on how to confidently stay alcohol-free in social settings?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
     },
   ],
-  "Occasionally (1–3 times per month)": [
+  "Used in the past, but quit": [
     {
-      subKey: "occasionalAlcoholAmount",
-      subTitle: "When you drink, how many drinks do you typically have?",
+      subKey: "motivationToQuitAlcohol",
+      subTitle: "What motivated you the most to stop drinking?",
       subType: "radio",
-      options: [
-        "1–2 drinks",
-        "3–4 drinks",
-        "5 or more drinks"
-      ],
+      options: ["Health reasons", "Family", "Financial", "Other"],
+      required: true,
+    },
+    {
+      subKey: "avoidRelapseAlcohol",
+      subTitle: "Would you like reminders and tips to stay alcohol-free long term?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
       required: true,
     },
   ],
-  "Weekly (1–3 times per week)": [
+  "Occasionally (1-3 times per month)": [
     {
-      subKey: "weeklyAlcoholAmount",
-      subTitle: "On average, how many drinks do you have per week?",
-      subType: "radio",
+      subKey: "alcoholSituations",
+      subTitle: "In what situations do you usually drink?",
+      subType: "multiselect",
       options: [
-        "1–3 drinks",
-        "4–7 drinks",
-        "8 or more drinks"
+        { id: "social", label: "Social gatherings" },
+        { id: "stress", label: "Stress relief" },
+        { id: "celebrations", label: "Celebrations" },
+        { id: "other", label: "Other" },
       ],
+      required: false,
+    },
+    {
+      subKey: "healthierAlternatives",
+      subTitle: "Would you like to learn about healthier alternatives for those situations?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Weekly (1-3 times per week)": [
+    {
+      subKey: "drinkingImpact",
+      subTitle: "Do you ever feel your drinking affects your sleep, work, or relationships?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "Rarely", "No"],
       required: true,
     },
     {
-      subKey: "reduceWeeklyAlcohol",
-      subTitle: "Are you interested in reducing your alcohol consumption?",
+      subKey: "reduceDrinking",
+      subTitle: "Would you like practical tips to reduce how much or how often you drink?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -634,110 +979,66 @@ const conditionalFollowUps = {
   ],
   "Regular / Heavy use (4+ times per week or binge drinking)": [
     {
-      subKey: "heavyAlcoholAmount",
-      subTitle: "On average, how many drinks do you have per week?",
+      subKey: "drinkingChallenge",
+      subTitle: "What do you feel makes it hardest to cut down or stop drinking?",
       subType: "radio",
-      options: [
-        "4–7 drinks",
-        "8–14 drinks",
-        "15 or more drinks"
-      ],
+      options: ["Stress", "Cravings", "Social circle", "Don't feel ready"],
       required: true,
     },
     {
-      subKey: "reduceHeavyAlcohol",
-      subTitle: "Are you interested in reducing or quitting alcohol?",
+      subKey: "quitPlanAlcohol",
+      subTitle: "Would you like help with a personalized quit plan or professional resources?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
     },
   ],
-
-  // --- Exercise Location Follow-ups ---
-  "At home": [
-    {
-      subKey: "homeSuggestions",
-      subTitle: "Would you like suggestions for short routines that don’t need equipment?",
-      subType: "radio",
-      options: ["Yes", "No", "Maybe"],
-      required: true,
-    }
-  ],
-  "Outdoors (park, streets, trails)": [
-    {
-      subKey: "outdoorExercises",
-      subTitle: "Would you like walking, running, or bodyweight exercises?",
-      subType: "radio",
-      options: ["Yes", "No", "Maybe"],
-      required: true,
-    }
-  ],
-  "Gym or fitness center": [
-    {
-      subKey: "gymAccess",
-      subTitle: "Do you have access to machines, weights, or classes?",
-      subType: "radio",
-      options: ["Machines", "Free weights", "Classes", "Mixed"],
-      required: true,
-    }
-  ],
-  "Mixed / Any location": []
 };
 
-// Health condition specific follow-ups
+// Health condition specific follow-ups (UNCHANGED)
 const healthConditionFollowUps = {
+  // Generic medical follow-up triggered if ANY condition is selected (added via logic in Questionnaire.js)
+  // Specific condition follow-ups
   "diabetes": [
     {
-      subKey: "diabetesType",
-      subTitle: "What type of diabetes do you have?",
+      subKey: "diabetesCarbs",
+      subTitle: "Do you monitor carbohydrate intake (bread, rice, noodles, sugar)?",
       subType: "radio",
-      options: ["Type 1", "Type 2", "Gestational", "Not sure"],
-      required: true,
-    },
-    {
-      subKey: "diabetesControl",
-      subTitle: "How well is your diabetes controlled?",
-      subType: "radio",
-      options: ["Well-controlled", "Somewhat controlled", "Not well-controlled"],
-      required: true,
-    },
-  ],
-  "highBloodPressure": [
-    {
-      subKey: "bpControl",
-      subTitle: "Is your blood pressure controlled with medication or lifestyle?",
-      subType: "radio",
-      options: ["Yes, well-controlled", "Sometimes controlled", "Not controlled"],
+      options: ["Rarely", "Sometimes", "Daily"],
       required: true,
     },
   ],
   "heartDisease": [
     {
-      subKey: "heartCondition",
-      subTitle: "What type of heart condition do you have?",
+      subKey: "heartOmega3",
+      subTitle: "Do you include omega-3 foods (fish, flaxseed, walnuts)?",
       subType: "radio",
-      options: [
-        "High cholesterol",
-        "History of heart attack/stroke",
-        "Other",
-        "Not sure"
-      ],
+      options: ["Rarely", "Sometimes", "Daily"],
+      required: true,
+    },
+  ],
+  "highBloodPressure": [
+    {
+      subKey: "bpSalt",
+      subTitle: "Do you limit salt and salty foods (pickles, dried fish, chips)?",
+      subType: "radio",
+      options: ["Rarely", "Sometimes", "Daily"],
       required: true,
     },
   ],
   "kidneyLiver": [
     {
-      subKey: "kidneyLiverDetails",
-      subTitle: "Do you have kidney disease, liver disease, or both?",
+      subKey: "kidneyProtein",
+      subTitle: "Do you limit protein or processed foods as per doctor's advice?",
       subType: "radio",
-      options: ["Kidney disease", "Liver disease", "Both", "Not sure"],
+      options: ["Yes", "No"],
       required: true,
     },
   ],
   "cancer": [
     {
       subKey: "cancerAdviceFollow",
-      subTitle: "Would you like specific nutrition advice tailored for cancer patients/survivors?",
+      subTitle: "Do you follow your doctor's nutrition advice?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -745,423 +1046,43 @@ const healthConditionFollowUps = {
   ],
 };
 
-// Medication-related questions
+// New follow-up for ALL health condition users (UNCHANGED)
 const medicationQuestion = {
-  subKey: "takingMedications",
-  subTitle: "Are you currently taking any medications for these conditions?",
-  subType: "radio",
-  options: ["Yes", "No"],
-  required: true,
+    subKey: "takingMedications",
+    subTitle: "Are you currently taking medications?",
+    subType: "radio",
+    options: ["Yes", "No"],
+    required: true,
 };
 
-const medicationDetailsFollowUp = {
-  subKey: "medicineDetails",
-  subTitle: "Please provide details about your medications.",
-  subType: "medications",
-  required: true,
-  routineOptions: [
-    "Daily",
-    "Twice daily",
-    "Weekly",
-    "As needed",
-    "Other"
-  ],
-  defaultData: [{ id: 1, name: '', routine: 'Daily', dose: '' }],
-};
-
+// Conditional follow-up for the new cancer radio question's "Yes" answer (UNCHANGED)
 const cancerYesFollowUp = {
-  subKey: "cancerAdviceDetails",
-  subTitle: "Please specify any details about your cancer (type, treatment stage, etc.)",
-  subType: "text",
-  placeholder: "E.g., Breast cancer, undergoing chemotherapy",
-  required: true,
+    subKey: "cancerAdviceDetails",
+    subTitle: "Please describe your doctor's nutrition advice:",
+    subType: "text",
+    placeholder: "e.g., Low sugar, high protein, avoiding processed meats.",
+    required: true,
 };
 
+// Conditional follow-up for the generic medication "Yes" answer (UNCHANGED)
+const medicationDetailsFollowUp = {
+    subKey: "medicineDetails",
+    subTitle: "Please provide details for each medication:",
+    subType: "medications", // NEW CUSTOM TYPE
+    required: true,
+    defaultData: [{ id: 1, name: '', routine: 'Morning', dose: '' }],
+    routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+};
+
+// Conditional follow-up for "Other Condition" selection (UNCHANGED)
 const otherConditionFollowUp = {
-  subKey: "otherConditionDetails",
-  subTitle: "Please briefly describe your condition.",
-  subType: "text",
-  placeholder: "E.g., Thyroid condition, autoimmune disease",
-  required: true,
-};
-
-// New for Physical Activity Q1a
-const frequencyDurationQuestions = [
-  {
-    subKey: "daysPerWeek",
-    subTitle: "How many days per week do you exercise?",
-    subType: "radio",
-    options: ["0–1", "2–3", "4–5", "6–7"],
+    subKey: "otherConditionDetails",
+    subTitle: "Please specify the other health condition(s):",
+    subType: "text",
+    placeholder: "e.g., Asthma, Multiple Sclerosis, Chronic Migraines",
     required: true,
-  },
-  {
-    subKey: "durationPerDay",
-    subTitle: "On days you exercise, how long do you usually spend being active?",
-    subType: "radio",
-    options: ["<15", "15–30", "30–60", "60+ min"],
-    required: true,
-  },
-  {
-    subKey: "challengeLevel",
-    subTitle: "How challenging do you feel your exercise is?",
-    subType: "radio",
-    options: ["Very easy", "Moderate", "Hard", "Very hard"],
-    required: true,
-  }
-];
-
-// New for Barriers
-const barriersQuestion = {
-  subKey: "barriers",
-  subTitle: "What usually makes it hard for you to be more active?",
-  subType: "multiselect",
-  options: [
-    { id: "lackTime", label: "Lack of time" },
-    { id: "lackMotivation", label: "Lack of motivation" },
-    { id: "physicalLimitations", label: "Physical limitations / health issues" },
-    { id: "dontKnow", label: "Don’t know what to do" },
-    { id: "nothing", label: "Nothing" }
-  ],
-  required: false,
 };
 
-const barrierFollowUps = {
-  "lackTime": [
-    {
-      subKey: "shortWorkouts",
-      subTitle: "Would short 5–10 min workouts at home be easier for you to try?",
-      subType: "radio",
-      options: ["Yes", "No", "Maybe"],
-      required: true,
-    }
-  ],
-  "lackMotivation": [
-    {
-      subKey: "dailyChallenges",
-      subTitle: "Would you like us to set small daily challenges or reminders to help you stay consistent?",
-      subType: "radio",
-      options: ["Yes", "No", "Maybe"],
-      required: true,
-    }
-  ],
-  "physicalLimitations": [
-    {
-      subKey: "lowImpactPlan",
-      subTitle: "Would you like a safe low-impact plan (walking, stretching, mobility)?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    }
-  ],
-  "dontKnow": [
-    {
-      subKey: "beginnerRoutines",
-      subTitle: "Would you like us to suggest simple beginner routines you can follow?",
-      subType: "radio",
-      options: ["Yes", "No", "Maybe"],
-      required: true,
-    }
-  ],
-  "nothing": []
-};
-
-// New for Satisfaction
-const satisfactionQuestion = {
-  subKey: "satisfaction",
-  subTitle: "Do you feel your current routine gives you the results you want?",
-  subType: "radio",
-  options: ["Yes, I’m happy", "Not sure", "No, I feel stuck / not improving"],
-  required: true,
-};
-
-const maintainOrPushQuestion = {
-  subKey: "maintainOrPush",
-  subTitle: "Do you want to maintain or push further with new challenges?",
-  subType: "radio",
-  options: ["Maintain", "Push further"],
-  required: true,
-};
-
-const advancedGuidanceQuestion = {
-  subKey: "advancedGuidance",
-  subTitle: "Would you like advanced guidance on recovery, stretching, or nutrition?",
-  subType: "radio",
-  options: ["Yes", "Maybe", "No"],
-  required: true,
-};
-
-const structuredTrainingQuestion = {
-  subKey: "structuredTraining",
-  subTitle: "Would you like structured training (advanced strength, endurance, or sports-specific programs)?",
-  subType: "radio",
-  options: ["Yes", "Maybe", "No"],
-  required: true,
-};
-
-const suggestVarietyQuestion = {
-  subKey: "suggestVariety",
-  subTitle: "Would you like us to suggest a variety to keep it interesting?",
-  subType: "radio",
-  options: ["Yes", "No"],
-  required: true,
-};
-
-const focusAreaQuestion = {
-  subKey: "focusArea",
-  subTitle: "Would you like to focus more on strength, stamina, or flexibility?",
-  subType: "radio",
-  options: ["Yes", "No", "Not sure"],
-  required: true,
-};
-
-const suggestInterestingQuestion = {
-  subKey: "suggestInteresting",
-  subTitle: "Would you like suggestions to keep it interesting?",
-  subType: "radio",
-  options: ["Yes", "No"],
-  required: true,
-};
-
-// New for Physical Conditions
-const physicalConditionsQuestion = {
-  subKey: "conditions",
-  subTitle: "Please select any conditions or injuries you have that may affect your exercise.",
-  subType: "multiselect",
-  options: [
-    { id: "heartDisease", label: "Heart disease / High blood pressure" },
-    { id: "diabetes", label: "Diabetes / Blood sugar issues" },
-    { id: "jointIssues", label: "Joint or mobility issues (knees, hips, back)" },
-    { id: "respiratory", label: "Respiratory issues (asthma, COPD)" },
-    { id: "recentSurgery", label: "Recent surgery or injury" },
-    { id: "tobaccoUse", label: "Tobacco use" },
-    { id: "alcoholUse", label: "Alcohol use" },
-    { id: "drugUse", label: "Recreational drug use" },
-    { id: "other", label: "Other / Not listed" }
-  ],
-  required: false,
-};
-
-const physicalConditionFollowUps = {
-  "heartDisease": [
-    {
-      subKey: "heartCondition",
-      subTitle: "How would you describe your current condition?",
-      subType: "radio",
-      options: ["Well controlled with medication", "Sometimes fluctuates, but manageable", "Not well controlled / frequent issues"],
-      required: true,
-    },
-    {
-      subKey: "medicalClearance",
-      subTitle: "Do you have medical clearance to exercise?",
-      subType: "radio",
-      options: ["Yes", "No", "Not sure"],
-      required: true,
-    }
-  ],
-  "diabetes": [
-    {
-      subKey: "bloodSugarManagement",
-      subTitle: "How is your blood sugar usually managed?",
-      subType: "radio",
-      options: ["Controlled with medication or insulin", "Sometimes fluctuates", "Frequently unstable"],
-      required: true,
-    },
-    {
-      subKey: "hypoglycemia",
-      subTitle: "Do you experience frequent low sugar episodes (hypoglycemia)?",
-      subType: "radio",
-      options: ["Yes", "No", "Sometimes"],
-      required: true,
-    }
-  ],
-  "jointIssues": [
-    {
-      subKey: "affectedAreas",
-      subTitle: "Which areas are affected?",
-      subType: "radio",
-      options: ["Knees", "Hips", "Back", "Multiple areas"],
-      required: true,
-    },
-    {
-      subKey: "limitMovement",
-      subTitle: "How much does this limit your movement?",
-      subType: "radio",
-      options: ["Mild (can move with little discomfort)", "Moderate (some exercises are difficult)", "Severe (movement is very limited / painful)"],
-      required: true,
-    }
-  ],
-  "respiratory": [
-    {
-      subKey: "symptomsFrequency",
-      subTitle: "How often do you experience symptoms while moving/exercising?",
-      subType: "radio",
-      options: ["Rarely", "Sometimes", "Often"],
-      required: true,
-    },
-    {
-      subKey: "inhalerUse",
-      subTitle: "Do you use an inhaler or medication before activity?",
-      subType: "radio",
-      options: ["Yes", "No", "Sometimes"],
-      required: true,
-    }
-  ],
-  "recentSurgery": [
-    {
-      subKey: "surgeryTime",
-      subTitle: "When did this occur?",
-      subType: "radio",
-      options: ["Less than 2 weeks ago", "Less than 1 month ago", "Less than 3 months ago", "3–6 months ago", "More than 6 months ago"],
-      required: true,
-    },
-    {
-      subKey: "recoveryPlan",
-      subTitle: "Are you currently under a doctor’s or physiotherapist’s recovery plan?",
-      subType: "radio",
-      options: ["Yes", "No", "Not sure"],
-      required: true,
-    }
-  ],
-  "tobaccoUse": [
-    {
-      subKey: "smokingFrequency",
-      subTitle: "How often do you smoke?",
-      subType: "radio",
-      options: ["Daily / A few times a week", "Occasionally", "Rarely"],
-      required: true,
-    },
-    {
-      subKey: "staminaTips",
-      subTitle: "Would you like us to suggest tips for improving stamina if you continue smoking?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    }
-  ],
-  "alcoholUse": [
-    {
-      subKey: "drinkingFrequency",
-      subTitle: "How often do you drink alcohol?",
-      subType: "radio",
-      options: ["Daily", "Weekly", "Occasionally", "Rarely"],
-      required: true,
-    },
-    {
-      subKey: "drinksQuantity",
-      subTitle: "On days you drink, how many drinks do you usually have?",
-      subType: "radio",
-      options: ["1–2", "3–4", "5+"],
-      required: true,
-    }
-  ],
-  "drugUse": [
-    {
-      subKey: "drugFrequency",
-      subTitle: "How often do you use recreational drugs?",
-      subType: "radio",
-      options: ["Daily", "Weekly", "Occasionally", "Rarely"],
-      required: true,
-    },
-    {
-      subKey: "saferOptions",
-      subTitle: "Would you like us to suggest safer exercise options that consider your lifestyle?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    }
-  ],
-  "other": [
-    {
-      subKey: "otherDescription",
-      subTitle: "Please briefly describe your condition.",
-      subType: "text",
-      placeholder: "",
-      required: true,
-    },
-    {
-      subKey: "lowIntensity",
-      subTitle: "Would you like us to recommend only safe, low-intensity activities to start with?",
-      subType: "radio",
-      options: ["Yes", "No", "Not sure"],
-      required: true,
-    }
-  ]
-};
-
-// New for Primary Fitness Goal
-const otherGoalText = {
-  subKey: "otherGoal",
-  subTitle: "Please specify your goal",
-  subType: "text",
-  placeholder: "",
-  required: true,
-};
-
-const goalFollowUps = {
-  "Lose weight / Fat reduction": [
-    {
-      subKey: "combinedGuidance",
-      subTitle: "Would you like combined guidance on both exercise and nutrition?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    }
-  ],
-  "Improve stamina / Cardiovascular fitness": [
-    {
-      subKey: "workoutPreference",
-      subTitle: "Would you prefer endurance workouts (running, cycling) or interval-style workouts?",
-      subType: "radio",
-      options: ["Endurance", "Interval", "Mixed"],
-      required: true,
-    }
-  ],
-  "Build strength / Muscle tone": [
-    {
-      subKey: "strengthAccess",
-      subTitle: "Do you have access to weights or prefer bodyweight workouts?",
-      subType: "radio",
-      options: ["Weights", "Bodyweight", "Both"],
-      required: true,
-    }
-  ],
-  "Improve flexibility / Mobility": [
-    {
-      subKey: "mobilityRoutines",
-      subTitle: "Would you like mobility and stretching routines to relieve discomfort?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    }
-  ],
-  "Reduce stress / Improve mental health": [
-    {
-      subKey: "exerciseStyle",
-      subTitle: "Would you prefer calming exercises (yoga, stretching) or energy-boosting ones (cardio, dance)?",
-      subType: "radio",
-      options: ["Calming", "Energy-boosting", "Mixed"],
-      required: true,
-    }
-  ],
-  "Maintain overall fitness / health": [
-    {
-      subKey: "consistentGuidance",
-      subTitle: "Would you like guidance on keeping your routine consistent and challenging?",
-      subType: "radio",
-      options: ["Yes", "No", "Maybe"],
-      required: true,
-    }
-  ],
-  "Other": [
-    {
-      subKey: "suggestBasedOnLifestyle",
-      subTitle: "Would you like suggestions based on your lifestyle and preferences?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    }
-  ]
-};
 
 export { 
   baseQuestions, 
@@ -1172,20 +1093,6 @@ export {
   cancerYesFollowUp,
   medicationQuestion,      
   medicationDetailsFollowUp,
-  otherConditionFollowUp,
-  frequencyDurationQuestions,
-  barriersQuestion,
-  barrierFollowUps,
-  satisfactionQuestion,
-  maintainOrPushQuestion,
-  advancedGuidanceQuestion,
-  structuredTrainingQuestion,
-  suggestVarietyQuestion,
-  focusAreaQuestion,
-  suggestInterestingQuestion,
-  physicalConditionsQuestion,
-  physicalConditionFollowUps,
-  goalFollowUps,
-  otherGoalText
+  otherConditionFollowUp 
 };
 export default getQuestions;
