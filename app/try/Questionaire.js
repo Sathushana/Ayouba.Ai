@@ -1,8 +1,13 @@
 // components/Questionnaire.js
 "use client";
 import React, { useState, useEffect } from "react";
-// Import the new cancerYesFollowUp constant
-import getQuestions, { conditionalFollowUps, healthConditionFollowUps, cancerYesFollowUp } from "../data/questions";
+import getQuestions, { 
+    conditionalFollowUps, 
+    healthConditionFollowUps, 
+    cancerYesFollowUp, 
+    medicationQuestion,     // Import new question
+    medicationDetailsFollowUp // Import new medication details
+} from "../data/questions";
 
 // Branching step IDs (will be dynamically determined based on selected goal)
 const BRANCHING_KEYS = {
@@ -63,21 +68,40 @@ export default function Questionnaire() {
     baseConditionalAnswer = answers[baseConditionalKey];
   }
 
-  // Handle health conditions multiselect conditional logic (UPDATED FOR CANCER)
+  // Helper to check if any condition (excluding 'none') is selected
+  const isAnyConditionSelected = (healthConditions) => {
+      return Object.entries(healthConditions || {})
+          .some(([key, isSelected]) => isSelected && key !== 'none');
+  };
+
+  // Handle health conditions multiselect conditional logic (UPDATED FOR MEDICATION AND CANCER)
   useEffect(() => {
     if (currentStepData?.key === 'healthConditions' && subStep === 1) {
       const selectedConditions = answers.healthConditions || {};
       const followUpAnswers = answers.followUps || {};
       const conditionQuestions = [];
       
+      const anyConditionSelected = isAnyConditionSelected(selectedConditions);
+
+      // 1. Add GENERIC MEDICATION question if ANY condition is selected (except 'none')
+      if (anyConditionSelected) {
+          conditionQuestions.push(medicationQuestion);
+          
+          // 1b. Add MEDICATION DETAILS if user answered "Yes" to takingMedications
+          if (followUpAnswers.takingMedications === 'Yes') {
+              // Ensure the follow-up key is unique, even though it's technically a nested step
+              conditionQuestions.push(medicationDetailsFollowUp); 
+          }
+      }
+
+      // 2. Add SPECIFIC CONDITION follow-ups
       Object.keys(selectedConditions).forEach(conditionId => {
         if (selectedConditions[conditionId] && healthConditionFollowUps[conditionId] && conditionId !== 'none') {
-          // Add the base condition follow-ups (e.g., diabetesCarbs)
+          // Add the base condition follow-ups
           conditionQuestions.push(...healthConditionFollowUps[conditionId]);
           
-          // SPECIAL CASE: Nested logic for Cancer
+          // SPECIAL CASE: Nested logic for Cancer nutrition advice details
           if (conditionId === 'cancer') {
-              // Check the answer to the first cancer follow-up question
               if (followUpAnswers.cancerAdviceFollow === 'Yes') {
                   conditionQuestions.push(cancerYesFollowUp);
               }
@@ -87,7 +111,7 @@ export default function Questionnaire() {
       
       setHealthConditionQuestions(conditionQuestions);
     }
-  }, [answers.healthConditions, answers.followUps, currentStepData, subStep]); 
+  }, [answers.healthConditions, answers.followUps, currentStepData, subStep]); // Added answers.followUps as a dependency for the nested 'cancer' and 'medication' logic
 
   // Handle substance use multiselect conditional logic
   useEffect(() => {
@@ -106,45 +130,6 @@ export default function Questionnaire() {
   }, [answers.substanceUse, currentStepData, subStep]);
 
   const conditionalQuestions = baseConditionalAnswer ? conditionalFollowUps[baseConditionalAnswer] : [];
-
-  // Format health conditions for display (Kept for console logging/debugging)
-  const formatHealthConditions = (healthConditions) => {
-    if (!healthConditions) return "None";
-    
-    const selectedConditions = Object.entries(healthConditions)
-      .filter(([key, isSelected]) => isSelected && key !== 'none')
-      .map(([conditionId]) => {
-        const conditionMap = {
-          'diabetes': 'Diabetes',
-          'highBloodPressure': 'High blood pressure',
-          'heartDisease': 'Heart disease / High cholesterol',
-          'kidneyLiver': 'Kidney or liver problems',
-          'cancer': 'Cancer (history/current)',
-          'otherCondition': 'Other'
-        };
-        return conditionMap[conditionId] || conditionId;
-      });
-    
-    return selectedConditions.length > 0 ? selectedConditions.join(', ') : "None";
-  };
-
-  // Format substance use for display (Kept for console logging/debugging)
-  const formatSubstanceUse = (substanceUse) => {
-    if (!substanceUse) return "None";
-    
-    const selectedSubstances = Object.entries(substanceUse)
-      .filter(([key, isSelected]) => isSelected && key !== 'none')
-      .map(([substanceId]) => {
-        const substanceMap = {
-          'alcohol': 'Alcohol',
-          'tobacco': 'Cigarettes / Tobacco',
-          'drugs': 'Drugs (recreational / non-prescribed)'
-        };
-        return substanceMap[substanceId] || substanceId;
-      });
-    
-    return selectedSubstances.length > 0 ? selectedSubstances.join(', ') : "None";
-  };
 
   // --- Utility Functions ---
   const calculateBMI = (heightCm, weightKg) => {
@@ -174,7 +159,7 @@ export default function Questionnaire() {
         
         let questionsToValidate = [];
         if (currentStepData.key === 'healthConditions') {
-          // Use the dynamically generated list which includes nested 'cancer' logic
+          // Use the dynamically generated list which includes nested logic
           questionsToValidate = healthConditionQuestions;
         } else if (currentStepData.key === 'substanceUse') {
           questionsToValidate = substanceUseQuestions;
@@ -186,6 +171,15 @@ export default function Questionnaire() {
         return questionsToValidate.every(q => {
           if (q.required) {
             const answer = followUpAnswers[q.subKey];
+            
+            // Check for the new custom medication type validation
+            if (q.subType === 'medications') {
+                const meds = answer || [];
+                // Must have at least one entry, and all required fields in that entry must be filled
+                if (meds.length === 0) return false;
+                return meds.every(med => med.name && med.routine && med.dose);
+            }
+            
             if (q.subType === 'radio') return !!answer;
             if (q.subType === 'multiselect') return Object.values(answer || {}).some(v => v === true);
             if (q.subType === 'text') return !!answer && answer.trim().length > 0;
@@ -222,6 +216,20 @@ export default function Questionnaire() {
     // A. If on a Branching Step's Base Question (subStep 0)
     if (isBranchingStep && subStep === 0) {
       if (isStepValid()) {
+        
+        // Special logic for healthConditions
+        if (currentStepData.key === 'healthConditions') {
+            const selectedConditions = answers.healthConditions || {};
+            const anyConditionSelected = isAnyConditionSelected(selectedConditions);
+            
+            // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
+            if (!anyConditionSelected) {
+                setCurrentStep(currentStep + 1);
+                setSubStep(0);
+                return;
+            }
+        }
+        
         // Skip follow-ups for Diet Type's Balanced/Mediterranean and No specific diet
         if (currentStepData.key === 'dietType' && 
             (baseConditionalAnswer === "A mix of vegetables, fruits, grains, and some meat or fish (Balanced / Mediterranean)" ||
@@ -273,7 +281,7 @@ export default function Questionnaire() {
   };
 
   // --- Input Change Handler ---
-  const handleInputChange = (key, value, subKey = null, type = null) => {
+  const handleInputChange = (key, value, subKey = null, type = null, itemIndex = null) => {
     const currentKey = currentStepData.key;
 
     // Conditional Follow-Ups (Stored under the 'followUps' key)
@@ -285,7 +293,16 @@ export default function Questionnaire() {
         if (type === 'multiselect') {
           const subSectionAnswer = followUpAnswers[subKey] || {};
           newSubAnswer = { ...subSectionAnswer, [key]: !subSectionAnswer[key] };
-        } else {
+        } 
+        else if (type === 'medications') {
+            // key is the field (name/routine/dose), value is the input value, itemIndex is the row index
+            const meds = followUpAnswers[subKey] || medicationDetailsFollowUp.defaultData;
+            const updatedMeds = meds.map((item, index) => 
+                index === itemIndex ? { ...item, [key]: value } : item
+            );
+            newSubAnswer = updatedMeds;
+        }
+        else {
           // This handles radio and text inputs for follow-ups
           newSubAnswer = value;
         }
@@ -300,6 +317,17 @@ export default function Questionnaire() {
                      [subKey]: value // Set the new 'No' answer
                  }
              };
+        }
+        // Special Case: If 'takingMedications' is changed to 'No', clear the details
+        else if (subKey === 'takingMedications' && value === 'No' && prevAnswers.followUps?.medicineDetails) {
+            const { medicineDetails, ...restFollowUps } = prevAnswers.followUps;
+            return {
+                ...prevAnswers,
+                followUps: {
+                    ...restFollowUps,
+                    [subKey]: value
+                }
+            };
         }
         
         return {
@@ -321,15 +349,31 @@ export default function Questionnaire() {
         }
       }));
     }
-    // Simple Multi-Select (Goals, Health Conditions, Substance Use, NutritionFocus, MainNutritionGoal)
+    // Simple Multi-Select (FIXED: Wrapped in setAnswers callback)
     else if (currentStepData.type === 'multiselect') {
-      setAnswers(prevAnswers => ({
-        ...prevAnswers,
-        [currentKey]: {
-          ...(prevAnswers[currentKey] || {}),
-          [key]: !prevAnswers[currentKey]?.[key]
-        }
-      }));
+      setAnswers(prevAnswers => { // <--- FIX: start of functional update
+          // Logic for selecting 'none' to deselect all others, and vice versa
+          let newSelections = prevAnswers[currentKey] || {};
+          
+          if (key === 'none') {
+              // If 'none' is selected, clear all others
+              newSelections = { none: !newSelections.none };
+          } else {
+              // If any other option is selected/deselected, ensure 'none' is deselected
+              newSelections = { ...newSelections, [key]: !newSelections[key], none: false };
+              
+              // Re-check: if no other conditions are selected, automatically check 'none'
+              const selectedKeys = Object.keys(newSelections).filter(k => k !== 'none' && newSelections[k]);
+              if (selectedKeys.length === 0 && !newSelections[key]) {
+                  newSelections.none = true;
+              }
+          }
+
+          return {
+              ...prevAnswers,
+              [currentKey]: newSelections
+          };
+      }); // <--- FIX: end of functional update
     }
     // Single-Value Steps (Radio, Text, Number)
     else {
@@ -338,6 +382,30 @@ export default function Questionnaire() {
         [currentKey]: value
       }));
     }
+  };
+  
+  // Handlers for the dynamic medication list (used directly in the renderer)
+  const handleAddMedication = () => {
+    const meds = answers.followUps?.medicineDetails || [];
+    const newId = meds.length > 0 ? Math.max(...meds.map(m => m.id)) + 1 : 1;
+    setAnswers(prevAnswers => ({
+        ...prevAnswers,
+        followUps: {
+            ...prevAnswers.followUps,
+            medicineDetails: [...meds, { id: newId, name: '', routine: medicationDetailsFollowUp.routineOptions[0], dose: '' }]
+        }
+    }));
+  };
+
+  const handleRemoveMedication = (idToRemove) => {
+    const meds = answers.followUps?.medicineDetails || [];
+    setAnswers(prevAnswers => ({
+        ...prevAnswers,
+        followUps: {
+            ...prevAnswers.followUps,
+            medicineDetails: meds.filter(m => m.id !== idToRemove)
+        }
+    }));
   };
 
   // --- Step UI Renderers ---
@@ -457,6 +525,77 @@ export default function Questionnaire() {
       </div>
     );
   };
+  
+  // Renders the new custom medication input
+  const renderMedicationInputs = (q) => {
+      // Use answers.followUps for the data, falling back to defaultData if empty
+      const medications = answers.followUps?.[q.subKey] || q.defaultData;
+      const subKey = q.subKey;
+      
+      return (
+          <div className="w-full space-y-4">
+              {medications.map((med, index) => (
+                  <div key={med.id} className="p-4 border border-gray-200 rounded-lg space-y-3 bg-white shadow-sm">
+                      <div className="flex justify-between items-center">
+                          <h4 className="font-semibold text-gray-700">Medication #{index + 1}</h4>
+                          {medications.length > 1 && (
+                              <button
+                                  type="button"
+                                  onClick={() => handleRemoveMedication(med.id)}
+                                  className="text-red-500 hover:text-red-700 text-sm font-medium"
+                              >
+                                  Remove
+                              </button>
+                          )}
+                      </div>
+                      
+                      <div className="space-y-3">
+                          {/* Medicine Name */}
+                          <input
+                              type="text"
+                              value={med.name}
+                              onChange={(e) => handleInputChange('name', e.target.value, subKey, 'medications', index)}
+                              placeholder="Medicine Name"
+                              className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                              required
+                          />
+                          
+                          <div className="flex gap-3">
+                              {/* Routine Dropdown */}
+                              <select
+                                  value={med.routine}
+                                  onChange={(e) => handleInputChange('routine', e.target.value, subKey, 'medications', index)}
+                                  className="w-1/2 p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                                  required
+                              >
+                                  {q.routineOptions.map(opt => (
+                                      <option key={opt} value={opt}>{opt}</option>
+                                  ))}
+                              </select>
+                              
+                              {/* Dose/Mg */}
+                              <input
+                                  type="text"
+                                  value={med.dose}
+                                  onChange={(e) => handleInputChange('dose', e.target.value, subKey, 'medications', index)}
+                                  placeholder="Dose (e.g., 500mg/day)"
+                                  className="w-1/2 p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                                  required
+                              />
+                          </div>
+                      </div>
+                  </div>
+              ))}
+              <button
+                  type="button"
+                  onClick={handleAddMedication}
+                  className="w-full py-3 rounded-xl font-semibold border-2 border-gray-400 text-gray-700 bg-gray-100 hover:bg-gray-200 transition mt-2"
+              >
+                  + Add Another Medication
+              </button>
+          </div>
+      );
+  };
 
   // Renders the Conditional Follow-Up Questions (subStep 1 of branching steps)
   const renderConditionalFollowUps = () => {
@@ -465,7 +604,7 @@ export default function Questionnaire() {
     // Determine the correct set of questions to render
     let questionsToRender = [];
     if (currentStepData.key === 'healthConditions') {
-      // Use the dynamic state which includes the nested cancer advice question
+      // Use the dynamic state which includes the nested logic
       questionsToRender = healthConditionQuestions;
     } else if (currentStepData.key === 'substanceUse') {
       questionsToRender = substanceUseQuestions;
@@ -491,13 +630,14 @@ export default function Questionnaire() {
                 <input
                   type="text"
                   // For text type follow-ups, the answer is the direct value under subKey
-                  // The key argument in handleInputChange is the subKey itself for text follow-ups
                   value={answerValue || ''}
                   onChange={(e) => handleInputChange(q.subKey, e.target.value, q.subKey, 'text')}
                   placeholder={q.placeholder}
                   className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
                 />
               )}
+              {/* NEW CUSTOM TYPE RENDERER */}
+              {q.subType === 'medications' && renderMedicationInputs(q)}
             </div>
           );
         })}

@@ -55,7 +55,7 @@ const baseQuestions = [
     options: [
       "🥗 Eat better & get enough nutrients (Nutrition)",
       "🏃 Be more active & exercise (Physical Activity)",
-      "🚭 Reduce or Quit: Smoking, Beedi, Chewing Tobacco, Betel Leaves & Other Substances",
+      "🚭 Reduce or quit smoking / tobacco / beedi",
       "🍺 Reduce or quit alcohol use",
       "🧘 Improve my mood & reduce stress (Mental health)",
       "😴 Sleep better & feel more rested",
@@ -329,6 +329,7 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
 
 // --- CONDITIONAL FOLLOW-UP DATA ---
 const conditionalFollowUps = {
+  // ... (No change to these sections)
   // --- Diet Type Follow-ups ---
   "Mostly vegetables and no meat (Vegetarian)": [
     {
@@ -647,6 +648,8 @@ const conditionalFollowUps = {
 
 // Health condition specific follow-ups
 const healthConditionFollowUps = {
+  // Generic medical follow-up triggered if ANY condition is selected (added via logic in Questionnaire.js)
+  // Specific condition follow-ups
   "diabetes": [
     {
       subKey: "diabetesCarbs",
@@ -683,7 +686,6 @@ const healthConditionFollowUps = {
       required: true,
     },
   ],
-  // CANCER FOLLOW-UP (UPDATED)
   "cancer": [
     {
       subKey: "cancerAdviceFollow",
@@ -692,8 +694,16 @@ const healthConditionFollowUps = {
       options: ["Yes", "No"],
       required: true,
     },
-    // The conditional text box is appended in Questionnaire.js if the answer is "Yes"
   ],
+};
+
+// New follow-up for ALL health condition users
+const medicationQuestion = {
+    subKey: "takingMedications",
+    subTitle: "Are you currently taking medications?",
+    subType: "radio",
+    options: ["Yes", "No"],
+    required: true,
 };
 
 // Conditional follow-up for the new cancer radio question's "Yes" answer
@@ -705,6 +715,25 @@ const cancerYesFollowUp = {
     required: true,
 };
 
+// Conditional follow-up for the generic medication "Yes" answer
+const medicationDetailsFollowUp = {
+    subKey: "medicineDetails",
+    subTitle: "Please provide details for each medication:",
+    subType: "medications", // NEW CUSTOM TYPE
+    required: true,
+    defaultData: [{ id: 1, name: '', routine: 'Morning', dose: '' }],
+    routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+};
 
-export { baseQuestions, goalSpecificQuestions, getQuestions, healthConditionFollowUps, conditionalFollowUps, cancerYesFollowUp };
+
+export { 
+  baseQuestions, 
+  goalSpecificQuestions, 
+  getQuestions, 
+  healthConditionFollowUps, 
+  conditionalFollowUps, 
+  cancerYesFollowUp,
+  medicationQuestion,      
+  medicationDetailsFollowUp
+};
 export default getQuestions;
