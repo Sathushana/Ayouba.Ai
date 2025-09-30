@@ -83,7 +83,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Nutrition Questions (UPDATED - Medication questions completely removed)
+  // Nutrition Questions
   "Nutrition": [
     // Q1: Diet Type
     {
@@ -177,34 +177,34 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Q7: Nutrition Focus
+    // Q7: Nutrition Focus (UPDATED TO MULTISELECT)
     {
       id: 12,
-      type: "radio",
+      type: "multiselect",
       title: "Nutrition Focus",
-      description: "Which of these best describes your main nutrition focus?",
+      description: "Which of these best describes your main nutrition focus? (Select all that apply)",
       key: "nutritionFocus",
       options: [
-        "I follow a plant-based diet (vegan or rarely eat animal products)",
-        "I want to improve heart health",
-        "I want to manage or prevent diabetes",
-        "I have kidney or liver problems",
-        "Other"
+        { id: "plantBased", label: "I follow a plant-based diet (vegan or rarely eat animal products)" },
+        { id: "heartHealth", label: "I want to improve heart health" },
+        { id: "diabetes", label: "I want to manage or prevent diabetes" },
+        { id: "kidneyLiver", label: "I have kidney or liver problems" },
+        { id: "other", label: "Other" }
       ],
       required: true,
     },
-    // Q8: Main Nutrition Goal
+    // Q8: Main Nutrition Goal (UPDATED TO MULTISELECT)
     {
       id: 13,
-      type: "radio",
+      type: "multiselect",
       title: "Main Nutrition Goal",
-      description: "What is your main nutrition goal?",
+      description: "What is your main nutrition goal? (Select all that apply)",
       key: "mainNutritionGoal",
       options: [
-        "Manage or reduce weight",
-        "Have more energy and feel stronger",
-        "Prevent diseases and stay healthy",
-        "Improve digestion and gut health"
+        { id: "weightManagement", label: "Manage or reduce weight" },
+        { id: "moreEnergy", label: "Have more energy and feel stronger" },
+        { id: "diseasePrevention", label: "Prevent diseases and stay healthy" },
+        { id: "gutHealth", label: "Improve digestion and gut health" }
       ],
       required: true,
     },

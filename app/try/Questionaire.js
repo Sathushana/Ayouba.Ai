@@ -86,7 +86,7 @@ export default function Questionnaire() {
 
   const conditionalQuestions = baseConditionalAnswer ? conditionalFollowUps[baseConditionalAnswer] : [];
 
-  // Format health conditions for display
+  // Format health conditions for display (No longer used in description, but kept for console logging/debugging)
   const formatHealthConditions = (healthConditions) => {
     if (!healthConditions) return "None";
     
@@ -107,7 +107,7 @@ export default function Questionnaire() {
     return selectedConditions.length > 0 ? selectedConditions.join(', ') : "None";
   };
 
-  // Format substance use for display
+  // Format substance use for display (No longer used in description, but kept for console logging/debugging)
   const formatSubstanceUse = (substanceUse) => {
     if (!substanceUse) return "None";
     
@@ -145,8 +145,10 @@ export default function Questionnaire() {
       // subStep 0: Validate the base question
       if (subStep === 0) {
         if (currentStepData.key === 'healthConditions' || currentStepData.key === 'substanceUse') {
-          // Health conditions and substance use are optional, so always valid
-          return true;
+          // Health conditions and substance use are optional, so always valid unless required changes
+          // The data in questions.js has 'required: false' for these, so they are valid.
+          // For other branching radio types, baseConditionalAnswer (which is currentAnswer) must exist.
+          return currentStepData.required ? !!baseConditionalAnswer : true;
         }
         return !!baseConditionalAnswer;
       }
@@ -154,46 +156,25 @@ export default function Questionnaire() {
       if (subStep === 1) {
         const followUpAnswers = answers.followUps || {};
         
-        // For health conditions, validate each selected condition's follow-ups
+        let questionsToValidate = [];
         if (currentStepData.key === 'healthConditions') {
-          const selectedConditions = answers.healthConditions || {};
-          return healthConditionQuestions.every(q => {
-            if (q.required) {
-              const answer = followUpAnswers[q.subKey];
-              if (q.subType === 'radio') return !!answer;
-              if (q.subType === 'text') return !!answer && answer.trim().length > 0;
-            }
-            return true;
-          });
+          questionsToValidate = healthConditionQuestions;
+        } else if (currentStepData.key === 'substanceUse') {
+          questionsToValidate = substanceUseQuestions;
+        } else {
+          // Check if conditionalQuestions is an array before using it
+          questionsToValidate = conditionalQuestions && Array.isArray(conditionalQuestions) ? conditionalQuestions : [];
         }
-        
-        // For substance use, validate each selected substance's follow-ups
-        if (currentStepData.key === 'substanceUse') {
-          const selectedSubstances = answers.substanceUse || {};
-          return substanceUseQuestions.every(q => {
-            if (q.required) {
-              const answer = followUpAnswers[q.subKey];
-              if (q.subType === 'radio') return !!answer;
-              if (q.subType === 'text') return !!answer && answer.trim().length > 0;
-            }
-            return true;
-          });
-        }
-        
-        // For other branching steps - safely handle undefined conditionalQuestions
-        if (conditionalQuestions && Array.isArray(conditionalQuestions)) {
-          return conditionalQuestions.every(q => {
-            if (q.required) {
-              const answer = followUpAnswers[q.subKey];
-              // Check if a radio answer exists, or if a multiselect has any true value
-              if (q.subType === 'radio') return !!answer;
-              if (q.subType === 'multiselect') return Object.values(answer || {}).some(v => v === true);
-              if (q.subType === 'text') return !!answer && answer.trim().length > 0;
-            }
-            return true;
-          });
-        }
-        return true; // If no conditional questions, step is valid
+
+        return questionsToValidate.every(q => {
+          if (q.required) {
+            const answer = followUpAnswers[q.subKey];
+            if (q.subType === 'radio') return !!answer;
+            if (q.subType === 'multiselect') return Object.values(answer || {}).some(v => v === true);
+            if (q.subType === 'text') return !!answer && answer.trim().length > 0;
+          }
+          return true;
+        });
       }
     }
     // Case 2: Validation for NON-Branching Steps
@@ -212,8 +193,10 @@ export default function Questionnaire() {
         return !!height && !!weight && height > 0 && weight > 0;
       }
       if (currentStepData.type === 'multiselect') {
-        // Multiselect is optional for health conditions and substance use
-        if (currentStepData.key === 'healthConditions' || currentStepData.key === 'substanceUse') return true;
+        // Now covers 'healthConditions', 'substanceUse', 'nutritionFocus', 'mainNutritionGoal'
+        // 'healthConditions' and 'substanceUse' are required: false in questions.js, so they are technically valid if empty.
+        // 'nutritionFocus' and 'mainNutritionGoal' are required: true, so they must have at least one selection.
+        if (!currentStepData.required) return true;
         return Object.values(currentAnswer || {}).some(v => v === true);
       }
       return false;
@@ -287,6 +270,7 @@ export default function Questionnaire() {
         if (type === 'multiselect') {
           newSubAnswer = { ...subSectionAnswer, [key]: !subSectionAnswer[key] };
         } else {
+          // This handles radio and text inputs for follow-ups
           newSubAnswer = value;
         }
         return {
@@ -308,7 +292,7 @@ export default function Questionnaire() {
         }
       }));
     }
-    // Simple Multi-Select (Goals, Health Conditions, Substance Use)
+    // Simple Multi-Select (Goals, Health Conditions, Substance Use, NutritionFocus, MainNutritionGoal)
     else if (currentStepData.type === 'multiselect') {
       setAnswers(prevAnswers => ({
         ...prevAnswers,
@@ -318,7 +302,7 @@ export default function Questionnaire() {
         }
       }));
     }
-    // Single-Value Steps
+    // Single-Value Steps (Radio, Text, Number)
     else {
       setAnswers(prevAnswers => ({
         ...prevAnswers,
@@ -364,6 +348,7 @@ export default function Questionnaire() {
 
   // Renders Multiselect Options
   const renderMultiselectOptions = (options, currentAnswer, subKey = null) => {
+    // Note: The key for handleInputChange is `option.id` for multiselect
     return (
       <div className="space-y-4 w-full">
         {options.map((option) => {
@@ -449,7 +434,7 @@ export default function Questionnaire() {
   const renderConditionalFollowUps = () => {
     const followUpAnswers = answers.followUps || {};
     
-    // For health conditions, use the dynamically generated questions
+    // Determine the correct set of questions to render
     let questionsToRender = [];
     if (currentStepData.key === 'healthConditions') {
       questionsToRender = healthConditionQuestions;
@@ -464,9 +449,14 @@ export default function Questionnaire() {
         {questionsToRender.map((q) => {
           const currentSubAnswer = followUpAnswers[q.subKey];
           let answerValue = currentSubAnswer;
+          // For multiselect/radio/text, answerValue is determined differently
           if (q.subType === 'multiselect') {
-            answerValue = currentSubAnswer;
+            answerValue = currentSubAnswer; // It's an object of {id: bool}
           }
+          
+          // Note: handleInputChange needs to be called correctly for text inputs
+          // Since text inputs for follow-ups only take a single value, 
+          // we pass null for subKey/type in handleInputChange
           return (
             <div key={q.subKey} className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800">
@@ -478,8 +468,9 @@ export default function Questionnaire() {
               {q.subType === 'text' && (
                 <input
                   type="text"
+                  // For text type follow-ups, the answer is the direct value under subKey, not an object/array
                   value={answerValue || ''}
-                  onChange={(e) => handleInputChange(q.subKey, e.target.value, null, 'text')}
+                  onChange={(e) => handleInputChange(e.target.value, e.target.value, q.subKey, 'text')}
                   placeholder={q.placeholder}
                   className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
                 />
@@ -569,7 +560,13 @@ export default function Questionnaire() {
     // Add extra virtual steps for branching follow-ups
     questions.forEach(question => {
       if (branchingSteps.includes(question.id)) {
-        totalVirtualSteps += 1; // Each branching step has 2 virtual steps
+        // Only count the branching step's base question if an answer was provided 
+        // that triggers follow-ups. If the answer skips follow-ups, it's just 1 step.
+        // For simplicity and a smoother progress bar, we count all branching steps as 2 
+        // virtual steps unless the 'dietType' skip is triggered, but since the complexity 
+        // is high, let's stick to the base logic for now, or simplify it to only main steps.
+        // Sticking to original logic: each branching step has up to 2 steps.
+        totalVirtualSteps += 1; 
       }
     });
     
@@ -578,19 +575,10 @@ export default function Questionnaire() {
       currentVirtualStep += 1;
     }
     
-    return (currentVirtualStep / totalVirtualSteps) * 100;
+    // Clamp to 100% just in case of rounding errors on the final step
+    return Math.min(100, (currentVirtualStep / totalVirtualSteps) * 100);
   };
 
-  // Get formatted answer for display
-  const getFormattedAnswer = () => {
-    if (currentStepData?.key === 'healthConditions') {
-      return formatHealthConditions(answers.healthConditions);
-    }
-    if (currentStepData?.key === 'substanceUse') {
-      return formatSubstanceUse(answers.substanceUse);
-    }
-    return baseConditionalAnswer;
-  };
 
   if (questions.length === 0) {
     return <div>Loading...</div>;
@@ -613,6 +601,8 @@ export default function Questionnaire() {
             <button
               onClick={handleNext}
               className="text-gray-500 hover:text-[#e72638] font-medium"
+              // The skip button should be disabled only if the current step is required AND invalid
+              // and if we are NOT on the final sub-step of a branching question, where 'Next' is the only option.
               disabled={currentStepData?.required && !isStepValid() && isBranchingStep && subStep === 0}
             >
               Skip
@@ -629,11 +619,9 @@ export default function Questionnaire() {
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
             {currentStepData?.title}
           </h2>
-          {/* Dynamic Description/Subtitle */}
+          {/* Dynamic Description/Subtitle - REMOVED ANSWER DISPLAY */}
           <p className="text-base text-gray-600 mb-6">
-            {isBranchingStep && subStep === 1
-              ? `${currentStepData?.description} Answer: ${getFormattedAnswer()}`
-              : currentStepData?.description}
+            {currentStepData?.description}
           </p>
         </div>
 
