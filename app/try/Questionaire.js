@@ -1,14 +1,14 @@
 // components/Questionnaire.js
 "use client";
 import React, { useState, useEffect } from "react";
-import getQuestions, { conditionalFollowUps } from "../data/questions";
+import getQuestions, { conditionalFollowUps, healthConditionFollowUps } from "../data/questions";
 
 // Branching step IDs (will be dynamically determined based on selected goal)
 const BRANCHING_KEYS = {
-  'fruitVegIntake': 'Nutrition',
+  'dietType': 'Nutrition',
+  'healthConditions': 'Nutrition', 
+  'substanceUse': 'Nutrition',
   'activityLevel': 'Physical Activity',
-  'sugarIntake': 'Nutrition',
-  'mealRegularity': 'Nutrition', 
   'tobaccoUse': 'Tobacco',
   'alcoholUse': 'Alcohol'
 };
@@ -21,11 +21,13 @@ export default function Questionnaire() {
   const [answers, setAnswers] = useState({});
   const [questions, setQuestions] = useState([]);
   const [branchingSteps, setBranchingSteps] = useState([]);
+  const [healthConditionQuestions, setHealthConditionQuestions] = useState([]);
+  const [substanceUseQuestions, setSubstanceUseQuestions] = useState([]);
 
   // Initialize questions based on primary goal
   useEffect(() => {
     const primaryGoal = answers.primaryGoal;
-    const allQuestions = getQuestions(primaryGoal);
+    const allQuestions = getQuestions(primaryGoal, answers);
     setQuestions(allQuestions);
     
     // Identify branching steps based on the current question set
@@ -50,7 +52,78 @@ export default function Questionnaire() {
     baseConditionalAnswer = answers[baseConditionalKey];
   }
 
+  // Handle health conditions multiselect conditional logic
+  useEffect(() => {
+    if (currentStepData?.key === 'healthConditions' && subStep === 1) {
+      const selectedConditions = answers.healthConditions || {};
+      const conditionQuestions = [];
+      
+      Object.keys(selectedConditions).forEach(conditionId => {
+        if (selectedConditions[conditionId] && healthConditionFollowUps[conditionId] && conditionId !== 'none') {
+          conditionQuestions.push(...healthConditionFollowUps[conditionId]);
+        }
+      });
+      
+      setHealthConditionQuestions(conditionQuestions);
+    }
+  }, [answers.healthConditions, currentStepData, subStep]);
+
+  // Handle substance use multiselect conditional logic
+  useEffect(() => {
+    if (currentStepData?.key === 'substanceUse' && subStep === 1) {
+      const selectedSubstances = answers.substanceUse || {};
+      const substanceQuestions = [];
+      
+      Object.keys(selectedSubstances).forEach(substanceId => {
+        if (selectedSubstances[substanceId] && conditionalFollowUps[substanceId] && substanceId !== 'none') {
+          substanceQuestions.push(...conditionalFollowUps[substanceId]);
+        }
+      });
+      
+      setSubstanceUseQuestions(substanceQuestions);
+    }
+  }, [answers.substanceUse, currentStepData, subStep]);
+
   const conditionalQuestions = baseConditionalAnswer ? conditionalFollowUps[baseConditionalAnswer] : [];
+
+  // Format health conditions for display
+  const formatHealthConditions = (healthConditions) => {
+    if (!healthConditions) return "None";
+    
+    const selectedConditions = Object.entries(healthConditions)
+      .filter(([key, isSelected]) => isSelected && key !== 'none')
+      .map(([conditionId]) => {
+        const conditionMap = {
+          'diabetes': 'Diabetes',
+          'highBloodPressure': 'High blood pressure',
+          'heartDisease': 'Heart disease / High cholesterol',
+          'kidneyLiver': 'Kidney or liver problems',
+          'cancer': 'Cancer (history/current)',
+          'otherCondition': 'Other'
+        };
+        return conditionMap[conditionId] || conditionId;
+      });
+    
+    return selectedConditions.length > 0 ? selectedConditions.join(', ') : "None";
+  };
+
+  // Format substance use for display
+  const formatSubstanceUse = (substanceUse) => {
+    if (!substanceUse) return "None";
+    
+    const selectedSubstances = Object.entries(substanceUse)
+      .filter(([key, isSelected]) => isSelected && key !== 'none')
+      .map(([substanceId]) => {
+        const substanceMap = {
+          'alcohol': 'Alcohol',
+          'tobacco': 'Cigarettes / Tobacco',
+          'drugs': 'Drugs (recreational / non-prescribed)'
+        };
+        return substanceMap[substanceId] || substanceId;
+      });
+    
+    return selectedSubstances.length > 0 ? selectedSubstances.join(', ') : "None";
+  };
 
   // --- Utility Functions ---
   const calculateBMI = (heightCm, weightKg) => {
@@ -63,58 +136,103 @@ export default function Questionnaire() {
   };
 
   // --- Validation and Navigation Handlers ---
-  // In the isStepValid() function, update the validation for text inputs:
-const isStepValid = () => {
-  if (!currentStepData) return false;
-  const currentAnswer = answers[currentStepData.key];
+  const isStepValid = () => {
+    if (!currentStepData) return false;
+    const currentAnswer = answers[currentStepData.key];
 
-  // Case 1: Validation for Branching Steps
-  if (isBranchingStep) {
-    // subStep 0: Validate the base radio button
-    if (subStep === 0) {
-      return !!baseConditionalAnswer;
-    }
-    // subStep 1: Validate all conditional questions
-    if (subStep === 1) {
-      const followUpAnswers = answers.followUps || {};
-      return conditionalQuestions.every(q => {
-        if (q.required) {
-          const answer = followUpAnswers[q.subKey];
-          // Check if a radio answer exists, or if a multiselect has any true value
-          if (q.subType === 'radio') return !!answer;
-          if (q.subType === 'multiselect') return Object.values(answer || {}).some(v => v === true);
+    // Case 1: Validation for Branching Steps
+    if (isBranchingStep) {
+      // subStep 0: Validate the base question
+      if (subStep === 0) {
+        if (currentStepData.key === 'healthConditions' || currentStepData.key === 'substanceUse') {
+          // Health conditions and substance use are optional, so always valid
+          return true;
         }
-        return true;
-      });
+        return !!baseConditionalAnswer;
+      }
+      // subStep 1: Validate all conditional questions
+      if (subStep === 1) {
+        const followUpAnswers = answers.followUps || {};
+        
+        // For health conditions, validate each selected condition's follow-ups
+        if (currentStepData.key === 'healthConditions') {
+          const selectedConditions = answers.healthConditions || {};
+          return healthConditionQuestions.every(q => {
+            if (q.required) {
+              const answer = followUpAnswers[q.subKey];
+              if (q.subType === 'radio') return !!answer;
+              if (q.subType === 'text') return !!answer && answer.trim().length > 0;
+            }
+            return true;
+          });
+        }
+        
+        // For substance use, validate each selected substance's follow-ups
+        if (currentStepData.key === 'substanceUse') {
+          const selectedSubstances = answers.substanceUse || {};
+          return substanceUseQuestions.every(q => {
+            if (q.required) {
+              const answer = followUpAnswers[q.subKey];
+              if (q.subType === 'radio') return !!answer;
+              if (q.subType === 'text') return !!answer && answer.trim().length > 0;
+            }
+            return true;
+          });
+        }
+        
+        // For other branching steps - safely handle undefined conditionalQuestions
+        if (conditionalQuestions && Array.isArray(conditionalQuestions)) {
+          return conditionalQuestions.every(q => {
+            if (q.required) {
+              const answer = followUpAnswers[q.subKey];
+              // Check if a radio answer exists, or if a multiselect has any true value
+              if (q.subType === 'radio') return !!answer;
+              if (q.subType === 'multiselect') return Object.values(answer || {}).some(v => v === true);
+              if (q.subType === 'text') return !!answer && answer.trim().length > 0;
+            }
+            return true;
+          });
+        }
+        return true; // If no conditional questions, step is valid
+      }
     }
-  }
-  // Case 2: Validation for NON-Branching Steps
-  else {
-    if (!currentStepData.required) return true;
-    
-    // Handle different input types
-    if (currentStepData.type === 'text') {
-      return !!currentAnswer && currentAnswer.trim().length > 0; // Text must not be empty
+    // Case 2: Validation for NON-Branching Steps
+    else {
+      if (!currentStepData.required) return true;
+      
+      // Handle different input types
+      if (currentStepData.type === 'text') {
+        return !!currentAnswer && currentAnswer.trim().length > 0;
+      }
+      if (currentStepData.type === 'number' || currentStepData.type === 'radio') {
+        return !!currentAnswer;
+      }
+      if (currentStepData.type === 'measurements') {
+        const { height, weight } = currentAnswer || {};
+        return !!height && !!weight && height > 0 && weight > 0;
+      }
+      if (currentStepData.type === 'multiselect') {
+        // Multiselect is optional for health conditions and substance use
+        if (currentStepData.key === 'healthConditions' || currentStepData.key === 'substanceUse') return true;
+        return Object.values(currentAnswer || {}).some(v => v === true);
+      }
+      return false;
     }
-    if (currentStepData.type === 'number' || currentStepData.type === 'radio') {
-      return !!currentAnswer;
-    }
-    if (currentStepData.type === 'measurements') {
-      const { height, weight } = currentAnswer || {};
-      return !!height && !!weight && height > 0 && weight > 0;
-    }
-    if (currentStepData.type === 'multiselect') {
-      return Object.values(currentAnswer || {}).some(v => v === true);
-    }
-    return false;
-  }
-};
+  };
 
   const handleNext = () => {
     // A. If on a Branching Step's Base Question (subStep 0)
     if (isBranchingStep && subStep === 0) {
       if (isStepValid()) {
-        setSubStep(1); // Move to follow-up questions
+        // Skip follow-ups for Balanced/Mediterranean and No specific diet
+        if (currentStepData.key === 'dietType' && 
+            (baseConditionalAnswer === "A mix of vegetables, fruits, grains, and some meat or fish (Balanced / Mediterranean)" ||
+             baseConditionalAnswer === "I eat whatever I feel like, no specific pattern (No specific diet)")) {
+          setCurrentStep(currentStep + 1);
+          setSubStep(0);
+        } else {
+          setSubStep(1); // Move to follow-up questions
+        }
       }
     }
     // B. If on the FINAL STEP
@@ -190,7 +308,7 @@ const isStepValid = () => {
         }
       }));
     }
-    // Simple Multi-Select (Goals)
+    // Simple Multi-Select (Goals, Health Conditions, Substance Use)
     else if (currentStepData.type === 'multiselect') {
       setAnswers(prevAnswers => ({
         ...prevAnswers,
@@ -330,9 +448,20 @@ const isStepValid = () => {
   // Renders the Conditional Follow-Up Questions (subStep 1 of branching steps)
   const renderConditionalFollowUps = () => {
     const followUpAnswers = answers.followUps || {};
+    
+    // For health conditions, use the dynamically generated questions
+    let questionsToRender = [];
+    if (currentStepData.key === 'healthConditions') {
+      questionsToRender = healthConditionQuestions;
+    } else if (currentStepData.key === 'substanceUse') {
+      questionsToRender = substanceUseQuestions;
+    } else {
+      questionsToRender = conditionalQuestions || [];
+    }
+
     return (
       <div className="w-full max-w-lg space-y-12 text-left">
-        {conditionalQuestions.map((q) => {
+        {questionsToRender.map((q) => {
           const currentSubAnswer = followUpAnswers[q.subKey];
           let answerValue = currentSubAnswer;
           if (q.subType === 'multiselect') {
@@ -346,6 +475,15 @@ const isStepValid = () => {
               </h3>
               {q.subType === 'radio' && renderRadioButtons(q.options, answerValue, q.subKey)}
               {q.subType === 'multiselect' && renderMultiselectOptions(q.options, answerValue, q.subKey)}
+              {q.subType === 'text' && (
+                <input
+                  type="text"
+                  value={answerValue || ''}
+                  onChange={(e) => handleInputChange(q.subKey, e.target.value, null, 'text')}
+                  placeholder={q.placeholder}
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+                />
+              )}
             </div>
           );
         })}
@@ -353,56 +491,59 @@ const isStepValid = () => {
     );
   };
 
-// In the renderStepContent function, add this case for 'text' type:
-const renderStepContent = () => {
-  if (!currentStepData) return <p>Step not found.</p>;
+  const renderStepContent = () => {
+    if (!currentStepData) return <p>Step not found.</p>;
 
-  // Handle Branching Steps
-  if (isBranchingStep) {
-    if (subStep === 0) {
-      // Base Question (Radio)
-      return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
+    // Handle Branching Steps
+    if (isBranchingStep) {
+      if (subStep === 0) {
+        // Base Question
+        if (currentStepData.type === 'radio') {
+          return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
+        } else if (currentStepData.type === 'multiselect') {
+          return renderMultiselectOptions(currentStepData.options, answers[currentStepData.key]);
+        }
+      }
+      if (subStep === 1) {
+        // Conditional Follow-ups
+        return renderConditionalFollowUps();
+      }
     }
-    if (subStep === 1) {
-      // Conditional Follow-ups
-      return renderConditionalFollowUps();
-    }
-  }
 
-  // Handle all non-branching steps
-  switch (currentStepData.type) {
-    case 'text': // NEW: Handle text input for full name
-      return (
-        <input
-          type="text"
-          value={answers[currentStepData.key] || ''}
-          onChange={(e) => handleInputChange(currentStepData.key, e.target.value)}
-          placeholder={currentStepData.placeholder}
-          className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
-        />
-      );
-    case 'number':
-      return (
-        <input
-          type="number"
-          value={answers[currentStepData.key] || ''}
-          onChange={(e) => handleInputChange(currentStepData.key, parseInt(e.target.value) || '')}
-          placeholder={currentStepData.placeholder}
-          className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
-          min="1"
-          max="120"
-        />
-      );
-    case 'radio':
-      return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
-    case 'measurements':
-      return renderMeasurements();
-    case 'multiselect':
-      return renderMultiselectOptions(currentStepData.options, answers[currentStepData.key]);
-    default:
-      return <p>Invalid step type.</p>;
-  }
-};
+    // Handle all non-branching steps
+    switch (currentStepData.type) {
+      case 'text':
+        return (
+          <input
+            type="text"
+            value={answers[currentStepData.key] || ''}
+            onChange={(e) => handleInputChange(currentStepData.key, e.target.value)}
+            placeholder={currentStepData.placeholder}
+            className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+          />
+        );
+      case 'number':
+        return (
+          <input
+            type="number"
+            value={answers[currentStepData.key] || ''}
+            onChange={(e) => handleInputChange(currentStepData.key, parseInt(e.target.value) || '')}
+            placeholder={currentStepData.placeholder}
+            className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+            min="1"
+            max="120"
+          />
+        );
+      case 'radio':
+        return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
+      case 'measurements':
+        return renderMeasurements();
+      case 'multiselect':
+        return renderMultiselectOptions(currentStepData.options, answers[currentStepData.key]);
+      default:
+        return <p>Invalid step type.</p>;
+    }
+  };
 
   // Determine button text dynamically
   const getButtonText = () => {
@@ -438,6 +579,17 @@ const renderStepContent = () => {
     }
     
     return (currentVirtualStep / totalVirtualSteps) * 100;
+  };
+
+  // Get formatted answer for display
+  const getFormattedAnswer = () => {
+    if (currentStepData?.key === 'healthConditions') {
+      return formatHealthConditions(answers.healthConditions);
+    }
+    if (currentStepData?.key === 'substanceUse') {
+      return formatSubstanceUse(answers.substanceUse);
+    }
+    return baseConditionalAnswer;
   };
 
   if (questions.length === 0) {
@@ -480,7 +632,7 @@ const renderStepContent = () => {
           {/* Dynamic Description/Subtitle */}
           <p className="text-base text-gray-600 mb-6">
             {isBranchingStep && subStep === 1
-              ? `${currentStepData?.description} Answer: ${baseConditionalAnswer}`
+              ? `${currentStepData?.description} Answer: ${getFormattedAnswer()}`
               : currentStepData?.description}
           </p>
         </div>

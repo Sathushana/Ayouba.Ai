@@ -83,79 +83,128 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Nutrition Questions
+  // Nutrition Questions (UPDATED - Medication questions completely removed)
   "Nutrition": [
-    // Step 6: Fruits and Vegetables Intake
+    // Q1: Diet Type
     {
       id: 6,
       type: "radio",
-      title: "Fruits and Vegetables Intake",
-      description: "We all eat differently. How many servings of fruits and vegetables do you usually have in a day?",
-      key: "fruitVegIntake",
+      title: "Diet Type",
+      description: "What type of diet do you usually follow?",
+      key: "dietType",
       options: [
-        "0 (Low intake)",
-        "1–2 (Low-moderate intake)",
-        "3–4 (Moderate intake)",
-        "5+ (High intake)",
+        "Mostly vegetables and no meat (Vegetarian)",
+        "Only plant-based foods, no meat, eggs, or dairy (Vegan)",
+        "Mostly meat, eggs, and low in bread/rice/potatoes (Keto / Low-carb)",
+        "A mix of vegetables, fruits, grains, and some meat or fish (Balanced / Mediterranean)",
+        "I eat whatever I feel like, no specific pattern (No specific diet)"
       ],
       required: true,
     },
-    // Step 7: Nutrition (Sugary Foods, Branching)
+    // Q2: Health Conditions
     {
       id: 7,
-      type: "radio",
-      title: "Nutrition Habits: Processed Foods",
-      description: "How often do you have sugary drinks or processed foods?",
-      key: "sugarIntake",
+      type: "multiselect",
+      title: "Health Conditions",
+      description: "Do you have any health conditions?",
+      key: "healthConditions",
       options: [
-        "Daily",
-        "Several times a week",
-        "Occasionally",
-        "Rarely",
+        { id: "none", label: "None" },
+        { id: "diabetes", label: "Diabetes" },
+        { id: "highBloodPressure", label: "High blood pressure" },
+        { id: "heartDisease", label: "Heart disease / High cholesterol" },
+        { id: "kidneyLiver", label: "Kidney or liver problems" },
+        { id: "cancer", label: "Cancer (history/current)" },
+        { id: "otherCondition", label: "Other" }
       ],
-      required: true,
+      required: false,
     },
-    // Step 8: Meal Regularity (Branching)
+    // Q3: Substance Use
     {
       id: 8,
-      type: "radio",
-      title: "Nutrition Habits: Meal Regularity",
-      description: "How regularly do you eat your meals each day?",
-      key: "mealRegularity",
+      type: "multiselect",
+      title: "Substance Use",
+      description: "Do you use any of the following?",
+      key: "substanceUse",
       options: [
-        "Skipped often",
-        "Mostly regular",
-        "Very regular",
+        { id: "none", label: "None" },
+        { id: "alcohol", label: "Alcohol" },
+        { id: "tobacco", label: "Cigarettes / Tobacco" },
+        { id: "drugs", label: "Drugs (recreational / non-prescribed)" }
       ],
-      required: true,
+      required: false,
     },
-    // Step 9: Protein Intake
+    // Q4: Meal Patterns
     {
       id: 9,
       type: "radio",
-      title: "Nutrition Habits: Protein",
-      description: "Do you regularly include protein-rich foods like eggs, fish, lentils, or meat?",
-      key: "proteinIntake",
+      title: "Meal Patterns",
+      description: "How do you usually eat your meals?",
+      key: "mealPatterns",
       options: [
-        "Yes",
-        "Sometimes",
-        "Rarely",
-        "No",
+        "I eat regular meals every day",
+        "I often skip breakfast",
+        "I snack a lot between meals",
+        "I follow intermittent fasting or skip meals"
       ],
       required: true,
     },
-    // Step 10: Water Intake
+    // Q5: Water Intake
     {
       id: 10,
       type: "radio",
-      title: "Nutrition Habits: Water Intake",
-      description: "How many glasses of water do you drink on a typical day?",
+      title: "Water Intake",
+      description: "How much water do you drink daily?",
       key: "waterIntake",
       options: [
-        "<4",
-        "4–6",
-        "6–8",
-        "8+",
+        "Less than 1 liter",
+        "1–2 liters",
+        "More than 2 liters"
+      ],
+      required: true,
+    },
+    // Q6: Fruits & Vegetables
+    {
+      id: 11,
+      type: "radio",
+      title: "Fruits and Vegetables",
+      description: "How often do you eat fruits, vegetables, or whole grains?",
+      key: "fruitVegFrequency",
+      options: [
+        "Rarely",
+        "Sometimes",
+        "Every day"
+      ],
+      required: true,
+    },
+    // Q7: Nutrition Focus
+    {
+      id: 12,
+      type: "radio",
+      title: "Nutrition Focus",
+      description: "Which of these best describes your main nutrition focus?",
+      key: "nutritionFocus",
+      options: [
+        "I follow a plant-based diet (vegan or rarely eat animal products)",
+        "I want to improve heart health",
+        "I want to manage or prevent diabetes",
+        "I have kidney or liver problems",
+        "Other"
+      ],
+      required: true,
+    },
+    // Q8: Main Nutrition Goal
+    {
+      id: 13,
+      type: "radio",
+      title: "Main Nutrition Goal",
+      description: "What is your main nutrition goal?",
+      key: "mainNutritionGoal",
+      options: [
+        "Manage or reduce weight",
+        "Have more energy and feel stronger",
+        "Prevent diseases and stay healthy",
+        "Improve digestion and gut health"
       ],
       required: true,
     },
@@ -198,7 +247,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Sleep Questions (placeholder - you can add specific sleep questions later)
+  // Sleep Questions
   "Sleep": [
     {
       id: 6,
@@ -219,14 +268,27 @@ const goalSpecificQuestions = {
 };
 
 // Function to get all questions based on primary goal
-const getQuestions = (primaryGoal = null) => {
+const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
   if (!primaryGoal) {
     return baseQuestions;
   }
   
   const goalQuestions = goalSpecificQuestions[primaryGoal] || [];
   
-  // Reassign IDs to maintain sequence
+  // For Nutrition goal, no need for conditional filtering since medication questions are removed
+  if (primaryGoal === "Nutrition") {
+    const allQuestions = [...baseQuestions];
+    goalQuestions.forEach((question, index) => {
+      allQuestions.push({
+        ...question,
+        id: baseQuestions.length + index + 1
+      });
+    });
+    
+    return allQuestions;
+  }
+  
+  // For other goals
   const allQuestions = [...baseQuestions];
   goalQuestions.forEach((question, index) => {
     allQuestions.push({
@@ -239,84 +301,83 @@ const getQuestions = (primaryGoal = null) => {
 };
 
 // --- CONDITIONAL FOLLOW-UP DATA ---
-export const conditionalFollowUps = {
-  // --- Fruits & Vegetables Intake Follow-ups ---
-  "0 (Low intake)": [
+const conditionalFollowUps = {
+  // --- Diet Type Follow-ups ---
+  "Mostly vegetables and no meat (Vegetarian)": [
     {
-      subKey: "fruitVegBarrier",
-      subTitle: "What usually makes it hard to eat more fruits and vegetables?",
-      subType: "multiselect",
-      options: [
-        { id: "tooExpensive", label: "Too expensive" },
-        { id: "hardToFind", label: "Hard to find" },
-        { id: "dontLikeTaste", label: "Don't like the taste" },
-        { id: "noTime", label: "Don't have time" },
-      ],
-      required: false,
-    },
-    {
-      subKey: "fruitVegSuggestions",
-      subTitle: "Would you like us to suggest easy ways to include more fruits and vegetables in your meals?",
+      subKey: "vegetarianProtein",
+      subTitle: "How often do you include protein sources (lentils, beans, soy, tofu, eggs, dairy, nuts)?",
       subType: "radio",
-      options: ["Yes", "Maybe", "No"],
+      options: ["Rarely", "Sometimes", "Daily"],
       required: true,
     },
   ],
-  "1–2 (Low-moderate intake)": [
+  "Only plant-based foods, no meat, eggs, or dairy (Vegan)": [
     {
-      subKey: "fruitVegBarrier",
-      subTitle: "What usually makes it hard to eat more fruits and vegetables?",
-      subType: "multiselect",
-      options: [
-        { id: "tooExpensive", label: "Too expensive" },
-        { id: "hardToFind", label: "Hard to find" },
-        { id: "dontLikeTaste", label: "Don't like the taste" },
-        { id: "noTime", label: "Don't have time" },
-      ],
-      required: false,
-    },
-    {
-      subKey: "fruitVegSuggestions",
-      subTitle: "Would you like us to suggest easy ways to include more fruits and vegetables in your meals?",
+      subKey: "veganProtein",
+      subTitle: "How often do you include protein sources (lentils, beans, soy, tofu, nuts)?",
       subType: "radio",
-      options: ["Yes", "Maybe", "No"],
+      options: ["Rarely", "Sometimes", "Daily"],
       required: true,
     },
   ],
-  "3–4 (Moderate intake)": [
+  "Mostly meat, eggs, and low in bread/rice/potatoes (Keto / Low-carb)": [
     {
-      subKey: "foodPreferences",
-      subTitle: "Which type of foods would you like to include more in your diet?",
-      subType: "multiselect",
-      options: [
-        { id: "fruits", label: "Fruits" },
-        { id: "vegetables", label: "Vegetables" },
-        { id: "protein", label: "Protein-rich foods" },
-        { id: "wholeGrains", label: "Whole grains" },
-      ],
-      required: false,
-    },
-    {
-      subKey: "mealSwapSuggestions",
-      subTitle: "Would you like personalized meal swap suggestions or portion tips?",
+      subKey: "ketoFiber",
+      subTitle: "How often do you include fiber-rich vegetables (leafy greens, beans, local vegetables)?",
       subType: "radio",
-      options: ["Yes", "Maybe", "No"],
+      options: ["Rarely", "Sometimes", "Daily"],
       required: true,
     },
   ],
-  "5+ (High intake)": [
+
+  // --- Substance Use Follow-ups ---
+  "alcohol": [
     {
-      subKey: "advancedNutritionTips",
-      subTitle: "Would you like new recipes or advanced tips to optimize nutrition?",
+      subKey: "alcoholFrequency",
+      subTitle: "How often do you drink alcohol?",
       subType: "radio",
-      options: ["Yes", "Maybe", "No"],
+      options: [
+        "Rarely (special occasions)",
+        "Sometimes (1–2 times a week)",
+        "Frequently (3–5 times a week)",
+        "Daily"
+      ],
       required: true,
     },
     {
-      subKey: "trackNutrition",
-      subTitle: "Are you interested in tracking your nutrient intake or hydration more closely?",
+      subKey: "alcoholQuantity",
+      subTitle: "On days you drink, how many drinks do you usually have?",
       subType: "radio",
-      options: ["Yes", "Maybe", "No"],
+      options: ["1–2", "3–4", "5 or more"],
+      required: true,
+    },
+  ],
+  "tobacco": [
+    {
+      subKey: "tobaccoFrequency",
+      subTitle: "How often do you smoke?",
+      subType: "radio",
+      options: [
+        "Rarely (less than once a week)",
+        "Sometimes (1–5 cigarettes per day)",
+        "Frequently (6–10 cigarettes per day)",
+        "Heavy (more than 10 per day)"
+      ],
+      required: true,
+    },
+  ],
+  "drugs": [
+    {
+      subKey: "drugsFrequency",
+      subTitle: "How often do you use recreational drugs?",
+      subType: "radio",
+      options: [
+        "Rarely",
+        "Sometimes (monthly / weekends)",
+        "Frequently (weekly)",
+        "Daily"
+      ],
       required: true,
     },
   ],
@@ -392,138 +453,6 @@ export const conditionalFollowUps = {
     {
       subKey: "advancedGuidance",
       subTitle: "Are you interested in advanced guidance for recovery, stretching, or nutrition for active adults?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-
-  // --- Nutrition (Sugary Foods) Follow-ups ---
-  "Daily": [
-    {
-      subKey: "sugarBarrier",
-      subTitle: "What usually makes it hard to reduce sugary drinks or processed foods?",
-      subType: "multiselect",
-      options: [
-        { id: "cravings", label: "Cravings" },
-        { id: "busySchedule", label: "Busy schedule" },
-        { id: "social", label: "Social occasions" },
-        { id: "dontKnow", label: "Don't know alternatives" },
-      ],
-      required: false,
-    },
-    {
-      subKey: "easySwaps",
-      subTitle: "Would you like us to suggest easy swaps or low-sugar alternatives?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Several times a week": [
-    {
-      subKey: "sugarOccasions",
-      subTitle: "Which occasions usually involve sugary drinks or processed foods?",
-      subType: "multiselect",
-      options: [
-        { id: "work", label: "Work" },
-        { id: "social", label: "Social gatherings" },
-        { id: "home", label: "Home" },
-        { id: "outings", label: "Outings" },
-        { id: "other", label: "Other" },
-      ],
-      required: false,
-    },
-    {
-      subKey: "sugarReductionTips",
-      subTitle: "Would you like tips for reducing sugar a few times a week without feeling restricted?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Occasionally": [
-    {
-      subKey: "maintainLowSugar",
-      subTitle: "Do you want ideas to maintain low sugar and processed food habits?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-    {
-      subKey: "occasionalIndulgence",
-      subTitle: "Are you interested in learning advanced strategies for occasional indulgences?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Rarely": [
-    {
-      subKey: "optimizeNutrition",
-      subTitle: "Would you like advanced tips for optimizing overall nutrition and minimizing hidden sugars?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-    {
-      subKey: "trackQuality",
-      subTitle: "Are you interested in tracking nutrition quality to maintain excellent habits?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-
-  // --- Nutrition (Meal Regularity) Follow-ups ---
-  "Skipped often": [
-    {
-      subKey: "skipBarrier",
-      subTitle: "What usually causes you to skip meals?",
-      subType: "multiselect",
-      options: [
-        { id: "busySchedule", label: "Busy schedule" },
-        { id: "forget", label: "Forget to eat" },
-        { id: "lackAppetite", label: "Lack of appetite" },
-        { id: "irregular", label: "Irregular lifestyle" },
-      ],
-      required: false,
-    },
-    {
-      subKey: "mealPrepTips",
-      subTitle: "Would you like tips for quick, healthy snacks or easy meal prep?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Mostly regular": [
-    {
-      subKey: "struggleMeal",
-      subTitle: "Which meal do you struggle with most to keep regular?",
-      subType: "radio",
-      options: ["Breakfast", "Lunch", "Dinner", "Snacks"],
-      required: true,
-    },
-    {
-      subKey: "improveRegularity",
-      subTitle: "Would you like suggestions to improve the regularity of that meal?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Very regular": [
-    {
-      subKey: "optimizeTiming",
-      subTitle: "Would you like advanced tips for optimizing meal timing, such as for energy or weight management?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-    {
-      subKey: "portionMindful",
-      subTitle: "Are you interested in learning about portion timing or mindful eating practices?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -689,5 +618,54 @@ export const conditionalFollowUps = {
   ],
 };
 
-export { baseQuestions, goalSpecificQuestions, getQuestions };
+// Health condition specific follow-ups
+const healthConditionFollowUps = {
+  "diabetes": [
+    {
+      subKey: "diabetesCarbs",
+      subTitle: "Do you monitor carbohydrate intake (bread, rice, noodles, sugar)?",
+      subType: "radio",
+      options: ["Rarely", "Sometimes", "Daily"],
+      required: true,
+    },
+  ],
+  "heartDisease": [
+    {
+      subKey: "heartOmega3",
+      subTitle: "Do you include omega-3 foods (fish, flaxseed, walnuts)?",
+      subType: "radio",
+      options: ["Rarely", "Sometimes", "Daily"],
+      required: true,
+    },
+  ],
+  "highBloodPressure": [
+    {
+      subKey: "bpSalt",
+      subTitle: "Do you limit salt and salty foods (pickles, dried fish, chips)?",
+      subType: "radio",
+      options: ["Rarely", "Sometimes", "Daily"],
+      required: true,
+    },
+  ],
+  "kidneyLiver": [
+    {
+      subKey: "kidneyProtein",
+      subTitle: "Do you limit protein or processed foods as per doctor's advice?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  "cancer": [
+    {
+      subKey: "cancerAdvice",
+      subTitle: "Do you follow your doctor's nutrition advice?",
+      subType: "text",
+      placeholder: "Please describe your doctor's nutrition advice",
+      required: false,
+    },
+  ],
+};
+
+export { baseQuestions, goalSpecificQuestions, getQuestions, healthConditionFollowUps, conditionalFollowUps };
 export default getQuestions;
