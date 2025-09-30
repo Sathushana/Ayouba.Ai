@@ -7,7 +7,22 @@ import getQuestions, {
     cancerYesFollowUp, 
     medicationQuestion,     
     medicationDetailsFollowUp,
-    otherConditionFollowUp // Import new follow-up
+    otherConditionFollowUp,
+    // New imports for Physical Activity
+    frequencyDurationQuestions,
+    barriersQuestion,
+    barrierFollowUps,
+    satisfactionQuestion,
+    maintainOrPushQuestion,
+    advancedGuidanceQuestion,
+    structuredTrainingQuestion,
+    suggestVarietyQuestion,
+    focusAreaQuestion,
+    suggestInterestingQuestion,
+    physicalConditionsQuestion,
+    physicalConditionFollowUps,
+    goalFollowUps,
+    otherGoalText
 } from "../data/questions";
 
 // Branching step IDs (will be dynamically determined based on selected goal)
@@ -17,7 +32,12 @@ const BRANCHING_KEYS = {
   'substanceUse': 'Nutrition',
   'activityLevel': 'Physical Activity',
   'tobaccoUse': 'Tobacco',
-  'alcoholUse': 'Alcohol'
+  'alcoholUse': 'Alcohol',
+  // New branching keys for Physical Activity
+  'hasConditions': 'Physical Activity',
+  'exerciseLocation': 'Physical Activity',
+  'activityType': 'Physical Activity',
+  'primaryFitnessGoal': 'Physical Activity'
 };
 
 const APP_NAME = "Ayubo";
@@ -30,6 +50,11 @@ export default function Questionnaire() {
   const [branchingSteps, setBranchingSteps] = useState([]);
   const [healthConditionQuestions, setHealthConditionQuestions] = useState([]);
   const [substanceUseQuestions, setSubstanceUseQuestions] = useState([]);
+  // New states for Physical Activity dynamic questions
+  const [activityQuestions, setActivityQuestions] = useState([]);
+  const [physicalConditionQuestions, setPhysicalConditionQuestions] = useState([]);
+  const [activityTypeQuestions, setActivityTypeQuestions] = useState([]);
+  const [goalQuestions, setGoalQuestions] = useState([]);
 
   // Utility function to extract the clean goal key from the option string
   const extractGoalKey = (optionString) => {
@@ -144,6 +169,98 @@ export default function Questionnaire() {
     }
   }, [answers.substanceUse, currentStepData, subStep]);
 
+  // New: Handle activity level dynamic questions
+  useEffect(() => {
+    if (currentStepData?.key === 'activityLevel' && subStep === 1) {
+      const selectedLevel = answers.activityLevel;
+      const followUpAnswers = answers.followUps || {};
+      let activityQ = [];
+
+      // Add Q1a if not mostly sitting
+      if (selectedLevel !== "Mostly sitting (little or no exercise)") {
+        activityQ.push(...frequencyDurationQuestions);
+      }
+
+      // Add barriers or satisfaction
+      if (["Mostly sitting (little or no exercise)", "Light movement (walks, chores, light activity)"].includes(selectedLevel)) {
+        activityQ.push(barriersQuestion);
+        const selectedBarriers = followUpAnswers.barriers || {};
+        Object.keys(selectedBarriers).forEach(barrierId => {
+          if (selectedBarriers[barrierId] && barrierFollowUps[barrierId]) {
+            activityQ.push(...barrierFollowUps[barrierId]);
+          }
+        });
+      } else {
+        activityQ.push(satisfactionQuestion);
+        const satisfaction = followUpAnswers.satisfaction;
+        if (satisfaction === "Yes, I’m happy") {
+          activityQ.push(maintainOrPushQuestion);
+          const mop = followUpAnswers.maintainOrPush;
+          if (mop === "Maintain") {
+            activityQ.push(advancedGuidanceQuestion);
+          } else if (mop === "Push further") {
+            activityQ.push(structuredTrainingQuestion);
+          }
+        } else if (satisfaction === "Not sure") {
+          activityQ.push(suggestVarietyQuestion);
+        } else if (satisfaction === "No, I feel stuck / not improving") {
+          activityQ.push(focusAreaQuestion);
+          const focus = followUpAnswers.focusArea;
+          if (focus === "Not sure") {
+            activityQ.push(suggestInterestingQuestion);
+          }
+        }
+      }
+
+      setActivityQuestions(activityQ);
+    }
+  }, [answers.activityLevel, answers.followUps, currentStepData, subStep]);
+
+  // New: Handle physical conditions dynamic questions
+  useEffect(() => {
+    if (currentStepData?.key === 'hasConditions' && subStep === 1) {
+      const followUpAnswers = answers.followUps || {};
+      let conditionQs = [physicalConditionsQuestion];
+      const selectedConditions = followUpAnswers.conditions || {};
+      Object.keys(selectedConditions).forEach(condId => {
+        if (selectedConditions[condId] && physicalConditionFollowUps[condId]) {
+          conditionQs.push(...physicalConditionFollowUps[condId]);
+        }
+      });
+      setPhysicalConditionQuestions(conditionQs);
+    }
+  }, [answers.followUps, currentStepData, subStep]);
+
+  // New: Handle activity type dynamic questions
+  useEffect(() => {
+    if (currentStepData?.key === 'activityType' && subStep === 1) {
+      let qs = [{
+        subKey: "suggestActivities",
+        subTitle: "Would you like the app to suggest activities based on your goals and environment?",
+        subType: "radio",
+        options: ["Yes", "No"],
+        required: true,
+      }];
+      setActivityTypeQuestions(qs);
+    }
+  }, [currentStepData, subStep]);
+
+  // New: Handle primary fitness goal dynamic questions
+  useEffect(() => {
+    if (currentStepData?.key === 'primaryFitnessGoal' && subStep === 1) {
+      const selectedGoal = answers.primaryFitnessGoal;
+      const followUpAnswers = answers.followUps || {};
+      let qs = [];
+      if (selectedGoal === "Other") {
+        qs.push(otherGoalText);
+      }
+      if (goalFollowUps[selectedGoal]) {
+        qs.push(...goalFollowUps[selectedGoal]);
+      }
+      setGoalQuestions(qs);
+    }
+  }, [answers.primaryFitnessGoal, answers.followUps, currentStepData, subStep]);
+
   const conditionalQuestions = baseConditionalAnswer ? conditionalFollowUps[baseConditionalAnswer] : [];
 
   // --- Utility Functions ---
@@ -174,10 +291,17 @@ export default function Questionnaire() {
         
         let questionsToValidate = [];
         if (currentStepData.key === 'healthConditions') {
-          // Use the dynamically generated list which includes nested logic
           questionsToValidate = healthConditionQuestions;
         } else if (currentStepData.key === 'substanceUse') {
           questionsToValidate = substanceUseQuestions;
+        } else if (currentStepData.key === 'activityLevel') {
+          questionsToValidate = activityQuestions;
+        } else if (currentStepData.key === 'hasConditions') {
+          questionsToValidate = physicalConditionQuestions;
+        } else if (currentStepData.key === 'activityType') {
+          questionsToValidate = activityTypeQuestions;
+        } else if (currentStepData.key === 'primaryFitnessGoal') {
+          questionsToValidate = goalQuestions;
         } else {
           // Other single-select branching steps
           questionsToValidate = conditionalQuestions && Array.isArray(conditionalQuestions) ? conditionalQuestions : [];
@@ -256,6 +380,26 @@ export default function Questionnaire() {
                 setSubStep(0);
                 return;
             }
+        }
+
+        // New: Special logic for hasConditions
+        if (currentStepData.key === 'hasConditions') {
+          if (baseConditionalAnswer === 'No') {
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
+        }
+
+        // New: Special logic for activityType
+        if (currentStepData.key === 'activityType') {
+          const selectedTypes = answers.activityType || {};
+          const hasOther = selectedTypes.other || false;
+          if (!hasOther) {
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
         }
 
         // Skip follow-ups for Diet Type's Balanced/Mediterranean and No specific diet
@@ -640,6 +784,14 @@ export default function Questionnaire() {
       questionsToRender = healthConditionQuestions;
     } else if (currentStepData.key === 'substanceUse') {
       questionsToRender = substanceUseQuestions;
+    } else if (currentStepData.key === 'activityLevel') {
+      questionsToRender = activityQuestions;
+    } else if (currentStepData.key === 'hasConditions') {
+      questionsToRender = physicalConditionQuestions;
+    } else if (currentStepData.key === 'activityType') {
+      questionsToRender = activityTypeQuestions;
+    } else if (currentStepData.key === 'primaryFitnessGoal') {
+      questionsToRender = goalQuestions;
     } else {
       questionsToRender = conditionalQuestions || [];
     }
