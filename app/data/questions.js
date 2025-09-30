@@ -329,7 +329,6 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
 
 // --- CONDITIONAL FOLLOW-UP DATA ---
 const conditionalFollowUps = {
-  // ... (No change to these sections)
   // --- Diet Type Follow-ups ---
   "Mostly vegetables and no meat (Vegetarian)": [
     {
@@ -725,6 +724,15 @@ const medicationDetailsFollowUp = {
     routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
 };
 
+// Conditional follow-up for "Other Condition" selection (NEW ADDITION)
+const otherConditionFollowUp = {
+    subKey: "otherConditionDetails",
+    subTitle: "Please specify the other health condition(s):",
+    subType: "text",
+    placeholder: "e.g., Asthma, Multiple Sclerosis, Chronic Migraines",
+    required: true,
+};
+
 
 export { 
   baseQuestions, 
@@ -734,6 +742,7 @@ export {
   conditionalFollowUps, 
   cancerYesFollowUp,
   medicationQuestion,      
-  medicationDetailsFollowUp
+  medicationDetailsFollowUp,
+  otherConditionFollowUp 
 };
 export default getQuestions;

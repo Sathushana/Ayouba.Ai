@@ -6,7 +6,8 @@ import getQuestions, {
     healthConditionFollowUps, 
     cancerYesFollowUp, 
     medicationQuestion,     
-    medicationDetailsFollowUp 
+    medicationDetailsFollowUp,
+    otherConditionFollowUp // Import new follow-up
 } from "../data/questions";
 
 // Branching step IDs (will be dynamically determined based on selected goal)
@@ -81,7 +82,7 @@ export default function Questionnaire() {
   };
 
 
-  // Handle health conditions multiselect conditional logic (UPDATED FOR MEDICATION AND CANCER)
+  // Handle health conditions multiselect conditional logic (UPDATED FOR MEDICATION, CANCER, and OTHER)
   useEffect(() => {
     if (currentStepData?.key === 'healthConditions' && subStep === 1) {
       const selectedConditions = answers.healthConditions || {};
@@ -96,16 +97,23 @@ export default function Questionnaire() {
           
           // 1b. Add MEDICATION DETAILS if user answered "Yes" to takingMedications
           if (followUpAnswers.takingMedications === 'Yes') {
-              // Ensure the follow-up key is unique, even though it's technically a nested step
               conditionQuestions.push(medicationDetailsFollowUp); 
           }
       }
 
       // 2. Add SPECIFIC CONDITION follow-ups
       Object.keys(selectedConditions).forEach(conditionId => {
-        if (selectedConditions[conditionId] && healthConditionFollowUps[conditionId] && conditionId !== 'none') {
-          // Add the base condition follow-ups
-          conditionQuestions.push(...healthConditionFollowUps[conditionId]);
+        if (selectedConditions[conditionId] && conditionId !== 'none') {
+          
+          // SPECIAL CASE: Other Condition (triggers text box)
+          if (conditionId === 'otherCondition') {
+              conditionQuestions.push(otherConditionFollowUp);
+          }
+          
+          // Add standard condition follow-ups (if they exist)
+          if (healthConditionFollowUps[conditionId]) {
+             conditionQuestions.push(...healthConditionFollowUps[conditionId]);
+          }
           
           // SPECIAL CASE: Nested logic for Cancer nutrition advice details
           if (conditionId === 'cancer') {
@@ -118,7 +126,7 @@ export default function Questionnaire() {
       
       setHealthConditionQuestions(conditionQuestions);
     }
-  }, [answers.healthConditions, answers.followUps, currentStepData, subStep]); // Added answers.followUps as a dependency for the nested 'cancer' and 'medication' logic
+  }, [answers.healthConditions, answers.followUps, currentStepData, subStep]); 
 
   // Handle substance use multiselect conditional logic
   useEffect(() => {
@@ -237,7 +245,7 @@ export default function Questionnaire() {
             }
         }
         
-        // Special logic for substanceUse (NEW ADDITION)
+        // Special logic for substanceUse 
         if (currentStepData.key === 'substanceUse') {
             const selectedSubstances = answers.substanceUse || {};
             const anySubstanceSelected = isAnySubstanceSelected(selectedSubstances);
@@ -382,7 +390,7 @@ export default function Questionnaire() {
               
           } else {
               // If any other option is selected/deselected, ensure 'none' is deselected
-              newSelections = { ...newSelections, [key]: !newSelections[key], none: false };
+              newSelections = { ...newSelections, [key]: !newSelections[key] };
               
               // Re-check: if no other options are selected, automatically check 'none'
               const selectedKeys = Object.keys(newSelections).filter(k => k !== 'none' && newSelections[k]);
