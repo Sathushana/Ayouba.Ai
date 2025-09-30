@@ -45,19 +45,21 @@ const baseQuestions = [
     ],
     required: true,
   },
-  // Step 5: Primary Health Goal
+  // Step 5: Primary Health Goal (UPDATED OPTIONS)
   {
     id: 5,
     type: "radio",
-    title: "Primary Health Goal",
+    title: "What is your main health goal right now?",
     description: "Select your primary health goal (choose one):",
     key: "primaryGoal",
     options: [
-      "Physical Activity",
-      "Nutrition",
-      "Tobacco",
-      "Alcohol",
-      "Sleep"
+      "🥗 Eat better & get enough nutrients (Nutrition)",
+      "🏃 Be more active & exercise (Physical Activity)",
+      "🚭 Reduce or Quit: Smoking, Beedi, Chewing Tobacco, Betel Leaves & Other Substances",
+      "🍺 Reduce or quit alcohol use",
+      "🧘 Improve my mood & reduce stress (Mental health)",
+      "😴 Sleep better & feel more rested",
+      "🛡️ Stay healthy & prevent future diseases (Prevent diseases)"
     ],
     required: true,
   },
@@ -177,7 +179,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Q7: Nutrition Focus (UPDATED TO MULTISELECT)
+    // Q7: Nutrition Focus
     {
       id: 12,
       type: "multiselect",
@@ -193,7 +195,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Q8: Main Nutrition Goal (UPDATED TO MULTISELECT)
+    // Q8: Main Nutrition Goal
     {
       id: 13,
       type: "multiselect",
@@ -247,7 +249,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Sleep Questions
+  // Sleep Questions (No change)
   "Sleep": [
     {
       id: 6,
@@ -265,30 +267,55 @@ const goalSpecificQuestions = {
       required: true,
     },
   ],
+  
+  // Mental Health Questions (New Goal)
+  "Mental health": [
+    {
+      id: 6,
+      type: "radio",
+      title: "Stress and Mood",
+      description: "How often do you feel stressed or anxious in a typical week?",
+      key: "stressLevel",
+      options: [
+        "Rarely",
+        "Sometimes (1-2 days)",
+        "Frequently (3-5 days)",
+        "Almost every day",
+      ],
+      required: true,
+    },
+  ],
+  
+  // Prevent diseases Questions (New Goal)
+  "Prevent diseases": [
+    {
+      id: 6,
+      type: "radio",
+      title: "Prevention Focus",
+      description: "What diseases are you most concerned about preventing?",
+      key: "preventionFocus",
+      options: [
+        "Diabetes",
+        "High Blood Pressure / Heart Disease",
+        "Cancer",
+        "General health and longevity",
+      ],
+      required: true,
+    },
+  ],
 };
 
 // Function to get all questions based on primary goal
 const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
+  // Use a regex to extract the key from the option string
+  const goalKey = primaryGoal ? primaryGoal.match(/\(([^)]+)\)/)?.[1] || primaryGoal.trim() : null;
+
   if (!primaryGoal) {
     return baseQuestions;
   }
   
-  const goalQuestions = goalSpecificQuestions[primaryGoal] || [];
+  const goalQuestions = goalSpecificQuestions[goalKey] || [];
   
-  // For Nutrition goal, no need for conditional filtering since medication questions are removed
-  if (primaryGoal === "Nutrition") {
-    const allQuestions = [...baseQuestions];
-    goalQuestions.forEach((question, index) => {
-      allQuestions.push({
-        ...question,
-        id: baseQuestions.length + index + 1
-      });
-    });
-    
-    return allQuestions;
-  }
-  
-  // For other goals
   const allQuestions = [...baseQuestions];
   goalQuestions.forEach((question, index) => {
     allQuestions.push({
@@ -656,16 +683,28 @@ const healthConditionFollowUps = {
       required: true,
     },
   ],
+  // CANCER FOLLOW-UP (UPDATED)
   "cancer": [
     {
-      subKey: "cancerAdvice",
+      subKey: "cancerAdviceFollow",
       subTitle: "Do you follow your doctor's nutrition advice?",
-      subType: "text",
-      placeholder: "Please describe your doctor's nutrition advice",
-      required: false,
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
     },
+    // The conditional text box is appended in Questionnaire.js if the answer is "Yes"
   ],
 };
 
-export { baseQuestions, goalSpecificQuestions, getQuestions, healthConditionFollowUps, conditionalFollowUps };
+// Conditional follow-up for the new cancer radio question's "Yes" answer
+const cancerYesFollowUp = {
+    subKey: "cancerAdviceDetails",
+    subTitle: "Please describe your doctor's nutrition advice:",
+    subType: "text",
+    placeholder: "e.g., Low sugar, high protein, avoiding processed meats.",
+    required: true,
+};
+
+
+export { baseQuestions, goalSpecificQuestions, getQuestions, healthConditionFollowUps, conditionalFollowUps, cancerYesFollowUp };
 export default getQuestions;

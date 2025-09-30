@@ -1,7 +1,8 @@
 // components/Questionnaire.js
 "use client";
 import React, { useState, useEffect } from "react";
-import getQuestions, { conditionalFollowUps, healthConditionFollowUps } from "../data/questions";
+// Import the new cancerYesFollowUp constant
+import getQuestions, { conditionalFollowUps, healthConditionFollowUps, cancerYesFollowUp } from "../data/questions";
 
 // Branching step IDs (will be dynamically determined based on selected goal)
 const BRANCHING_KEYS = {
@@ -24,10 +25,20 @@ export default function Questionnaire() {
   const [healthConditionQuestions, setHealthConditionQuestions] = useState([]);
   const [substanceUseQuestions, setSubstanceUseQuestions] = useState([]);
 
+  // Utility function to extract the clean goal key from the option string
+  const extractGoalKey = (optionString) => {
+    if (!optionString) return null;
+    const match = optionString.match(/\(([^)]+)\)/);
+    return match ? match[1].trim() : optionString.trim();
+  };
+
   // Initialize questions based on primary goal
   useEffect(() => {
     const primaryGoal = answers.primaryGoal;
-    const allQuestions = getQuestions(primaryGoal, answers);
+    const goalKey = extractGoalKey(primaryGoal);
+    
+    // Pass the extracted key to getQuestions
+    const allQuestions = getQuestions(goalKey, answers); 
     setQuestions(allQuestions);
     
     // Identify branching steps based on the current question set
@@ -52,21 +63,31 @@ export default function Questionnaire() {
     baseConditionalAnswer = answers[baseConditionalKey];
   }
 
-  // Handle health conditions multiselect conditional logic
+  // Handle health conditions multiselect conditional logic (UPDATED FOR CANCER)
   useEffect(() => {
     if (currentStepData?.key === 'healthConditions' && subStep === 1) {
       const selectedConditions = answers.healthConditions || {};
+      const followUpAnswers = answers.followUps || {};
       const conditionQuestions = [];
       
       Object.keys(selectedConditions).forEach(conditionId => {
         if (selectedConditions[conditionId] && healthConditionFollowUps[conditionId] && conditionId !== 'none') {
+          // Add the base condition follow-ups (e.g., diabetesCarbs)
           conditionQuestions.push(...healthConditionFollowUps[conditionId]);
+          
+          // SPECIAL CASE: Nested logic for Cancer
+          if (conditionId === 'cancer') {
+              // Check the answer to the first cancer follow-up question
+              if (followUpAnswers.cancerAdviceFollow === 'Yes') {
+                  conditionQuestions.push(cancerYesFollowUp);
+              }
+          }
         }
       });
       
       setHealthConditionQuestions(conditionQuestions);
     }
-  }, [answers.healthConditions, currentStepData, subStep]);
+  }, [answers.healthConditions, answers.followUps, currentStepData, subStep]); 
 
   // Handle substance use multiselect conditional logic
   useEffect(() => {
@@ -86,7 +107,7 @@ export default function Questionnaire() {
 
   const conditionalQuestions = baseConditionalAnswer ? conditionalFollowUps[baseConditionalAnswer] : [];
 
-  // Format health conditions for display (No longer used in description, but kept for console logging/debugging)
+  // Format health conditions for display (Kept for console logging/debugging)
   const formatHealthConditions = (healthConditions) => {
     if (!healthConditions) return "None";
     
@@ -107,7 +128,7 @@ export default function Questionnaire() {
     return selectedConditions.length > 0 ? selectedConditions.join(', ') : "None";
   };
 
-  // Format substance use for display (No longer used in description, but kept for console logging/debugging)
+  // Format substance use for display (Kept for console logging/debugging)
   const formatSubstanceUse = (substanceUse) => {
     if (!substanceUse) return "None";
     
@@ -144,13 +165,8 @@ export default function Questionnaire() {
     if (isBranchingStep) {
       // subStep 0: Validate the base question
       if (subStep === 0) {
-        if (currentStepData.key === 'healthConditions' || currentStepData.key === 'substanceUse') {
-          // Health conditions and substance use are optional, so always valid unless required changes
-          // The data in questions.js has 'required: false' for these, so they are valid.
-          // For other branching radio types, baseConditionalAnswer (which is currentAnswer) must exist.
-          return currentStepData.required ? !!baseConditionalAnswer : true;
-        }
-        return !!baseConditionalAnswer;
+        // Health conditions and substance use are required: false, so they are valid by default
+        return currentStepData.required ? !!baseConditionalAnswer : true;
       }
       // subStep 1: Validate all conditional questions
       if (subStep === 1) {
@@ -158,11 +174,12 @@ export default function Questionnaire() {
         
         let questionsToValidate = [];
         if (currentStepData.key === 'healthConditions') {
+          // Use the dynamically generated list which includes nested 'cancer' logic
           questionsToValidate = healthConditionQuestions;
         } else if (currentStepData.key === 'substanceUse') {
           questionsToValidate = substanceUseQuestions;
         } else {
-          // Check if conditionalQuestions is an array before using it
+          // Other single-select branching steps
           questionsToValidate = conditionalQuestions && Array.isArray(conditionalQuestions) ? conditionalQuestions : [];
         }
 
@@ -193,9 +210,7 @@ export default function Questionnaire() {
         return !!height && !!weight && height > 0 && weight > 0;
       }
       if (currentStepData.type === 'multiselect') {
-        // Now covers 'healthConditions', 'substanceUse', 'nutritionFocus', 'mainNutritionGoal'
-        // 'healthConditions' and 'substanceUse' are required: false in questions.js, so they are technically valid if empty.
-        // 'nutritionFocus' and 'mainNutritionGoal' are required: true, so they must have at least one selection.
+        // Must have at least one selection if required: true
         if (!currentStepData.required) return true;
         return Object.values(currentAnswer || {}).some(v => v === true);
       }
@@ -207,7 +222,7 @@ export default function Questionnaire() {
     // A. If on a Branching Step's Base Question (subStep 0)
     if (isBranchingStep && subStep === 0) {
       if (isStepValid()) {
-        // Skip follow-ups for Balanced/Mediterranean and No specific diet
+        // Skip follow-ups for Diet Type's Balanced/Mediterranean and No specific diet
         if (currentStepData.key === 'dietType' && 
             (baseConditionalAnswer === "A mix of vegetables, fruits, grains, and some meat or fish (Balanced / Mediterranean)" ||
              baseConditionalAnswer === "I eat whatever I feel like, no specific pattern (No specific diet)")) {
@@ -262,17 +277,31 @@ export default function Questionnaire() {
     const currentKey = currentStepData.key;
 
     // Conditional Follow-Ups (Stored under the 'followUps' key)
-    if (subKey && isBranchingStep) {
+    if (subKey) { // subKey is present when answering a conditional follow-up question
       setAnswers(prevAnswers => {
         const followUpAnswers = prevAnswers.followUps || {};
-        const subSectionAnswer = followUpAnswers[subKey] || {};
         let newSubAnswer;
+        
         if (type === 'multiselect') {
+          const subSectionAnswer = followUpAnswers[subKey] || {};
           newSubAnswer = { ...subSectionAnswer, [key]: !subSectionAnswer[key] };
         } else {
           // This handles radio and text inputs for follow-ups
           newSubAnswer = value;
         }
+        
+        // Special Case: If the base 'cancerAdviceFollow' is changed to 'No', clear the nested detail box answer
+        if (subKey === 'cancerAdviceFollow' && value === 'No' && prevAnswers.followUps?.cancerAdviceDetails) {
+             const { cancerAdviceDetails, ...restFollowUps } = prevAnswers.followUps;
+             return {
+                 ...prevAnswers,
+                 followUps: {
+                     ...restFollowUps,
+                     [subKey]: value // Set the new 'No' answer
+                 }
+             };
+        }
+        
         return {
           ...prevAnswers,
           followUps: {
@@ -348,7 +377,6 @@ export default function Questionnaire() {
 
   // Renders Multiselect Options
   const renderMultiselectOptions = (options, currentAnswer, subKey = null) => {
-    // Note: The key for handleInputChange is `option.id` for multiselect
     return (
       <div className="space-y-4 w-full">
         {options.map((option) => {
@@ -437,6 +465,7 @@ export default function Questionnaire() {
     // Determine the correct set of questions to render
     let questionsToRender = [];
     if (currentStepData.key === 'healthConditions') {
+      // Use the dynamic state which includes the nested cancer advice question
       questionsToRender = healthConditionQuestions;
     } else if (currentStepData.key === 'substanceUse') {
       questionsToRender = substanceUseQuestions;
@@ -449,14 +478,7 @@ export default function Questionnaire() {
         {questionsToRender.map((q) => {
           const currentSubAnswer = followUpAnswers[q.subKey];
           let answerValue = currentSubAnswer;
-          // For multiselect/radio/text, answerValue is determined differently
-          if (q.subType === 'multiselect') {
-            answerValue = currentSubAnswer; // It's an object of {id: bool}
-          }
           
-          // Note: handleInputChange needs to be called correctly for text inputs
-          // Since text inputs for follow-ups only take a single value, 
-          // we pass null for subKey/type in handleInputChange
           return (
             <div key={q.subKey} className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800">
@@ -468,9 +490,10 @@ export default function Questionnaire() {
               {q.subType === 'text' && (
                 <input
                   type="text"
-                  // For text type follow-ups, the answer is the direct value under subKey, not an object/array
+                  // For text type follow-ups, the answer is the direct value under subKey
+                  // The key argument in handleInputChange is the subKey itself for text follow-ups
                   value={answerValue || ''}
-                  onChange={(e) => handleInputChange(e.target.value, e.target.value, q.subKey, 'text')}
+                  onChange={(e) => handleInputChange(q.subKey, e.target.value, q.subKey, 'text')}
                   placeholder={q.placeholder}
                   className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
                 />
@@ -560,12 +583,6 @@ export default function Questionnaire() {
     // Add extra virtual steps for branching follow-ups
     questions.forEach(question => {
       if (branchingSteps.includes(question.id)) {
-        // Only count the branching step's base question if an answer was provided 
-        // that triggers follow-ups. If the answer skips follow-ups, it's just 1 step.
-        // For simplicity and a smoother progress bar, we count all branching steps as 2 
-        // virtual steps unless the 'dietType' skip is triggered, but since the complexity 
-        // is high, let's stick to the base logic for now, or simplify it to only main steps.
-        // Sticking to original logic: each branching step has up to 2 steps.
         totalVirtualSteps += 1; 
       }
     });
@@ -575,7 +592,6 @@ export default function Questionnaire() {
       currentVirtualStep += 1;
     }
     
-    // Clamp to 100% just in case of rounding errors on the final step
     return Math.min(100, (currentVirtualStep / totalVirtualSteps) * 100);
   };
 
@@ -601,8 +617,6 @@ export default function Questionnaire() {
             <button
               onClick={handleNext}
               className="text-gray-500 hover:text-[#e72638] font-medium"
-              // The skip button should be disabled only if the current step is required AND invalid
-              // and if we are NOT on the final sub-step of a branching question, where 'Next' is the only option.
               disabled={currentStepData?.required && !isStepValid() && isBranchingStep && subStep === 0}
             >
               Skip
@@ -619,7 +633,7 @@ export default function Questionnaire() {
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
             {currentStepData?.title}
           </h2>
-          {/* Dynamic Description/Subtitle - REMOVED ANSWER DISPLAY */}
+          {/* Dynamic Description/Subtitle */}
           <p className="text-base text-gray-600 mb-6">
             {currentStepData?.description}
           </p>
