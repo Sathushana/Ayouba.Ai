@@ -1528,12 +1528,11 @@ const conditionalFollowUps = {
   ],
   // --- END ALCOHOL FOLLOW-UPS ---
 
-  // --- TOBACCO FOLLOW-UPS (FROM PREVIOUS MERGE, CONFIRMED WORKING) ---
-  // ... (All tobacco keys as before)
+
 };
 
 
-// Health condition specific follow-ups (UNCHANGED, for Nutrition Q2)
+// Health condition specific follow-ups 
 const healthConditionFollowUps = {
   // Specific condition follow-ups
   diabetes: [
@@ -1586,7 +1585,7 @@ const healthConditionFollowUps = {
   ],
 };
 
-// New follow-up for ALL health condition users (UNCHANGED)
+
 const medicationQuestion = {
   subKey: "takingMedications",
   subTitle: "Are you currently taking medications?",
@@ -1595,7 +1594,7 @@ const medicationQuestion = {
   required: true,
 };
 
-// Conditional follow-up for the new cancer radio question's "Yes" answer (UNCHANGED)
+// Conditional follow-up for the new cancer radio question's "Yes" answer 
 const cancerYesFollowUp = {
   subKey: "cancerAdviceDetails",
   subTitle: "Please describe your doctor's nutrition advice:",
@@ -1604,7 +1603,7 @@ const cancerYesFollowUp = {
   required: true,
 };
 
-// Conditional follow-up for the generic medication "Yes" answer (UNCHANGED)
+// Conditional follow-up for the generic medication "Yes" answer
 const medicationDetailsFollowUp = {
   subKey: "medicineDetails",
   subTitle: "Please provide details for each medication:",
@@ -1614,7 +1613,7 @@ const medicationDetailsFollowUp = {
   routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
 };
 
-// Conditional follow-up for "Other Condition" selection (UNCHANGED)
+// Conditional follow-up for "Other Condition" selection 
 const otherConditionFollowUp = {
   subKey: "otherConditionDetails",
   subTitle: "Please specify the other health condition(s):",
