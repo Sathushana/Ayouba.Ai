@@ -71,13 +71,13 @@ const baseQuestions = [
 
 // Goal-specific questions
 const goalSpecificQuestions = {
-  // Physical Activity Questions - (Refactored in previous step)
+  // Physical Activity Questions
   "Physical Activity": [
     // Q1: Baseline Activity Level
     {
       id: 6,
       type: "radio",
-      title: "Q1 – Baseline Activity",
+      title: "Baseline Activity",
       description: "In a normal week, how active are you?",
       key: "activityLevel",
       options: [
@@ -92,7 +92,7 @@ const goalSpecificQuestions = {
     {
       id: 7,
       type: "radio",
-      title: "Q2 – Health & Safety Check",
+      title: "Health & Safety Check",
       description:
         "Do you have any medical conditions or injuries that affect your ability to exercise?",
       key: "hasMedicalConditions",
@@ -197,7 +197,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Nutrition Questions (Q1: Diet Type)
+  // Nutrition Questions
   Nutrition: [
     // Q1: Diet Type
     {
@@ -321,7 +321,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Tobacco Questions (UNCHANGED)
+  // Tobacco Questions
   Tobacco: [
     // Q1: Current Substance Use
     {
@@ -534,7 +534,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Alcohol Questions (UNCHANGED)
+  // Alcohol Questions
   Alcohol: [
     // Step 1: Frequency & Quantity
     {
@@ -624,7 +624,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Sleep Questions (UNCHANGED)
+  // Sleep Questions
   Sleep: [
     {
       id: 6,
@@ -637,7 +637,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Mental Health Questions (UNCHANGED)
+  // Mental Health Questions
   "Mental health": [
     {
       id: 6,
@@ -656,7 +656,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Prevent diseases Questions (UNCHANGED)
+  // Prevent diseases Questions
   "Prevent diseases": [
     {
       id: 6,
@@ -720,9 +720,9 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
   return allQuestions;
 };
 
-// --- CONDITIONAL FOLLOW-UP DATA ---
+// --- CONDITIONAL FOLLOW-UP DATA (MERGED) ---
 const conditionalFollowUps = {
-  // --- NUTRITION FOLLOW-UPS (FIXED) ---
+  // --- NUTRITION FOLLOW-UPS (From File 2) ---
   "Mostly vegetables and no meat (Vegetarian)": [
     {
       subKey: "vegetarianProtein",
@@ -753,10 +753,8 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  // --- END OF NUTRITION FOLLOW-UPS (FIXED) ---
-  
-  
-  // --- Physical Activity Follow-ups (using en dash where applicable) ---
+
+  // --- Physical Activity Q1: Baseline Activity Follow-ups (From File 1) ---
   "Mostly sitting (little or no exercise)": [
     {
       subKey: "barriers",
@@ -780,7 +778,7 @@ const conditionalFollowUps = {
       subKey: "frequencyDuration",
       subTitle: "How many days per week do you exercise?",
       subType: "radio",
-      options: ["0–1", "2–3", "4–5", "6–7"], 
+      options: ["0–1", "2–3", "4–5", "6–7"],
       required: true,
     },
     {
@@ -788,7 +786,7 @@ const conditionalFollowUps = {
       subTitle:
         "On days you exercise, how long do you usually spend being active?",
       subType: "radio",
-      options: ["<15 min", "15–30 min", "30–60 min", "60+ min"], 
+      options: ["<15 min", "15–30 min", "30–60 min", "60+ min"],
       required: true,
     },
     {
@@ -881,75 +879,174 @@ const conditionalFollowUps = {
         "Do you feel your current routine gives you the results you want?",
       subType: "radio",
       options: [
-          "Yes, I’m happy",
-          "No, I feel stuck / not improving",
-          "Not sure",
+        "Yes, I’m happy",
+        "No, I feel stuck / not improving",
+        "Not sure",
       ],
       required: true,
     },
   ],
 
-// Q2 Health & Safety Check
-Yes: [ 
-    {
-      subKey: "medicalConditions",
-      subTitle: "Please select any conditions or injuries you have that may affect your exercise.", // Q2a Multi-select
-      subType: "multiselect",
-      options: [
-        { id: "heartDisease", label: "Heart disease / High blood pressure" },
-        { id: "diabetes", label: "Diabetes / Blood sugar issues" },
-        { id: "jointIssues", label: "Joint or mobility issues (knees, hips, back)" },
-        { id: "respiratory", label: "Respiratory issues (asthma, COPD)" },
-        { id: "surgery", label: "Recent surgery or injury" },
-        { id: "tobacco", label: "Tobacco use" },
-        { id: "alcohol", label: "Alcohol use" },
-        { id: "drugs", label: "Recreational drug use" },
-        { id: "other", label: "Other / Not listed" },
-      ],
-      required: true,
-    },
-  ],
+  // --- Physical Activity Q1b Barrier-specific Follow-ups (From File 1 & 2) ---
+  lackTime: [
+    {
+      subKey: "shortWorkouts",
+      subTitle:
+        "Would short 5–10 min workouts at home be easier for you to try?",
+      subType: "radio",
+      options: ["Yes", "No", "Maybe"],
+      required: true,
+    },
+  ],
+  lackMotivation: [
+    {
+      subKey: "motivationSupport",
+      subTitle:
+        "Would you like us to set small daily challenges or reminders to help you stay consistent?",
+      subType: "radio",
+      options: ["Yes", "No", "Maybe"],
+      required: true,
+    },
+  ],
+  physicalLimitations: [
+    {
+      subKey: "lowImpactPlan",
+      subTitle:
+        "Would you like a safe low-impact plan (walking, stretching, mobility)?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  dontKnow: [
+    {
+      subKey: "beginnerRoutines",
+      subTitle:
+        "Would you like us to suggest simple beginner routines you can follow?",
+      subType: "radio",
+      options: ["Yes", "No", "Maybe"],
+      required: true,
+    },
+  ],
 
-// Q2b Condition-Specific Follow-Ups (THIRD LAYER)
-  heartDisease: [
-    { subKey: "heartControl", subTitle: "How would you describe your current condition?", subType: "radio", options: ["Well controlled with medication", "Sometimes fluctuates, but manageable", "Not well controlled / frequent issues"], required: true, },
-    { subKey: "heartClearance", subTitle: "Do you have medical clearance to exercise?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
-  ],
-  diabetes: [ 
-    { subKey: "sugarManagement", subTitle: "How is your blood sugar usually managed?", subType: "radio", options: ["Controlled with medication or insulin", "Sometimes fluctuates", "Frequently unstable"], required: true, },
-    { subKey: "hypoglycemia", subTitle: "Do you experience frequent low sugar episodes (hypoglycemia)?", subType: "radio", options: ["Yes", "No", "Sometimes"], required: true, },
-  ],
-  jointIssues: [ 
-    { subKey: "affectedAreas", subTitle: "Which areas are affected?", subType: "multiselect", options: [{ id: "knees", label: "Knees" }, { id: "hips", label: "Hips" }, { id: "back", label: "Back" }, { id: "multiple", label: "Multiple areas" }], required: true, },
-    { subKey: "limitLevel", subTitle: "How much does this limit your movement?", subType: "radio", options: ["Mild (can move with little discomfort)", "Moderate (some exercises are difficult)", "Severe (movement is very limited / painful)"], required: true, },
-  ],
-  respiratory: [ 
-    { subKey: "respiratorySymptoms", subTitle: "How often do you experience symptoms while moving/exercising?", subType: "radio", options: ["Rarely", "Sometimes", "Often"], required: true, },
-    { subKey: "inhalerUse", subTitle: "Do you use an inhaler or medication before activity?", subType: "radio", options: ["Yes", "No", "Sometimes"], required: true, },
-  ],
-  surgery: [ 
-    { subKey: "surgeryTiming", subTitle: "When did this occur?", subType: "radio", options: ["Less than 2 weeks ago", "Less than 1 month ago", "Less than 3 months ago", "3–6 months ago", "More than 6 months ago"], required: true, },
-    { subKey: "recoveryPlan", subTitle: "Are you currently under a doctor’s or physiotherapist’s recovery plan?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
-  ],
-  tobacco: [ 
-    { subKey: "tobaccoFrequencyPA", subTitle: "How often do you smoke?", subType: "radio", options: ["Daily", "A few times a week", "Occasionally", "Rarely"], required: true, },
-    { subKey: "tobaccoStamina", subTitle: "Would you like us to suggest tips for improving stamina if you continue smoking?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true, },
-  ],
-  alcohol: [ 
-    { subKey: "alcoholFrequencyPA", subTitle: "How often do you drink alcohol?", subType: "radio", options: ["Daily", "Weekly", "Occasionally", "Rarely"], required: true, },
-    { subKey: "alcoholQuantityPA", subTitle: "On days you drink, how many drinks do you usually have?", subType: "radio", options: ["1–2", "3–4", "5+"], required: true, },
-  ],
-  drugs: [ 
-    { subKey: "drugFrequency", subTitle: "How often do you use recreational drugs?", subType: "radio", options: ["Daily", "Weekly", "Occasionally", "Rarely"], required: true, },
-    { subKey: "saferExercise", subTitle: "Would you like us to suggest safer exercise options that consider your lifestyle?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true, },
-  ],
-  other: [ 
-    { subKey: "otherConditionDetailsPA", subTitle: "Please briefly describe your condition.", subType: "text", placeholder: "e.g., Arthritis, Chronic Pain", required: true, },
-    { subKey: "safeLowIntensity", subTitle: "Would you like us to recommend only safe, low-intensity activities to start with?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
-  ],
+  // --- Physical Activity Q1c Satisfaction Follow-ups (From File 1) ---
+  "Yes, I’m happy": [
+    {
+      subKey: "maintenanceDirection",
+      subTitle: "Do you want to maintain or push further with new challenges?",
+      subType: "radio",
+      options: ["Maintain", "Push further", "Not sure"],
+      required: true,
+    },
+  ],
+  "No, I feel stuck / not improving": [
+    {
+      subKey: "improvementFocus",
+      subTitle:
+        "Would you like to focus more on strength, stamina, or flexibility?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  "Not sure": [ 
+    {
+      subKey: "varietySuggestions",
+      subTitle:
+        "Would you like us to suggest a variety to keep it interesting?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+ 
+  Maintain: [ 
+    {
+      subKey: "advancedGuidance",
+      subTitle:
+        "Would you like advanced guidance on recovery, stretching, or nutrition?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Push further": [ 
+    {
+      subKey: "structuredTraining",
+      subTitle:
+        "Would you like structured training (advanced strength, endurance, or sports-specific programs)?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
 
 
-  // --- Exercise Location Follow-ups ---
+  Yes: [
+    {
+      subKey: "medicalConditions",
+      subTitle: "Please select any conditions or injuries you have that may affect your exercise.", // Q2a Multi-select
+      subType: "multiselect",
+      options: [
+        { id: "heartDisease", label: "Heart disease / High blood pressure" },
+        { id: "diabetes", label: "Diabetes / Blood sugar issues" },
+        { id: "jointIssues", label: "Joint or mobility issues (knees, hips, back)" },
+        { id: "respiratory", label: "Respiratory issues (asthma, COPD)" },
+        { id: "surgery", label: "Recent surgery or injury" },
+        { id: "tobacco", label: "Tobacco use" },
+        { id: "alcohol", label: "Alcohol use" },
+        { id: "drugs", label: "Recreational drug use" },
+        { id: "other", label: "Other / Not listed" },
+      ],
+      required: true,
+    },
+    // The Alcohol healthImpact follow-up that shares the 'Yes' key must be included,
+    // but the conflict means only one definition of 'Yes' can exist.
+    // Assuming the PA 'Yes' is the primary flow, we must add the Alcohol logic under a different key
+    // or rely on downstream logic to handle the conflict, but here we prioritize PA Q2a and rely on
+    // subsequent keys for Alcohol/Health.
+  ],
+
+  // --- Q2b Condition-Specific Follow-Ups (THIRD LAYER, triggered by medicalConditions multiselect keys) (From File 1 & 2) ---
+  heartDisease: [
+    { subKey: "heartControl", subTitle: "How would you describe your current condition?", subType: "radio", options: ["Well controlled with medication", "Sometimes fluctuates, but manageable", "Not well controlled / frequent issues"], required: true, },
+    { subKey: "heartClearance", subTitle: "Do you have medical clearance to exercise?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
+  ],
+  diabetes: [
+    { subKey: "sugarManagement", subTitle: "How is your blood sugar usually managed?", subType: "radio", options: ["Controlled with medication or insulin", "Sometimes fluctuates", "Frequently unstable"], required: true, },
+    { subKey: "hypoglycemia", subTitle: "Do you experience frequent low sugar episodes (hypoglycemia)?", subType: "radio", options: ["Yes", "No", "Sometimes"], required: true, },
+  ],
+  jointIssues: [
+    { subKey: "affectedAreas", subTitle: "Which areas are affected?", subType: "multiselect", options: [{ id: "knees", label: "Knees" }, { id: "hips", label: "Hips" }, { id: "back", label: "Back" }, { id: "multiple", label: "Multiple areas" }], required: true, },
+    { subKey: "limitLevel", subTitle: "How much does this limit your movement?", subType: "radio", options: ["Mild (can move with little discomfort)", "Moderate (some exercises are difficult)", "Severe (movement is very limited / painful)"], required: true, },
+  ],
+  respiratory: [
+    { subKey: "respiratorySymptoms", subTitle: "How often do you experience symptoms while moving/exercising?", subType: "radio", options: ["Rarely", "Sometimes", "Often"], required: true, },
+    { subKey: "inhalerUse", subTitle: "Do you use an inhaler or medication before activity?", subType: "radio", options: ["Yes", "No", "Sometimes"], required: true, },
+  ],
+  surgery: [
+    { subKey: "surgeryTiming", subTitle: "When did this occur?", subType: "radio", options: ["Less than 2 weeks ago", "Less than 1 month ago", "Less than 3 months ago", "3–6 months ago", "More than 6 months ago"], required: true, },
+    { subKey: "recoveryPlan", subTitle: "Are you currently under a doctor’s or physiotherapist’s recovery plan?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
+  ],
+  tobacco: [
+    { subKey: "tobaccoFrequencyPA", subTitle: "How often do you smoke?", subType: "radio", options: ["Daily", "A few times a week", "Occasionally", "Rarely"], required: true, },
+    { subKey: "tobaccoStamina", subTitle: "Would you like us to suggest tips for improving stamina if you continue smoking?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true, },
+  ],
+  alcohol: [
+    { subKey: "alcoholFrequencyPA", subTitle: "How often do you drink alcohol?", subType: "radio", options: ["Daily", "Weekly", "Occasionally", "Rarely"], required: true, },
+    { subKey: "alcoholQuantityPA", subTitle: "On days you drink, how many drinks do you usually have?", subType: "radio", options: ["1–2", "3–4", "5+"], required: true, },
+  ],
+  drugs: [
+    { subKey: "drugFrequency", subTitle: "How often do you use recreational drugs?", subType: "radio", options: ["Daily", "Weekly", "Occasionally", "Rarely"], required: true, },
+    { subKey: "saferExercise", subTitle: "Would you like us to suggest safer exercise options that consider your lifestyle?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true, },
+  ],
+  other: [
+    { subKey: "otherConditionDetailsPA", subTitle: "Please briefly describe your condition.", subType: "text", placeholder: "e.g., Arthritis, Chronic Pain", required: true, },
+    { subKey: "safeLowIntensity", subTitle: "Would you like us to recommend only safe, low-intensity activities to start with?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
+  ],
+
+  // --- Q3 Exercise Location Follow-ups (From File 1 & 2) ---
   "At home": [
     {
       subKey: "homeEquipment",
@@ -984,7 +1081,7 @@ Yes: [
     },
   ],
 
-  // --- Fitness Goals Follow-ups ---
+  // --- Q4 Fitness Goals Follow-ups (From File 1 & 2) ---
   "Lose weight / Fat reduction": [
     {
       subKey: "weightNutrition",
@@ -1054,30 +1151,9 @@ Yes: [
       required: true,
     },
   ],
-  
-  // Q1c: Third Layer for "Yes, I'm happy" -> "Maintain" / "Push further"
-  Maintain: [ // Triggered by maintenanceDirection answer
-    {
-      subKey: "advancedGuidance",
-      subTitle:
-        "Would you like advanced guidance on recovery, stretching, or nutrition?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Push further": [ // Triggered by maintenanceDirection answer
-    {
-      subKey: "structuredTraining",
-      subTitle:
-        "Would you like structured training (advanced strength, endurance, or sports-specific programs)?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
+  // --- END PA FOLLOW-UPS ---
 
-  // --- Tobacco Follow-ups (UNCHANGED) ---
+  // --- TOBACCO FOLLOW-UPS (From File 2, excluding repeated keys) ---
   "I used in the past, but quit": [
     {
       subKey: "quitDuration",
@@ -1092,8 +1168,6 @@ Yes: [
       required: true,
     },
   ],
-
-  // Tobacco Substances Follow-ups
   cigarettes: [
     {
       subKey: "cigarettesQuantity",
@@ -1133,10 +1207,87 @@ Yes: [
       required: false,
     },
   ],
+  Never: [
+    {
+      subKey: "secondHandExposure",
+      subTitle:
+        "Do you feel exposed to second-hand smoke at home, work, or in public?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "Rarely", "No"],
+      required: true,
+    },
+    {
+      subKey: "stayTobaccoFree",
+      subTitle:
+        "Would you like to learn strategies to continue staying tobacco-free?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Used in the past, but quit": [ // Duplicate key in File 2, but different follow-ups, prioritizing quitDuration above, adding others here.
+    {
+      subKey: "quittingHelp",
+      subTitle: "What helped you the most in quitting tobacco?",
+      subType: "radio",
+      options: ["Willpower", "Family support", "Medical advice", "Other"],
+      required: true,
+    },
+    {
+      subKey: "avoidRelapseTobacco",
+      subTitle: "Would you like tips to avoid relapse in the future?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Occasionally (less than daily)": [
+    {
+      subKey: "tobaccoSituations",
+      subTitle: "In what situations do you usually use tobacco?",
+      subType: "multiselect",
+      options: [
+        { id: "social", label: "Social gatherings" },
+        { id: "stress", label: "Stress" },
+        { id: "meals", label: "After meals" },
+        { id: "other", label: "Other" },
+      ],
+      required: false,
+    },
+    {
+      subKey: "cutDownTobacco",
+      subTitle: "Would you like suggestions to cut down or quit completely?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  "Daily / Regular use": [
+    {
+      subKey: "quittingChallenge",
+      subTitle:
+        "What do you feel is the biggest challenge in quitting tobacco?",
+      subType: "radio",
+      options: [
+        "Cravings",
+        "Stress relief",
+        "Social circle",
+        "Don't feel ready",
+      ],
+      required: true,
+    },
+    {
+      subKey: "quitPlanTobacco",
+      subTitle:
+        "Would you like us to guide you with a personalized quit plan or professional resources?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  // --- END TOBACCO FOLLOW-UPS ---
 
-  // --- Alcohol Follow-ups (UNCHANGED) ---
-
-  // Alcohol Frequency Follow-ups
+  // --- ALCOHOL FOLLOW-UPS (From File 2, excluding repeated keys) ---
   "Sometimes (1-2 times a week)": [
     {
       subKey: "alcoholQuantity",
@@ -1164,8 +1315,6 @@ Yes: [
       required: true,
     },
   ],
-
-  // Drinking Context Follow-ups
   homeAlone: [
     {
       subKey: "homeAloneReason",
@@ -1229,8 +1378,6 @@ Yes: [
       required: true,
     },
   ],
-
-  // Drinking Effects Follow-ups
   sleepEnergy: [
     {
       subKey: "sleepEnergyFrequency",
@@ -1303,9 +1450,9 @@ Yes: [
       required: true,
     },
   ],
-
-  // Health Impact Doctor Advice Follow-ups (Reused key 'Yes' from hasMedicalConditions)
-  Yes: [
+  // NOTE: The 'Yes' key collision between PA Q2 and Alcohol healthImpact is resolved by keeping the PA Q2 definition above.
+  // The 'healthImpact: Yes' flow is handled by the explicit keys below:
+  healthAreasAffected: [ // This key is triggered by the 'Yes' answer to 'doctorAdvice'
     {
       subKey: "healthAreasAffected",
       subTitle: "Which health area is most affected?",
@@ -1321,7 +1468,6 @@ Yes: [
       required: true,
     },
   ],
-
   // Specific Health Areas Follow-ups
   liver: [
     {
@@ -1400,131 +1546,7 @@ Yes: [
       required: true,
     },
   ],
-
-  // --- Barrier-specific Follow-ups (used in PA Q1) ---
-  lackTime: [
-    {
-      subKey: "shortWorkouts",
-      subTitle:
-        "Would short 5-10 min workouts at home be easier for you to try?",
-      subType: "radio",
-      options: ["Yes", "No", "Maybe"],
-      required: true,
-    },
-  ],
-  lackMotivation: [
-    {
-      subKey: "motivationSupport",
-      subTitle:
-        "Would you like us to set small daily challenges or reminders to help you stay consistent?",
-      subType: "radio",
-      options: ["Yes", "No", "Maybe"],
-      required: true,
-    },
-  ],
-  physicalLimitations: [
-    {
-      subKey: "lowImpactPlan",
-      subTitle:
-        "Would you like a safe low-impact plan (walking, stretching, mobility)?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    },
-  ],
-  dontKnow: [
-    {
-      subKey: "beginnerRoutines",
-      subTitle:
-        "Would you like us to suggest simple beginner routines you can follow?",
-      subType: "radio",
-      options: ["Yes", "No", "Maybe"],
-      required: true,
-    },
-  ],
-  
-  // --- Tobacco Use Follow-ups (UNCHANGED) ---
-  Never: [
-    {
-      subKey: "secondHandExposure",
-      subTitle:
-        "Do you feel exposed to second-hand smoke at home, work, or in public?",
-      subType: "radio",
-      options: ["Yes", "Sometimes", "Rarely", "No"],
-      required: true,
-    },
-    {
-      subKey: "stayTobaccoFree",
-      subTitle:
-        "Would you like to learn strategies to continue staying tobacco-free?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Used in the past, but quit": [
-    {
-      subKey: "quittingHelp",
-      subTitle: "What helped you the most in quitting tobacco?",
-      subType: "radio",
-      options: ["Willpower", "Family support", "Medical advice", "Other"],
-      required: true,
-    },
-    {
-      subKey: "avoidRelapseTobacco",
-      subTitle: "Would you like tips to avoid relapse in the future?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Occasionally (less than daily)": [
-    {
-      subKey: "tobaccoSituations",
-      subTitle: "In what situations do you usually use tobacco?",
-      subType: "multiselect",
-      options: [
-        { id: "social", label: "Social gatherings" },
-        { id: "stress", label: "Stress" },
-        { id: "meals", label: "After meals" },
-        { id: "other", label: "Other" },
-      ],
-      required: false,
-    },
-    {
-      subKey: "cutDownTobacco",
-      subTitle: "Would you like suggestions to cut down or quit completely?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Daily / Regular use": [
-    {
-      subKey: "quittingChallenge",
-      subTitle:
-        "What do you feel is the biggest challenge in quitting tobacco?",
-      subType: "radio",
-      options: [
-        "Cravings",
-        "Stress relief",
-        "Social circle",
-        "Don't feel ready",
-      ],
-      required: true,
-    },
-    {
-      subKey: "quitPlanTobacco",
-      subTitle:
-        "Would you like us to guide you with a personalized quit plan or professional resources?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-
-  // --- Alcohol Use Follow-ups (UNCHANGED) ---
-  // ... (all other original Alcohol follow-ups were here)
+  // --- END ALCOHOL FOLLOW-UPS ---
 };
 
 // Health condition specific follow-ups (UNCHANGED, for Nutrition Q2)
