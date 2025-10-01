@@ -126,7 +126,7 @@ export default function Hero() {
             How Ayubo.AI Works
           </h2>
 
-          {/* Cards: items-stretch fixes vertical misalignment of the numbers */}
+          {/* Cards 1: items-stretch fixes vertical misalignment of the numbers */}
           <div className="flex flex-col md:flex-row justify-center items-stretch gap-8">
             {/* Card 1 */}
             <div className="flex flex-col justify-start items-center text-center space-y-4 p-6 bg-white rounded-2xl shadow-xl w-full max-w-xs mx-auto">
