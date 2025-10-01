@@ -7,7 +7,7 @@ import getQuestions, {
     cancerYesFollowUp, 
     medicationQuestion,     
     medicationDetailsFollowUp,
-    otherConditionFollowUp // Import new follow-up
+    otherConditionFollowUp 
 } from "../data/questions";
 
 // Branching step IDs (will be dynamically determined based on selected goal)
@@ -17,10 +17,13 @@ const BRANCHING_KEYS = {
   'substanceUse': 'Nutrition',
   'activityLevel': 'Physical Activity',
   'hasMedicalConditions': 'Physical Activity',
+  'medicalConditions': 'Physical Activity',
   'exerciseLocation': 'Physical Activity',
   'fitnessGoal': 'Physical Activity',
-  'tobaccoUse': 'Tobacco',
-  'alcoholUse': 'Alcohol'
+  //'alcoholFrequency': 'Alcohol',
+  //'drinkingContext': 'Alcohol',
+  'drinkingEffects': 'Alcohol',
+  'tobaccoUse': 'Tobacco'
 };
 
 const APP_NAME = "Ayubo";
@@ -34,6 +37,7 @@ export default function Questionnaire() {
   const [healthConditionQuestions, setHealthConditionQuestions] = useState([]);
   const [substanceUseQuestions, setSubstanceUseQuestions] = useState([]);
   const [physicalActivityQuestions, setPhysicalActivityQuestions] = useState([]);
+  const [alcoholQuestions, setAlcoholQuestions] = useState([]);
 
   // Utility function to extract the clean goal key from the option string
   const extractGoalKey = (optionString) => {
@@ -91,6 +95,11 @@ export default function Questionnaire() {
           .some(([key, isSelected]) => isSelected && key !== 'nothing');
   };
 
+  // Helper to check if any drinking effect (excluding 'noIssues') is selected
+  const isAnyEffectSelected = (effects) => {
+      return Object.entries(effects || {})
+          .some(([key, isSelected]) => isSelected && key !== 'noIssues');
+  };
 
   // Handle health conditions multiselect conditional logic
   useEffect(() => {
@@ -195,6 +204,14 @@ export default function Questionnaire() {
         if (conditionalFollowUps[baseConditionalAnswer]) {
           physicalActivityFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
         }
+        
+        // Handle condition-specific follow-ups
+        const selectedMedicalConditions = followUpAnswers.medicalConditions || {};
+        Object.keys(selectedMedicalConditions).forEach(conditionId => {
+          if (selectedMedicalConditions[conditionId] && conditionalFollowUps[conditionId]) {
+            physicalActivityFollowUps.push(...conditionalFollowUps[conditionId]);
+          }
+        });
       }
       
       // Handle exercise location follow-up
@@ -222,6 +239,61 @@ export default function Questionnaire() {
     }
   }, [baseConditionalKey, baseConditionalAnswer, answers.followUps, currentStepData, subStep, isBranchingStep]);
 
+  // Handle alcohol branching logic
+  useEffect(() => {
+    if (currentStepData && isBranchingStep && subStep === 1) {
+      const followUpAnswers = answers.followUps || {};
+      let alcoholFollowUps = [];
+      
+      // Handle alcohol frequency follow-ups
+      if (baseConditionalKey === 'alcoholFrequency' && baseConditionalAnswer) {
+        if (conditionalFollowUps[baseConditionalAnswer]) {
+          alcoholFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+        }
+      }
+      
+      // Handle drinking context follow-ups
+      if (baseConditionalKey === 'drinkingContext' && baseConditionalAnswer) {
+        const selectedContexts = baseConditionalAnswer || {};
+        
+        Object.keys(selectedContexts).forEach(contextId => {
+          if (selectedContexts[contextId] && conditionalFollowUps[contextId]) {
+            alcoholFollowUps.push(...conditionalFollowUps[contextId]);
+          }
+        });
+      }
+      
+      // Handle drinking effects follow-ups
+      if (baseConditionalKey === 'drinkingEffects' && baseConditionalAnswer) {
+        const selectedEffects = baseConditionalAnswer || {};
+        
+        Object.keys(selectedEffects).forEach(effectId => {
+          if (selectedEffects[effectId] && conditionalFollowUps[effectId]) {
+            alcoholFollowUps.push(...conditionalFollowUps[effectId]);
+          }
+        });
+        
+        // Special case: Health impact doctor advice follow-up
+        if (selectedEffects.healthImpact && followUpAnswers.doctorAdvice === 'Yes') {
+          if (conditionalFollowUps['Yes']) {
+            alcoholFollowUps.push(...conditionalFollowUps['Yes']);
+          }
+        }
+        
+        // Handle specific health areas affected
+        if (selectedEffects.healthImpact && followUpAnswers.healthAreasAffected) {
+          Object.keys(followUpAnswers.healthAreasAffected).forEach(healthArea => {
+            if (followUpAnswers.healthAreasAffected[healthArea] && conditionalFollowUps[healthArea]) {
+              alcoholFollowUps.push(...conditionalFollowUps[healthArea]);
+            }
+          });
+        }
+      }
+      
+      setAlcoholQuestions(alcoholFollowUps);
+    }
+  }, [baseConditionalKey, baseConditionalAnswer, answers.followUps, currentStepData, subStep, isBranchingStep]);
+
   const conditionalQuestions = baseConditionalAnswer ? conditionalFollowUps[baseConditionalAnswer] : [];
 
   // --- Utility Functions ---
@@ -243,8 +315,8 @@ export default function Questionnaire() {
     if (isBranchingStep) {
       // subStep 0: Validate the base question
       if (subStep === 0) {
-        // Health conditions and substance use are required: false, so they are valid by default
-        // Activity preferences and motivation style are required: true
+        // Health conditions, substance use, and drinking context are required: false, so they are valid by default
+        // Activity preferences, motivation style, and drinking effects are required: true
         return currentStepData.required ? !!baseConditionalAnswer : true;
       }
       // subStep 1: Validate all conditional questions
@@ -259,6 +331,8 @@ export default function Questionnaire() {
           questionsToValidate = substanceUseQuestions;
         } else if (BRANCHING_KEYS[currentStepData.key] === 'Physical Activity') {
           questionsToValidate = physicalActivityQuestions;
+        } else if (BRANCHING_KEYS[currentStepData.key] === 'Alcohol') {
+          questionsToValidate = alcoholQuestions;
         } else {
           // Other single-select branching steps
           questionsToValidate = conditionalQuestions && Array.isArray(conditionalQuestions) ? conditionalQuestions : [];
@@ -352,6 +426,26 @@ export default function Questionnaire() {
             setSubStep(0);
             return;
           }
+        }
+
+        // Special logic for drinking effects
+        if (currentStepData.key === 'drinkingEffects') {
+            const selectedEffects = answers.drinkingEffects || {};
+            const anyEffectSelected = isAnyEffectSelected(selectedEffects);
+            
+            // If the user selects ONLY 'No noticeable issues' or nothing at all, skip all follow-ups
+            if (!anyEffectSelected) {
+                setCurrentStep(currentStep + 1);
+                setSubStep(0);
+                return;
+            }
+        }
+
+        // Skip Q2 medical conditions if user answered "No" to hasMedicalConditions
+        if (currentStepData.key === 'hasMedicalConditions' && baseConditionalAnswer === 'No') {
+          setCurrentStep(currentStep + 1);
+          setSubStep(0);
+          return;
         }
 
         // Skip follow-ups for Diet Type's Balanced/Mediterranean and No specific diet
@@ -453,6 +547,17 @@ export default function Questionnaire() {
                 }
             };
         }
+        // Special Case: If 'doctorAdvice' is changed to 'No', clear health areas affected
+        else if (subKey === 'doctorAdvice' && value === 'No' && prevAnswers.followUps?.healthAreasAffected) {
+            const { healthAreasAffected, ...restFollowUps } = prevAnswers.followUps;
+            return {
+                ...prevAnswers,
+                followUps: {
+                    ...restFollowUps,
+                    [subKey]: value
+                }
+            };
+        }
         
         return {
           ...prevAnswers,
@@ -489,25 +594,34 @@ export default function Questionnaire() {
               const isCurrentlySelected = !!newSelections.nothing;
               newSelections = { nothing: !isCurrentlySelected };
               
+          } else if (key === 'noIssues') {
+              // If 'noIssues' is selected (for drinking effects), clear all others and toggle 'noIssues'
+              const isCurrentlySelected = !!newSelections.noIssues;
+              newSelections = { noIssues: !isCurrentlySelected };
+              
           } else {
-              // If any other option is selected/deselected, ensure 'none'/'nothing' is deselected
+              // If any other option is selected/deselected, ensure 'none'/'nothing'/'noIssues' is deselected
               newSelections = { ...newSelections, [key]: !newSelections[key] };
               
-              // Re-check: if no other options are selected, automatically check 'none' or 'nothing'
+              // Re-check: if no other options are selected, automatically check 'none' or 'nothing' or 'noIssues'
               const selectedKeys = Object.keys(newSelections).filter(k => 
-                (k !== 'none' && k !== 'nothing') && newSelections[k]
+                (k !== 'none' && k !== 'nothing' && k !== 'noIssues') && newSelections[k]
               );
               if (selectedKeys.length === 0) {
                   if (currentStepData.key === 'healthConditions' || currentStepData.key === 'substanceUse') {
                       newSelections.none = true;
                   } else if (currentStepData.key === 'barriers') {
                       newSelections.nothing = true;
+                  } else if (currentStepData.key === 'drinkingEffects') {
+                      newSelections.noIssues = true;
                   }
               } else {
                   if (currentStepData.key === 'healthConditions' || currentStepData.key === 'substanceUse') {
                       newSelections.none = false;
                   } else if (currentStepData.key === 'barriers') {
                       newSelections.nothing = false;
+                  } else if (currentStepData.key === 'drinkingEffects') {
+                      newSelections.noIssues = false;
                   }
               }
           }
@@ -586,58 +700,89 @@ export default function Questionnaire() {
     );
   };
 
-  // Renders Multiselect Options
-  const renderMultiselectOptions = (options, currentAnswer, subKey = null) => {
-    return (
-      <div className="space-y-4 w-full">
-        {options.map((option) => {
-          const isSelected = currentAnswer?.[option.id] || false;
-          return (
-            <div
-              key={option.id}
-              className={`flex items-center justify-between p-4 rounded-xl cursor-pointer border-2 transition ${
-                isSelected
-                  ? "bg-[#e0e4ef] border-[#e72638] shadow-md"
-                  : "bg-white border-gray-200 hover:bg-gray-50"
-              }`}
-              onClick={() => handleInputChange(option.id, isSelected, subKey, 'multiselect')}
-            >
-              <div className="flex items-center">
-                {option.icon && <span className="mr-3 text-xl">{option.icon}</span>}
-                <span className="text-base text-gray-700 font-medium">
-                  {option.label}
-                </span>
-              </div>
-              <div
-                className={`w-5 h-5 rounded border-2 flex items-center justify-center transition ${
-                  isSelected
-                    ? "bg-[#e72638] border-[#e72638]"
-                    : "bg-white border-gray-400"
-                }`}
-              >
-                {isSelected && (
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="3"
-                      d="M5 13l4 4L19 7"
-                    ></path>
-                  </svg>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
+ // In components/Questionnaire.js - Update the renderMultiselectOptions function
+
+// Renders Multiselect Options with categorization
+const renderMultiselectOptions = (options, currentAnswer, subKey = null) => {
+  // Group options by category
+  const groupedOptions = {};
+  options.forEach(option => {
+    if (!groupedOptions[option.category]) {
+      groupedOptions[option.category] = [];
+    }
+    groupedOptions[option.category].push(option);
+  });
+
+  // Define category labels (optional - if you want to show headers)
+  const categoryLabels = {
+    'smoking': 'Smoking / Beedi Symptoms',
+    'chewing': 'Chewing Tobacco / Betel Leaves Symptoms', 
+    'otherDrugs': 'Other Drugs Symptoms',
+    'none': 'No Symptoms'
   };
+
+  return (
+    <div className="space-y-6 w-full">
+      {Object.keys(groupedOptions).map(category => (
+        <div key={category} className="space-y-4">
+          {category !== 'none' && (
+            <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+              {categoryLabels[category]}
+            </h4>
+          )} 
+          
+          <div className="space-y-3">
+            {groupedOptions[category].map((option) => {
+              const isSelected = currentAnswer?.[option.id] || false;
+              return (
+                <div
+                  key={option.id}
+                  className={`flex items-center justify-between p-4 rounded-xl cursor-pointer border-2 transition ${
+                    isSelected
+                      ? "bg-[#e0e4ef] border-[#e72638] shadow-md"
+                      : "bg-white border-gray-200 hover:bg-gray-50"
+                  }`}
+                  onClick={() => handleInputChange(option.id, isSelected, subKey, 'multiselect')}
+                >
+                  <div className="flex items-center">
+                    {option.icon && <span className="mr-3 text-xl">{option.icon}</span>}
+                    <span className="text-base text-gray-700 font-medium">
+                      {option.label}
+                    </span>
+                  </div>
+                  <div
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition ${
+                      isSelected
+                        ? "bg-[#e72638] border-[#e72638]"
+                        : "bg-white border-gray-400"
+                    }`}
+                  >
+                    {isSelected && (
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="3"
+                          d="M5 13l4 4L19 7"
+                        ></path>
+                      </svg>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
   // Renders Height/Weight Inputs (type: measurements)
   const renderMeasurements = () => {
@@ -753,6 +898,8 @@ export default function Questionnaire() {
       questionsToRender = substanceUseQuestions;
     } else if (BRANCHING_KEYS[currentStepData.key] === 'Physical Activity') {
       questionsToRender = physicalActivityQuestions;
+    } else if (BRANCHING_KEYS[currentStepData.key] === 'Alcohol') {
+      questionsToRender = alcoholQuestions;
     } else {
       questionsToRender = conditionalQuestions || [];
     }
