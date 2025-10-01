@@ -477,7 +477,6 @@ const goalSpecificQuestions = {
 };
 
 // Function to get all questions based on primary goal
-// Function to get all questions based on primary goal
 const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
   if (!primaryGoal) {
     return baseQuestions;

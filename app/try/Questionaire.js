@@ -23,7 +23,7 @@ const BRANCHING_KEYS = {
   //'drinkingMotivation': 'Alcohol',
   'drinkingContext': 'Alcohol',
   'drinkingEffects': 'Alcohol',
-  'alcoholGoal': 'Alcohol',
+  //'alcoholGoal': 'Alcohol',
   'tobaccoUse': 'Tobacco'
 };
 
