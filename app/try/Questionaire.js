@@ -713,7 +713,7 @@ const renderMultiselectOptions = (options, currentAnswer, subKey = null) => {
     groupedOptions[option.category].push(option);
   });
 
-  // Define category labels (optional - if you want to show headers)
+  // Define category labels (optional - if you want to show headers) For tabacco
   const categoryLabels = {
     'smoking': 'Smoking / Beedi Symptoms',
     'chewing': 'Chewing Tobacco / Betel Leaves Symptoms', 
