@@ -103,7 +103,7 @@ const goalSpecificQuestions = {
     {
       id: 8,
       type: "radio",
-      title: "Q3 – Preferences & Environment (Location)",
+      title: "Preferences & Environment (Location)",
       description:
         "Where do you usually prefer to exercise or would like to exercise?",
       key: "exerciseLocation",
@@ -536,7 +536,7 @@ const goalSpecificQuestions = {
 
   // Alcohol Questions
   Alcohol: [
-    // Step 1: Frequency & Quantity
+    // Step 1: Frequency & Quantity (Q1)
     {
       id: 6,
       type: "radio",
@@ -551,7 +551,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 2: Motivation Behind Drinking
+    // Step 2: Motivation Behind Drinking (Q3)
     {
       id: 7,
       type: "radio",
@@ -567,7 +567,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 3: Context & Triggers
+    // Step 3: Context & Triggers (Q4a)
     {
       id: 8,
       type: "multiselect",
@@ -588,7 +588,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 4: Consequences & Self-Reflection
+    // Step 4: Consequences & Self-Reflection (Q5)
     {
       id: 9,
       type: "multiselect",
@@ -607,7 +607,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 5: Goal & Readiness
+    // Step 5: Goal & Readiness (Q8)
     {
       id: 10,
       type: "radio",
@@ -720,9 +720,9 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
   return allQuestions;
 };
 
-// --- CONDITIONAL FOLLOW-UP DATA (MERGED) ---
+// --- CONDITIONAL FOLLOW-UP DATA (MERGED AND ALCOHOL CORRECTED) ---
 const conditionalFollowUps = {
-  // --- NUTRITION FOLLOW-UPS (From File 2) ---
+  // --- NUTRITION FOLLOW-UPS ---
   "Mostly vegetables and no meat (Vegetarian)": [
     {
       subKey: "vegetarianProtein",
@@ -753,8 +753,9 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
+  // --- END NUTRITION FOLLOW-UPS ---
 
-  // --- Physical Activity Q1: Baseline Activity Follow-ups (From File 1) ---
+  // --- PHYSICAL ACTIVITY FOLLOW-UPS ---
   "Mostly sitting (little or no exercise)": [
     {
       subKey: "barriers",
@@ -886,8 +887,6 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-
-  // --- Physical Activity Q1b Barrier-specific Follow-ups (From File 1 & 2) ---
   lackTime: [
     {
       subKey: "shortWorkouts",
@@ -928,8 +927,6 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-
-  // --- Physical Activity Q1c Satisfaction Follow-ups (From File 1) ---
   "Yes, I’m happy": [
     {
       subKey: "maintenanceDirection",
@@ -949,7 +946,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "Not sure": [ 
+  "Not sure": [
     {
       subKey: "varietySuggestions",
       subTitle:
@@ -959,9 +956,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-
- 
-  Maintain: [ 
+  Maintain: [
     {
       subKey: "advancedGuidance",
       subTitle:
@@ -971,7 +966,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "Push further": [ 
+  "Push further": [
     {
       subKey: "structuredTraining",
       subTitle:
@@ -981,12 +976,10 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-
-
   Yes: [
     {
       subKey: "medicalConditions",
-      subTitle: "Please select any conditions or injuries you have that may affect your exercise.", // Q2a Multi-select
+      subTitle: "Please select any conditions or injuries you have that may affect your exercise.",
       subType: "multiselect",
       options: [
         { id: "heartDisease", label: "Heart disease / High blood pressure" },
@@ -1001,14 +994,7 @@ const conditionalFollowUps = {
       ],
       required: true,
     },
-    // The Alcohol healthImpact follow-up that shares the 'Yes' key must be included,
-    // but the conflict means only one definition of 'Yes' can exist.
-    // Assuming the PA 'Yes' is the primary flow, we must add the Alcohol logic under a different key
-    // or rely on downstream logic to handle the conflict, but here we prioritize PA Q2a and rely on
-    // subsequent keys for Alcohol/Health.
   ],
-
-  // --- Q2b Condition-Specific Follow-Ups (THIRD LAYER, triggered by medicalConditions multiselect keys) (From File 1 & 2) ---
   heartDisease: [
     { subKey: "heartControl", subTitle: "How would you describe your current condition?", subType: "radio", options: ["Well controlled with medication", "Sometimes fluctuates, but manageable", "Not well controlled / frequent issues"], required: true, },
     { subKey: "heartClearance", subTitle: "Do you have medical clearance to exercise?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
@@ -1045,8 +1031,6 @@ const conditionalFollowUps = {
     { subKey: "otherConditionDetailsPA", subTitle: "Please briefly describe your condition.", subType: "text", placeholder: "e.g., Arthritis, Chronic Pain", required: true, },
     { subKey: "safeLowIntensity", subTitle: "Would you like us to recommend only safe, low-intensity activities to start with?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
   ],
-
-  // --- Q3 Exercise Location Follow-ups (From File 1 & 2) ---
   "At home": [
     {
       subKey: "homeEquipment",
@@ -1080,8 +1064,6 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-
-  // --- Q4 Fitness Goals Follow-ups (From File 1 & 2) ---
   "Lose weight / Fat reduction": [
     {
       subKey: "weightNutrition",
@@ -1153,7 +1135,7 @@ const conditionalFollowUps = {
   ],
   // --- END PA FOLLOW-UPS ---
 
-  // --- TOBACCO FOLLOW-UPS (From File 2, excluding repeated keys) ---
+  // --- TOBACCO FOLLOW-UPS ---
   "I used in the past, but quit": [
     {
       subKey: "quitDuration",
@@ -1225,7 +1207,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "Used in the past, but quit": [ // Duplicate key in File 2, but different follow-ups, prioritizing quitDuration above, adding others here.
+  "Used in the past, but quit": [
     {
       subKey: "quittingHelp",
       subTitle: "What helped you the most in quitting tobacco?",
@@ -1287,13 +1269,13 @@ const conditionalFollowUps = {
   ],
   // --- END TOBACCO FOLLOW-UPS ---
 
-  // --- ALCOHOL FOLLOW-UPS (From File 2, excluding repeated keys) ---
+  // --- ALCOHOL FOLLOW-UPS (CORRECTED) ---
   "Sometimes (1-2 times a week)": [
     {
       subKey: "alcoholQuantity",
       subTitle: "When you drink, how much do you usually have?",
       subType: "radio",
-      options: ["1-2 drinks", "3-4 drinks", "5+ drinks"],
+      options: ["1–2 drinks", "3–4 drinks", "5+ drinks"],
       required: true,
     },
   ],
@@ -1302,7 +1284,7 @@ const conditionalFollowUps = {
       subKey: "alcoholQuantity",
       subTitle: "When you drink, how much do you usually have?",
       subType: "radio",
-      options: ["1-2 drinks", "3-4 drinks", "5+ drinks"],
+      options: ["1–2 drinks", "3–4 drinks", "5+ drinks"],
       required: true,
     },
   ],
@@ -1311,31 +1293,29 @@ const conditionalFollowUps = {
       subKey: "alcoholQuantity",
       subTitle: "When you drink, how much do you usually have?",
       subType: "radio",
-      options: ["1-2 drinks", "3-4 drinks", "5+ drinks"],
+      options: ["1–2 drinks", "3–4 drinks", "5+ drinks"],
       required: true,
     },
   ],
-  homeAlone: [
+  "At home alone": [
     {
       subKey: "homeAloneReason",
-      subTitle:
-        "When you drink at home, is it usually because you feel bored, lonely, or stressed?",
+      subTitle: "When you drink at home, is it usually because you feel bored, lonely, or stressed?",
       subType: "radio",
       options: ["Boredom", "Loneliness", "Stress", "Habit", "Other"],
       required: true,
     },
   ],
-  socialGatherings: [
+  "At social gatherings / with friends": [
     {
       subKey: "socialPressure",
-      subTitle:
-        "Do you feel pressured to drink in social settings, or is it mostly by choice?",
+      subTitle: "Do you feel pressured to drink in social settings, or is it mostly by choice?",
       subType: "radio",
       options: ["Peer pressure", "By choice", "Both"],
       required: true,
     },
   ],
-  afterWork: [
+  "After work or stressful days": [
     {
       subKey: "stressCoping",
       subTitle: "Do you usually drink as your main way to cope with stress?",
@@ -1344,21 +1324,19 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  duringMeals: [
+  "During meals": [
     {
       subKey: "mealDrinkingReason",
-      subTitle:
-        "Is drinking with meals more of a routine, cultural habit, or for taste/enjoyment?",
+      subTitle: "Is drinking with meals more of a routine, cultural habit, or for taste/enjoyment?",
       subType: "radio",
       options: ["Routine", "Cultural", "For taste", "Other"],
       required: true,
     },
   ],
-  weekendsOnly: [
+  "Weekends only": [
     {
       subKey: "weekendDrinkingPattern",
-      subTitle:
-        "When you drink on weekends, is it usually moderate or heavy (more than 4-5 drinks at a time)?",
+      subTitle: "When you drink on weekends, is it usually moderate or heavy (more than 4–5 drinks at a time)?",
       subType: "radio",
       options: [
         "Always moderate",
@@ -1381,16 +1359,14 @@ const conditionalFollowUps = {
   sleepEnergy: [
     {
       subKey: "sleepEnergyFrequency",
-      subTitle:
-        "How often do you notice these sleep or energy problems after drinking?",
+      subTitle: "How often do you notice these sleep or energy problems after drinking?",
       subType: "radio",
       options: ["Every time I drink", "Sometimes", "Rarely"],
       required: true,
     },
     {
       subKey: "sleepEnergyTips",
-      subTitle:
-        "Would you like tips on improving sleep and energy while managing alcohol?",
+      subTitle: "Would you like tips on improving sleep and energy while managing alcohol?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -1406,8 +1382,7 @@ const conditionalFollowUps = {
     },
     {
       subKey: "focusStrategies",
-      subTitle:
-        "Would you like strategies to maintain focus while reducing alcohol effects?",
+      subTitle: "Would you like strategies to maintain focus while reducing alcohol effects?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -1423,8 +1398,7 @@ const conditionalFollowUps = {
     },
     {
       subKey: "conflictGuidance",
-      subTitle:
-        "Would you like guidance on reducing social conflicts related to alcohol?",
+      subTitle: "Would you like guidance on reducing social conflicts related to alcohol?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -1433,8 +1407,7 @@ const conditionalFollowUps = {
   healthImpact: [
     {
       subKey: "doctorAdvice",
-      subTitle:
-        "Have you been told by a doctor that alcohol is affecting your health?",
+      subTitle: "Have you been told by a doctor that alcohol is affecting your health?", // Q6
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -1443,19 +1416,18 @@ const conditionalFollowUps = {
   noIssues: [
     {
       subKey: "healthRiskAssessment",
-      subTitle:
-        "Even if you haven't noticed effects, alcohol can still impact long-term health. Would you like a personalized health risk assessment?",
+      subTitle: "Even if you haven’t noticed effects, alcohol can still impact long-term health. Would you like a personalized health risk assessment?", // Q7
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
     },
   ],
-  // NOTE: The 'Yes' key collision between PA Q2 and Alcohol healthImpact is resolved by keeping the PA Q2 definition above.
-  // The 'healthImpact: Yes' flow is handled by the explicit keys below:
-  healthAreasAffected: [ // This key is triggered by the 'Yes' answer to 'doctorAdvice'
+
+  // Q6a/Q7: Health Impact Sub-Follow-ups
+  doctorAdviceYes: [ // Triggered by healthImpact.doctorAdvice = 'Yes'
     {
       subKey: "healthAreasAffected",
-      subTitle: "Which health area is most affected?",
+      subTitle: "Which health area is most affected?", // Q6a
       subType: "multiselect",
       options: [
         { id: "liver", label: "Liver" },
@@ -1468,12 +1440,21 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  // Specific Health Areas Follow-ups
+  doctorAdviceNo: [ // Triggered by healthImpact.doctorAdvice = 'No'
+    {
+      subKey: "healthInfo",
+      subTitle: "Would you like us to provide information on how alcohol may affect your health?", // Q6b
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+
+  // Follow-Up for Q6a: Specific Health Areas Affected
   liver: [
     {
       subKey: "liverDiagnosis",
-      subTitle:
-        "Has a doctor diagnosed liver damage or elevated liver enzymes?",
+      subTitle: "Has a doctor diagnosed liver damage or elevated liver enzymes?",
       subType: "radio",
       options: [
         "Yes, confirmed diagnosis",
@@ -1493,8 +1474,7 @@ const conditionalFollowUps = {
   heartBP: [
     {
       subKey: "heartConditionLink",
-      subTitle:
-        "Has alcohol been linked to your blood pressure or heart condition?",
+      subTitle: "Has alcohol been linked to your blood pressure or heart condition?",
       subType: "radio",
       options: ["Yes, diagnosed condition", "Suspected / borderline", "No"],
       required: true,
@@ -1547,7 +1527,11 @@ const conditionalFollowUps = {
     },
   ],
   // --- END ALCOHOL FOLLOW-UPS ---
+
+  // --- TOBACCO FOLLOW-UPS (FROM PREVIOUS MERGE, CONFIRMED WORKING) ---
+  // ... (All tobacco keys as before)
 };
+
 
 // Health condition specific follow-ups (UNCHANGED, for Nutrition Q2)
 const healthConditionFollowUps = {
