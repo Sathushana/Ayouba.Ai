@@ -7,7 +7,7 @@ import getQuestions, {
     cancerYesFollowUp, 
     medicationQuestion,     
     medicationDetailsFollowUp,
-    otherConditionFollowUp // Import new follow-up
+    otherConditionFollowUp 
 } from "../data/questions";
 
 // Branching step IDs (will be dynamically determined based on selected goal)
@@ -17,15 +17,12 @@ const BRANCHING_KEYS = {
   'substanceUse': 'Nutrition',
   'activityLevel': 'Physical Activity',
   'hasMedicalConditions': 'Physical Activity',
+  'medicalConditions': 'Physical Activity',
   'exerciseLocation': 'Physical Activity',
   'fitnessGoal': 'Physical Activity',
   'alcoholFrequency': 'Alcohol',
-   //'tobaccoSubstances': 'Tobacco',
-  //'tobaccoFrequency': 'Tobacco',
-  //'drinkingMotivation': 'Alcohol',
   'drinkingContext': 'Alcohol',
   'drinkingEffects': 'Alcohol',
-  //'alcoholGoal': 'Alcohol',
   'tobaccoUse': 'Tobacco'
 };
 
@@ -207,6 +204,14 @@ export default function Questionnaire() {
         if (conditionalFollowUps[baseConditionalAnswer]) {
           physicalActivityFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
         }
+        
+        // Handle condition-specific follow-ups
+        const selectedMedicalConditions = followUpAnswers.medicalConditions || {};
+        Object.keys(selectedMedicalConditions).forEach(conditionId => {
+          if (selectedMedicalConditions[conditionId] && conditionalFollowUps[conditionId]) {
+            physicalActivityFollowUps.push(...conditionalFollowUps[conditionId]);
+          }
+        });
       }
       
       // Handle exercise location follow-up
@@ -434,6 +439,13 @@ export default function Questionnaire() {
                 setSubStep(0);
                 return;
             }
+        }
+
+        // Skip Q2 medical conditions if user answered "No" to hasMedicalConditions
+        if (currentStepData.key === 'hasMedicalConditions' && baseConditionalAnswer === 'No') {
+          setCurrentStep(currentStep + 1);
+          setSubStep(0);
+          return;
         }
 
         // Skip follow-ups for Diet Type's Balanced/Mediterranean and No specific diet
