@@ -19,8 +19,12 @@ const BRANCHING_KEYS = {
   'hasMedicalConditions': 'Physical Activity',
   'exerciseLocation': 'Physical Activity',
   'fitnessGoal': 'Physical Activity',
-  'tobaccoUse': 'Tobacco',
-  'alcoholUse': 'Alcohol'
+  'alcoholFrequency': 'Alcohol',
+  //'drinkingMotivation': 'Alcohol',
+  'drinkingContext': 'Alcohol',
+  'drinkingEffects': 'Alcohol',
+  'alcoholGoal': 'Alcohol',
+  'tobaccoUse': 'Tobacco'
 };
 
 const APP_NAME = "Ayubo";
@@ -34,6 +38,7 @@ export default function Questionnaire() {
   const [healthConditionQuestions, setHealthConditionQuestions] = useState([]);
   const [substanceUseQuestions, setSubstanceUseQuestions] = useState([]);
   const [physicalActivityQuestions, setPhysicalActivityQuestions] = useState([]);
+  const [alcoholQuestions, setAlcoholQuestions] = useState([]);
 
   // Utility function to extract the clean goal key from the option string
   const extractGoalKey = (optionString) => {
@@ -91,6 +96,11 @@ export default function Questionnaire() {
           .some(([key, isSelected]) => isSelected && key !== 'nothing');
   };
 
+  // Helper to check if any drinking effect (excluding 'noIssues') is selected
+  const isAnyEffectSelected = (effects) => {
+      return Object.entries(effects || {})
+          .some(([key, isSelected]) => isSelected && key !== 'noIssues');
+  };
 
   // Handle health conditions multiselect conditional logic
   useEffect(() => {
@@ -222,6 +232,61 @@ export default function Questionnaire() {
     }
   }, [baseConditionalKey, baseConditionalAnswer, answers.followUps, currentStepData, subStep, isBranchingStep]);
 
+  // Handle alcohol branching logic
+  useEffect(() => {
+    if (currentStepData && isBranchingStep && subStep === 1) {
+      const followUpAnswers = answers.followUps || {};
+      let alcoholFollowUps = [];
+      
+      // Handle alcohol frequency follow-ups
+      if (baseConditionalKey === 'alcoholFrequency' && baseConditionalAnswer) {
+        if (conditionalFollowUps[baseConditionalAnswer]) {
+          alcoholFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+        }
+      }
+      
+      // Handle drinking context follow-ups
+      if (baseConditionalKey === 'drinkingContext' && baseConditionalAnswer) {
+        const selectedContexts = baseConditionalAnswer || {};
+        
+        Object.keys(selectedContexts).forEach(contextId => {
+          if (selectedContexts[contextId] && conditionalFollowUps[contextId]) {
+            alcoholFollowUps.push(...conditionalFollowUps[contextId]);
+          }
+        });
+      }
+      
+      // Handle drinking effects follow-ups
+      if (baseConditionalKey === 'drinkingEffects' && baseConditionalAnswer) {
+        const selectedEffects = baseConditionalAnswer || {};
+        
+        Object.keys(selectedEffects).forEach(effectId => {
+          if (selectedEffects[effectId] && conditionalFollowUps[effectId]) {
+            alcoholFollowUps.push(...conditionalFollowUps[effectId]);
+          }
+        });
+        
+        // Special case: Health impact doctor advice follow-up
+        if (selectedEffects.healthImpact && followUpAnswers.doctorAdvice === 'Yes') {
+          if (conditionalFollowUps['Yes']) {
+            alcoholFollowUps.push(...conditionalFollowUps['Yes']);
+          }
+        }
+        
+        // Handle specific health areas affected
+        if (selectedEffects.healthImpact && followUpAnswers.healthAreasAffected) {
+          Object.keys(followUpAnswers.healthAreasAffected).forEach(healthArea => {
+            if (followUpAnswers.healthAreasAffected[healthArea] && conditionalFollowUps[healthArea]) {
+              alcoholFollowUps.push(...conditionalFollowUps[healthArea]);
+            }
+          });
+        }
+      }
+      
+      setAlcoholQuestions(alcoholFollowUps);
+    }
+  }, [baseConditionalKey, baseConditionalAnswer, answers.followUps, currentStepData, subStep, isBranchingStep]);
+
   const conditionalQuestions = baseConditionalAnswer ? conditionalFollowUps[baseConditionalAnswer] : [];
 
   // --- Utility Functions ---
@@ -243,8 +308,8 @@ export default function Questionnaire() {
     if (isBranchingStep) {
       // subStep 0: Validate the base question
       if (subStep === 0) {
-        // Health conditions and substance use are required: false, so they are valid by default
-        // Activity preferences and motivation style are required: true
+        // Health conditions, substance use, and drinking context are required: false, so they are valid by default
+        // Activity preferences, motivation style, and drinking effects are required: true
         return currentStepData.required ? !!baseConditionalAnswer : true;
       }
       // subStep 1: Validate all conditional questions
@@ -259,6 +324,8 @@ export default function Questionnaire() {
           questionsToValidate = substanceUseQuestions;
         } else if (BRANCHING_KEYS[currentStepData.key] === 'Physical Activity') {
           questionsToValidate = physicalActivityQuestions;
+        } else if (BRANCHING_KEYS[currentStepData.key] === 'Alcohol') {
+          questionsToValidate = alcoholQuestions;
         } else {
           // Other single-select branching steps
           questionsToValidate = conditionalQuestions && Array.isArray(conditionalQuestions) ? conditionalQuestions : [];
@@ -352,6 +419,19 @@ export default function Questionnaire() {
             setSubStep(0);
             return;
           }
+        }
+
+        // Special logic for drinking effects
+        if (currentStepData.key === 'drinkingEffects') {
+            const selectedEffects = answers.drinkingEffects || {};
+            const anyEffectSelected = isAnyEffectSelected(selectedEffects);
+            
+            // If the user selects ONLY 'No noticeable issues' or nothing at all, skip all follow-ups
+            if (!anyEffectSelected) {
+                setCurrentStep(currentStep + 1);
+                setSubStep(0);
+                return;
+            }
         }
 
         // Skip follow-ups for Diet Type's Balanced/Mediterranean and No specific diet
@@ -453,6 +533,17 @@ export default function Questionnaire() {
                 }
             };
         }
+        // Special Case: If 'doctorAdvice' is changed to 'No', clear health areas affected
+        else if (subKey === 'doctorAdvice' && value === 'No' && prevAnswers.followUps?.healthAreasAffected) {
+            const { healthAreasAffected, ...restFollowUps } = prevAnswers.followUps;
+            return {
+                ...prevAnswers,
+                followUps: {
+                    ...restFollowUps,
+                    [subKey]: value
+                }
+            };
+        }
         
         return {
           ...prevAnswers,
@@ -489,25 +580,34 @@ export default function Questionnaire() {
               const isCurrentlySelected = !!newSelections.nothing;
               newSelections = { nothing: !isCurrentlySelected };
               
+          } else if (key === 'noIssues') {
+              // If 'noIssues' is selected (for drinking effects), clear all others and toggle 'noIssues'
+              const isCurrentlySelected = !!newSelections.noIssues;
+              newSelections = { noIssues: !isCurrentlySelected };
+              
           } else {
-              // If any other option is selected/deselected, ensure 'none'/'nothing' is deselected
+              // If any other option is selected/deselected, ensure 'none'/'nothing'/'noIssues' is deselected
               newSelections = { ...newSelections, [key]: !newSelections[key] };
               
-              // Re-check: if no other options are selected, automatically check 'none' or 'nothing'
+              // Re-check: if no other options are selected, automatically check 'none' or 'nothing' or 'noIssues'
               const selectedKeys = Object.keys(newSelections).filter(k => 
-                (k !== 'none' && k !== 'nothing') && newSelections[k]
+                (k !== 'none' && k !== 'nothing' && k !== 'noIssues') && newSelections[k]
               );
               if (selectedKeys.length === 0) {
                   if (currentStepData.key === 'healthConditions' || currentStepData.key === 'substanceUse') {
                       newSelections.none = true;
                   } else if (currentStepData.key === 'barriers') {
                       newSelections.nothing = true;
+                  } else if (currentStepData.key === 'drinkingEffects') {
+                      newSelections.noIssues = true;
                   }
               } else {
                   if (currentStepData.key === 'healthConditions' || currentStepData.key === 'substanceUse') {
                       newSelections.none = false;
                   } else if (currentStepData.key === 'barriers') {
                       newSelections.nothing = false;
+                  } else if (currentStepData.key === 'drinkingEffects') {
+                      newSelections.noIssues = false;
                   }
               }
           }
@@ -753,6 +853,8 @@ export default function Questionnaire() {
       questionsToRender = substanceUseQuestions;
     } else if (BRANCHING_KEYS[currentStepData.key] === 'Physical Activity') {
       questionsToRender = physicalActivityQuestions;
+    } else if (BRANCHING_KEYS[currentStepData.key] === 'Alcohol') {
+      questionsToRender = alcoholQuestions;
     } else {
       questionsToRender = conditionalQuestions || [];
     }
