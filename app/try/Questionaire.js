@@ -21,7 +21,7 @@ const BRANCHING_KEYS = {
   'fitnessGoal': 'Physical Activity',
   'alcoholFrequency': 'Alcohol',
    //'tobaccoSubstances': 'Tobacco',
-  'tobaccoFrequency': 'Tobacco',
+  //'tobaccoFrequency': 'Tobacco',
   //'drinkingMotivation': 'Alcohol',
   'drinkingContext': 'Alcohol',
   'drinkingEffects': 'Alcohol',
@@ -688,58 +688,89 @@ export default function Questionnaire() {
     );
   };
 
-  // Renders Multiselect Options
-  const renderMultiselectOptions = (options, currentAnswer, subKey = null) => {
-    return (
-      <div className="space-y-4 w-full">
-        {options.map((option) => {
-          const isSelected = currentAnswer?.[option.id] || false;
-          return (
-            <div
-              key={option.id}
-              className={`flex items-center justify-between p-4 rounded-xl cursor-pointer border-2 transition ${
-                isSelected
-                  ? "bg-[#e0e4ef] border-[#e72638] shadow-md"
-                  : "bg-white border-gray-200 hover:bg-gray-50"
-              }`}
-              onClick={() => handleInputChange(option.id, isSelected, subKey, 'multiselect')}
-            >
-              <div className="flex items-center">
-                {option.icon && <span className="mr-3 text-xl">{option.icon}</span>}
-                <span className="text-base text-gray-700 font-medium">
-                  {option.label}
-                </span>
-              </div>
-              <div
-                className={`w-5 h-5 rounded border-2 flex items-center justify-center transition ${
-                  isSelected
-                    ? "bg-[#e72638] border-[#e72638]"
-                    : "bg-white border-gray-400"
-                }`}
-              >
-                {isSelected && (
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="3"
-                      d="M5 13l4 4L19 7"
-                    ></path>
-                  </svg>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
+ // In components/Questionnaire.js - Update the renderMultiselectOptions function
+
+// Renders Multiselect Options with categorization
+const renderMultiselectOptions = (options, currentAnswer, subKey = null) => {
+  // Group options by category
+  const groupedOptions = {};
+  options.forEach(option => {
+    if (!groupedOptions[option.category]) {
+      groupedOptions[option.category] = [];
+    }
+    groupedOptions[option.category].push(option);
+  });
+
+  // Define category labels (optional - if you want to show headers)
+  const categoryLabels = {
+    'smoking': 'Smoking / Beedi Symptoms',
+    'chewing': 'Chewing Tobacco / Betel Leaves Symptoms', 
+    'otherDrugs': 'Other Drugs Symptoms',
+    'none': 'No Symptoms'
   };
+
+  return (
+    <div className="space-y-6 w-full">
+      {Object.keys(groupedOptions).map(category => (
+        <div key={category} className="space-y-4">
+          {category !== 'none' && (
+            <h4 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+              {categoryLabels[category]}
+            </h4>
+          )} 
+          
+          <div className="space-y-3">
+            {groupedOptions[category].map((option) => {
+              const isSelected = currentAnswer?.[option.id] || false;
+              return (
+                <div
+                  key={option.id}
+                  className={`flex items-center justify-between p-4 rounded-xl cursor-pointer border-2 transition ${
+                    isSelected
+                      ? "bg-[#e0e4ef] border-[#e72638] shadow-md"
+                      : "bg-white border-gray-200 hover:bg-gray-50"
+                  }`}
+                  onClick={() => handleInputChange(option.id, isSelected, subKey, 'multiselect')}
+                >
+                  <div className="flex items-center">
+                    {option.icon && <span className="mr-3 text-xl">{option.icon}</span>}
+                    <span className="text-base text-gray-700 font-medium">
+                      {option.label}
+                    </span>
+                  </div>
+                  <div
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition ${
+                      isSelected
+                        ? "bg-[#e72638] border-[#e72638]"
+                        : "bg-white border-gray-400"
+                    }`}
+                  >
+                    {isSelected && (
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="3"
+                          d="M5 13l4 4L19 7"
+                        ></path>
+                      </svg>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
   // Renders Height/Weight Inputs (type: measurements)
   const renderMeasurements = () => {
