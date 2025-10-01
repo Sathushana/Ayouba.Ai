@@ -20,6 +20,8 @@ const BRANCHING_KEYS = {
   'exerciseLocation': 'Physical Activity',
   'fitnessGoal': 'Physical Activity',
   'alcoholFrequency': 'Alcohol',
+   //'tobaccoSubstances': 'Tobacco',
+  'tobaccoFrequency': 'Tobacco',
   //'drinkingMotivation': 'Alcohol',
   'drinkingContext': 'Alcohol',
   'drinkingEffects': 'Alcohol',

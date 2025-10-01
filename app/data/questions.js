@@ -319,19 +319,149 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Tobacco Questions (UNCHANGED)
+  // Tobacco Questions - COMPLETELY UPDATED based on the document
   "Tobacco": [
+    // Q1: Current Substance Use
     {
       id: 6,
-      type: "radio",
-      title: "Tobacco Use",
-      description: "Do you currently use tobacco in any form (cigarettes, beedi, smokeless tobacco, betel, vaping)?",
-      key: "tobaccoUse",
+      type: "multiselect",
+      title: "Substance Use",
+      description: "Do you currently use any of these substances? (Select all that apply)",
+      key: "tobaccoSubstances",
       options: [
-        "Never",
-        "Used in the past, but quit",
-        "Occasionally (less than daily)",
-        "Daily / Regular use",
+        { id: "cigarettes", label: "Cigarettes" },
+        { id: "beedi", label: "Beedi" },
+        { id: "chewingTobacco", label: "Chewing tobacco / Betel leaves (Mawa / Pan)" },
+        { id: "otherDrugs", label: "Other drugs (e.g., cannabis)" },
+        { id: "none", label: "None of the above" }
+      ],
+      required: true,
+    },
+    // Q2: Usage Frequency
+    {
+      id: 7,
+      type: "radio",
+      title: "Usage Frequency",
+      description: "How often do you use it?",
+      key: "tobaccoFrequency",
+      options: [
+        "Daily",
+        "Weekly", 
+        "Occasionally",
+        "I used in the past, but quit"
+      ],
+      required: true,
+    },
+    // Q3: Units Per Day/Week (Conditional - only for current users)
+    {
+      id: 8,
+      type: "text",
+      title: "Usage Quantity",
+      description: "How many units do you use per day/week?",
+      key: "tobaccoQuantity",
+      placeholder: "e.g., 10 cigarettes per day, 5 beedi per week, 3 leaves per day",
+      required: false,
+    },
+    // Q4: Duration of Use
+    {
+      id: 9,
+      type: "radio",
+      title: "Duration of Use",
+      description: "How long have you been using this?",
+      key: "tobaccoDuration",
+      options: [
+        "Less than 1 year",
+        "1-5 years",
+        "5-10 years", 
+        "More than 10 years"
+      ],
+      required: true,
+    },
+    // Q5: Symptoms
+    {
+      id: 10,
+      type: "multiselect",
+      title: "Current Symptoms",
+      description: "Are you experiencing any of these symptoms? (Select all that apply)",
+      key: "tobaccoSymptoms",
+      options: [
+        { id: "persistentCough", label: "Persistent cough or phlegm" },
+        { id: "shortnessBreath", label: "Shortness of breath/wheezing" },
+        { id: "chestPain", label: "Chest pain" },
+        { id: "fatigue", label: "Fatigue / low energy" },
+        { id: "mouthSores", label: "Mouth sores or ulcers" },
+        { id: "mouthPatches", label: "Red or white patches in the mouth" },
+        { id: "gumDisease", label: "Gum disease/tooth loss" },
+        { id: "badBreath", label: "Bad breath/teeth staining" },
+        { id: "memoryProblems", label: "Memory or concentration problems" },
+        { id: "anxietyDepression", label: "Anxiety or depression" },
+        { id: "sleepDisturbances", label: "Sleep disturbances" },
+        { id: "heartbeatChanges", label: "Rapid heartbeat/blood pressure changes" },
+        { id: "noneSymptoms", label: "None of the above" }
+      ],
+      required: true,
+    },
+    // Q6: Existing Health Conditions
+    {
+      id: 11,
+      type: "multiselect",
+      title: "Existing Health Conditions",
+      description: "Do you already have any of these diseases or health conditions? (Select all that apply)",
+      key: "tobaccoHealthConditions",
+      options: [
+        { id: "heartDisease", label: "Heart disease/hypertension" },
+        { id: "diabetes", label: "Diabetes" },
+        { id: "respiratoryDisease", label: "Respiratory disease (e.g., asthma, COPD)" },
+        { id: "cancer", label: "Cancer (any type)" },
+        { id: "oralHealth", label: "Oral health problems (e.g., gum disease, mouth ulcers)" },
+        { id: "mentalHealth", label: "Mental health conditions (e.g., anxiety, depression)" },
+        { id: "otherConditions", label: "Other" },
+        { id: "noneConditions", label: "None of the above" }
+      ],
+      required: true,
+    },
+    // Q7: Reasons for Use
+    {
+      id: 12,
+      type: "multiselect",
+      title: "Reasons for Use",
+      description: "What makes you use these substances? (Select all that apply)",
+      key: "tobaccoReasons",
+      options: [
+        { id: "stress", label: "Stress/anxiety" },
+        { id: "habit", label: "Habit/routine" },
+        { id: "social", label: "Social situations/peer pressure" },
+        { id: "cultural", label: "Cultural / family practice" },
+        { id: "otherReasons", label: "Other" }
+      ],
+      required: true,
+    },
+    // Q8: Motivation to Quit/Reduce
+    {
+      id: 13,
+      type: "multiselect",
+      title: "Motivation to Change",
+      description: "What motivates you to quit or reduce? (Select all that apply)",
+      key: "tobaccoMotivation",
+      options: [
+        { id: "health", label: "Health concerns" },
+        { id: "family", label: "Family / social reasons" },
+        { id: "financial", label: "Financial reasons" }
+      ],
+      required: true,
+    },
+    // Q9: Goal
+    {
+      id: 14,
+      type: "radio",
+      title: "Your Goal",
+      description: "What's your goal with using these substances?",
+      key: "tobaccoGoal",
+      options: [
+        "I want to quit completely",
+        "I want to reduce/cut down", 
+        "I just want to track and be mindful",
+        "Not sure yet"
       ],
       required: true,
     },
@@ -491,7 +621,7 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
     // Handle goals without parentheses explicitly
     const lower = primaryGoal.toLowerCase();
     if (lower.includes("alcohol")) return "Alcohol";
-    if (lower.includes("smoking") || lower.includes("tobacco")) return "Tobacco";
+    if (lower.includes("smoking") || lower.includes("tobacco") || lower.includes("beedi")) return "Tobacco";
     if (lower.includes("sleep")) return "Sleep";
     if (lower.includes("stress") || lower.includes("mood")) return "Mental health";
     if (lower.includes("prevent")) return "Prevent diseases";
@@ -748,6 +878,62 @@ const conditionalFollowUps = {
       subType: "text",
       placeholder: "e.g., Train for a marathon, improve sports performance, etc.",
       required: true,
+    },
+  ],
+
+  // --- NEW TOBACCO FOLLOW-UPS ---
+  
+  // Tobacco Frequency Follow-ups
+  "I used in the past, but quit": [
+    {
+      subKey: "quitDuration",
+      subTitle: "How long ago did you quit?",
+      subType: "radio",
+      options: [
+        "Less than 1 month ago",
+        "1-6 months ago", 
+        "6-12 months ago",
+        "More than 1 year ago"
+      ],
+      required: true,
+    },
+  ],
+
+  // Tobacco Substances Follow-ups
+  "cigarettes": [
+    {
+      subKey: "cigarettesQuantity",
+      subTitle: "For cigarettes, how many do you smoke per day (for daily) or per week (for weekly/occasional)?",
+      subType: "text",
+      placeholder: "e.g., 10 per day, 20 per week",
+      required: false,
+    },
+  ],
+  "beedi": [
+    {
+      subKey: "beediQuantity", 
+      subTitle: "For beedi, how many do you smoke per day (for daily) or per week (for weekly/occasional)?",
+      subType: "text",
+      placeholder: "e.g., 5 per day, 15 per week",
+      required: false,
+    },
+  ],
+  "chewingTobacco": [
+    {
+      subKey: "chewingQuantity",
+      subTitle: "For chewing tobacco/betel leaves, how many leaves/grams per day (or per week)?",
+      subType: "text", 
+      placeholder: "e.g., 3 leaves per day, 10 grams per week",
+      required: false,
+    },
+  ],
+  "otherDrugs": [
+    {
+      subKey: "otherDrugsFrequency",
+      subTitle: "For other drugs, what is the frequency per week/day?",
+      subType: "text",
+      placeholder: "e.g., 2 times per week, daily",
+      required: false,
     },
   ],
 
