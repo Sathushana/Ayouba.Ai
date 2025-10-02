@@ -22,6 +22,8 @@ const BRANCHING_KEYS = {
   fitnessGoal: "Physical Activity",
   drinkingEffects: "Alcohol",
   tobaccoUse: "Tobacco",
+  sleepDisorderDiagnosed: "Sleep",
+  biggestSleepChallenge: "Sleep",
 };
 
 const APP_NAME = "Ayubo";
@@ -38,6 +40,7 @@ export default function Questionnaire() {
     []
   );
   const [alcoholQuestions, setAlcoholQuestions] = useState([]);
+  const [sleepQuestions, setSleepQuestions] = useState([]);
 
   // Utility function to extract the clean goal key from the option string
   const extractGoalKey = (optionString) => {
@@ -291,6 +294,43 @@ export default function Questionnaire() {
     isBranchingStep,
   ]);
 
+  // Handle sleep branching logic
+  useEffect(() => {
+    if (currentStepData && isBranchingStep && subStep === 1) {
+      const followUpAnswers = answers.followUps || {};
+      let sleepFollowUps = [];
+
+      // Handle sleep disorder diagnosis follow-up
+      if (
+        baseConditionalKey === "sleepDisorderDiagnosed" &&
+        baseConditionalAnswer === "Yes"
+      ) {
+        if (conditionalFollowUps[baseConditionalAnswer]) {
+          sleepFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+        }
+      }
+
+      // Handle biggest sleep challenge follow-ups
+      if (
+        baseConditionalKey === "biggestSleepChallenge" &&
+        baseConditionalAnswer
+      ) {
+        if (conditionalFollowUps[baseConditionalAnswer]) {
+          sleepFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+        }
+      }
+
+      setSleepQuestions(sleepFollowUps);
+    }
+  }, [
+    baseConditionalKey,
+    baseConditionalAnswer,
+    answers.followUps,
+    currentStepData,
+    subStep,
+    isBranchingStep,
+  ]);
+
   // Handle alcohol branching logic
   useEffect(() => {
     if (currentStepData && isBranchingStep && subStep === 1) {
@@ -452,6 +492,8 @@ export default function Questionnaire() {
           questionsToValidate = physicalActivityQuestions;
         } else if (BRANCHING_KEYS[currentStepData.key] === "Alcohol") {
           questionsToValidate = alcoholQuestions;
+        } else if (BRANCHING_KEYS[currentStepData.key] === "Sleep") {
+          questionsToValidate = sleepQuestions;
         } else {
           // Other single-select branching steps
           questionsToValidate =
@@ -523,6 +565,10 @@ export default function Questionnaire() {
           ); // Total height > 0 inches
         }
         return false;
+      }
+      if (currentStepData.type === "sleepSchedule") {
+        const { bedtime, waketime } = currentAnswer || {};
+        return !!bedtime && !!waketime;
       }
       if (currentStepData.type === "multiselect") {
         // Must have at least one selection if required: true
@@ -756,6 +802,16 @@ export default function Questionnaire() {
     }
     // Simple Multi-Inputs (Height/Weight)
     else if (currentStepData.type === "measurements") {
+      setAnswers((prevAnswers) => ({
+        ...prevAnswers,
+        [currentKey]: {
+          ...(prevAnswers[currentKey] || {}),
+          [key]: value,
+        },
+      }));
+    }
+    // Sleep Schedule Inputs
+    else if (currentStepData.type === "sleepSchedule") {
       setAnswers((prevAnswers) => ({
         ...prevAnswers,
         [currentKey]: {
@@ -1095,7 +1151,6 @@ export default function Questionnaire() {
                   handleMeasurementInput("height", e.target.value)
                 }
                 placeholder="e.g., 170"
-                // REMOVED ml-2 and adjusted to flex-1 for alignment
                 className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition ml-2 text-black"
                 min="1"
               />
@@ -1115,7 +1170,6 @@ export default function Questionnaire() {
                   handleMeasurementInput("weight", e.target.value)
                 }
                 placeholder="e.g., 65"
-                // REMOVED ml-2 and adjusted to flex-1 for alignment
                 className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition ml-2 text-black"
                 min="1"
               />
@@ -1173,7 +1227,6 @@ export default function Questionnaire() {
                   handleMeasurementInput("weight", e.target.value)
                 }
                 placeholder="e.g., 143"
-                // On mobile: Full width. On sm+: Flex-1 and ml-2 to align with metric inputs.
                 className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition sm:ml-2 text-black"
                 min="1"
               />
@@ -1185,6 +1238,65 @@ export default function Questionnaire() {
           <span className="text-black">BMI:</span>
           <span className="text-black">{bmi}</span>
         </div>
+      </div>
+    );
+  };
+
+  // Renders Sleep Schedule Inputs (type: sleepSchedule)
+  const renderSleepSchedule = () => {
+    const sleepAnswers = answers[currentStepData.key] || {};
+    const {
+      bedtime = "",
+      waketime = "",
+    } = sleepAnswers;
+
+    // Handler for sleep schedule inputs
+    const handleSleepInput = (key, value) => {
+      handleInputChange(key, value, null, "sleepSchedule");
+    };
+
+    return (
+      <div className="w-full max-w-lg space-y-6">
+        {/* Bedtime Input */}
+        <div className="space-y-3">
+          <label className="w-full text-gray-700 font-medium block text-left">
+            Sleep Time:
+          </label>
+          <input
+            type="time"
+            value={bedtime}
+            onChange={(e) => handleSleepInput("bedtime", e.target.value)}
+            className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+            required
+          />
+        </div>
+
+        {/* Wake Time Input */}
+        <div className="space-y-3">
+          <label className="w-full text-gray-700 font-medium block text-left">
+            Wake Up Time:
+          </label>
+          <input
+            type="time"
+            value={waketime}
+            onChange={(e) => handleSleepInput("waketime", e.target.value)}
+            className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+            required
+          />
+        </div>
+
+        {/* Display the schedule summary */}
+        {(bedtime || waketime) && (
+          <div className="mt-4 p-4 bg-[#e0e4ef] rounded-lg text-lg font-semibold">
+            <div className="flex justify-between">
+              <span className="text-black">Your Sleep Schedule:</span>
+            </div>
+            <div className="mt-2 text-sm text-gray-700">
+              {bedtime && <div>Sleep: {bedtime}</div>}
+              {waketime && <div>Wake: {waketime}</div>}
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -1298,7 +1410,6 @@ export default function Questionnaire() {
     // Determine the correct set of questions to render
     let questionsToRender = [];
     if (currentStepData.key === "healthConditions") {
-      // Use the dynamic state which includes the nested logic
       questionsToRender = healthConditionQuestions;
     } else if (currentStepData.key === "substanceUse") {
       questionsToRender = substanceUseQuestions;
@@ -1306,6 +1417,8 @@ export default function Questionnaire() {
       questionsToRender = physicalActivityQuestions;
     } else if (BRANCHING_KEYS[currentStepData.key] === "Alcohol") {
       questionsToRender = alcoholQuestions;
+    } else if (BRANCHING_KEYS[currentStepData.key] === "Sleep") {
+      questionsToRender = sleepQuestions;
     } else {
       questionsToRender = conditionalQuestions || [];
     }
@@ -1445,6 +1558,8 @@ export default function Questionnaire() {
         );
       case "measurements":
         return renderMeasurements();
+      case "sleepSchedule":
+        return renderSleepSchedule();
       case "multiselect":
         return renderMultiselectOptions(
           currentStepData.options,

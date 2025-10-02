@@ -631,18 +631,80 @@ const goalSpecificQuestions = {
   ],
 
   // Sleep Questions
-  Sleep: [
-    {
-      id: 6,
-      type: "radio",
-      title: "Sleep Quality",
-      description: "How would you rate your overall sleep quality?",
-      key: "sleepQuality",
-      options: ["Very poor", "Poor", "Fair", "Good", "Very good"],
-      required: true,
-    },
-  ],
-
+  // Sleep Questions - COMPREHENSIVE VERSION
+Sleep: [
+  // Q1: Daily Life and Responsibilities
+  {
+    id: 6,
+    type: "radio",
+    title: "Which of these best describes your daily life and primary responsibilities?",
+    description: "This helps us understand your lifestyle and sleep challenges.",
+    key: "dailyLife",
+    options: [
+      "Student (University, School, other education)",
+      "Working Professional (Employed/Self-Employed)", 
+      "Homemaker / Caregiver / Parent",
+      "Retired / Currently Not Working",
+      "Other / Multiple roles"
+    ],
+    required: true,
+  },
+  // Q2: Sleep and Wake Times
+  {
+    id: 7,
+    type: "sleepSchedule",
+    title: "What time are you trying to sleep and what time do you usually wake up?",
+    description: "Your typical sleep schedule helps us identify patterns.",
+    key: "sleepSchedule",
+    inputs: [
+      { key: "bedtime", label: "Sleep time", type: "time", required: true },
+      { key: "waketime", label: "Wake up time", type: "time", required: true }
+    ],
+    required: true,
+  },
+  // Q3: Sleep Disorder Diagnosis
+  {
+    id: 8,
+    type: "radio",
+    title: "Have you been diagnosed with insomnia or another sleep disorder?",
+    description: "This helps us provide appropriate recommendations.",
+    key: "sleepDisorderDiagnosed",
+    options: ["Yes", "No"],
+    required: true,
+  },
+  // Q4: Biggest Sleep Challenge
+  {
+    id: 9,
+    type: "radio", 
+    title: "What is your biggest challenge when it comes to sleep?",
+    description: "Select the issue that affects you most.",
+    key: "biggestSleepChallenge",
+    options: [
+      "Difficulty falling asleep",
+      "Waking up frequently during the night", 
+      "Waking up too early and can't go back to sleep",
+      "Feeling unrefreshed/tired even after a full night's sleep",
+      "My schedule is irregular (e.g., shift work)"
+    ],
+    required: true,
+  },
+  // Q5: Last Meal Timing
+  {
+    id: 10,
+    type: "radio",
+    title: "How much time is there usually between your last main meal (dinner/supper) and when you go to bed?",
+    description: "Eating timing can affect sleep quality.",
+    key: "mealToBedTime",
+    options: [
+      "Less than 30 minutes",
+      "30 min - 1 hour", 
+      "1-2 hours",
+      "More than 2 hours",
+      "No fixed pattern"
+    ],
+    required: true,
+  }
+],
   // Mental Health Questions
   "Mental health": [
     {
@@ -1279,7 +1341,98 @@ const conditionalFollowUps = {
     },
   ],
   // --- END PA FOLLOW-UPS ---
+// --- SLEEP FOLLOW-UPS ---
 
+// Sleep Disorder Diagnosis Follow-up
+"Yes": [ // For sleepDisorderDiagnosed = "Yes"
+  {
+    subKey: "sleepTreatments",
+    subTitle: "Are you currently using any treatments, medications, or supplements for sleep?",
+    subType: "radio",
+    options: [
+      "Prescription medication",
+      "Over-the-counter sleep aids", 
+      "Herbal / natural remedies",
+      "None"
+    ],
+    required: true,
+  }
+],
+
+// Biggest Sleep Challenge Follow-ups
+"Difficulty falling asleep": [
+  {
+    subKey: "fallingAsleepReason",
+    subTitle: "When you're trying to fall asleep, what is the primary thing keeping you awake?",
+    subType: "radio",
+    options: [
+      "Racing thoughts / Stress / Anxiety",
+      "Physical discomfort (pain, heat, noise, hunger)", 
+      "Not feeling tired (too much energy, late activity)"
+    ],
+    required: true,
+  }
+],
+
+"Waking up frequently during the night": [
+  {
+    subKey: "wakeupReason",
+    subTitle: "When you wake up at night, what usually causes it?",
+    subType: "radio", 
+    options: [
+      "Need to use the bathroom",
+      "Temperature (too hot or too cold)",
+      "Noise or a partner's movement",
+      "I just woke up and can't go back to sleep (no clear reason)"
+    ],
+    required: true,
+  }
+],
+
+"Waking up too early and can't go back to sleep": [
+  {
+    subKey: "earlyWakingThought",
+    subTitle: "When you wake up too early, what is your first thought or feeling?",
+    subType: "radio",
+    options: [
+      "Worrying about things I can't control (family, work, future)",
+      "Hunger or a desire for a morning beverage", 
+      "It's just my internal clock; I feel done sleeping"
+    ],
+    required: true,
+  }
+],
+
+"Feeling unrefreshed/tired even after a full night's sleep": [
+  {
+    subKey: "unrefreshedFeeling",
+    subTitle: "How do you feel after waking up?",
+    subType: "radio",
+    options: [
+      "Crash mid-day",
+      "Groggy, need caffeine",
+      "Rarely feel rested"
+    ],
+    required: true,
+  }
+],
+
+"My schedule is irregular (e.g., shift work)": [
+  {
+    subKey: "irregularScheduleReason", 
+    subTitle: "What is the main reason your bedtime and wake time change so much?",
+    subType: "radio",
+    options: [
+      "Necessary late work/studying or early duties",
+      "Social activities, chats or calls with friends or partner, late-night movies, or gaming",
+      "I have no fixed schedule/routine"
+    ],
+    required: true,
+  }
+],
+
+// Additional nested follow-ups for specific sleep issues would go here
+// (racing thoughts, physical discomfort, bathroom breaks, etc.)
   // --- TOBACCO FOLLOW-UPS ---
   "I used in the past, but quit": [
     {
