@@ -630,58 +630,58 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Sleep Questions
-  // Sleep Questions - COMPREHENSIVE VERSION
+ // Sleep Questions
+// Sleep Questions
 Sleep: [
-  // Q1: Daily Life and Responsibilities
+  // Q1: Daily Life & Responsibilities
   {
     id: 6,
     type: "radio",
-    title: "Which of these best describes your daily life and primary responsibilities?",
-    description: "This helps us understand your lifestyle and sleep challenges.",
-    key: "dailyLife",
+    title: "Daily Life & Responsibilities",
+    description: "Which of these best describes your daily life and primary responsibilities?",
+    key: "sleepDailyLife",
     options: [
       "Student (University, School, other education)",
-      "Working Professional (Employed/Self-Employed)", 
+      "Working Professional (Employed/Self-Employed)",
       "Homemaker / Caregiver / Parent",
       "Retired / Currently Not Working",
       "Other / Multiple roles"
     ],
     required: true,
   },
-  // Q2: Sleep and Wake Times
+  // Q2: Sleep Schedule
   {
     id: 7,
     type: "sleepSchedule",
-    title: "What time are you trying to sleep and what time do you usually wake up?",
-    description: "Your typical sleep schedule helps us identify patterns.",
+    title: "Sleep Schedule",
+    description: "What time are you trying to sleep and what time do you usually wake up?",
     key: "sleepSchedule",
     inputs: [
-      { key: "bedtime", label: "Sleep time", type: "time", required: true },
-      { key: "waketime", label: "Wake up time", type: "time", required: true }
+      { key: "bedtime", type: "time", placeholder: "HH:MM", required: true },
+      { key: "waketime", type: "time", placeholder: "HH:MM", required: true }
     ],
     required: true,
   },
-  // Q3: Sleep Disorder Diagnosis
+  // Q3: Sleep Disorder Diagnosis - THIS SHOULD BE A BRANCHING STEP
   {
     id: 8,
     type: "radio",
-    title: "Have you been diagnosed with insomnia or another sleep disorder?",
-    description: "This helps us provide appropriate recommendations.",
-    key: "sleepDisorderDiagnosed",
+    title: "Sleep Disorder Diagnosis",
+    description: "Have you been diagnosed with insomnia or another sleep disorder?",
+    key: "sleepDisorderDiagnosis",
     options: ["Yes", "No"],
     required: true,
   },
-  // Q4: Biggest Sleep Challenge
+  // Q4: Biggest Sleep Challenge - THIS SHOULD BE A BRANCHING STEP
   {
     id: 9,
-    type: "radio", 
-    title: "What is your biggest challenge when it comes to sleep?",
-    description: "Select the issue that affects you most.",
-    key: "biggestSleepChallenge",
+    type: "radio",
+    title: "Biggest Sleep Challenge",
+    description: "What is your biggest challenge when it comes to sleep?",
+    key: "sleepChallenge",
     options: [
       "Difficulty falling asleep",
-      "Waking up frequently during the night", 
+      "Waking up frequently during the night",
       "Waking up too early and can't go back to sleep",
       "Feeling unrefreshed/tired even after a full night's sleep",
       "My schedule is irregular (e.g., shift work)"
@@ -692,12 +692,12 @@ Sleep: [
   {
     id: 10,
     type: "radio",
-    title: "How much time is there usually between your last main meal (dinner/supper) and when you go to bed?",
-    description: "Eating timing can affect sleep quality.",
-    key: "mealToBedTime",
+    title: "Last Meal Timing",
+    description: "How much time is there usually between your last main meal (dinner/supper) and when you go to bed?",
+    key: "lastMealTiming",
     options: [
       "Less than 30 minutes",
-      "30 min - 1 hour", 
+      "30 min - 1 hour",
       "1-2 hours",
       "More than 2 hours",
       "No fixed pattern"
@@ -705,25 +705,199 @@ Sleep: [
     required: true,
   }
 ],
-  // Mental Health Questions
-  "Mental health": [
-    {
-      id: 6,
-      type: "radio",
-      title: "Stress and Mood",
-      description:
-        "How often do you feel stressed or anxious in a typical week?",
-      key: "stressLevel",
-      options: [
-        "Rarely",
-        "Sometimes (1-2 days)",
-        "Frequently (3-5 days)",
-        "Almost every day",
-      ],
-      required: true,
-    },
-  ],
 
+
+
+
+  // Mental Health Questions
+"Mental health": [
+  // Step 1: Baseline & Life Situation
+  {
+    id: 6,
+    type: "radio",
+    title: "Current Situation",
+    description: "Which of these best describes your current situation?",
+    key: "currentSituation",
+    options: [
+      "Student (school, college, university)",
+      "Employed (full-time or part-time, private or government sector)",
+      "Self-employed / small business owner",
+      "Unemployed / looking for work",
+      "Homemaker / caregiver",
+      "Retired",
+      "Other"
+    ],
+    required: true,
+  },
+  {
+    id: 7,
+    type: "radio",
+    title: "Living Situation",
+    description: "Who do you currently live with?",
+    key: "livingSituation",
+    options: [
+      "With parents/family",
+      "With spouse/children",
+      "Alone",
+      "Hostel/boarding/friends"
+    ],
+    required: true,
+  },
+  {
+    id: 8,
+    type: "radio",
+    title: "Financial Situation",
+    description: "How would you describe your financial situation?",
+    key: "financialSituation",
+    options: [
+      "Comfortable -- basic needs met without worry",
+      "Manageable -- some challenges, but okay",
+      "Struggling -- financial stress is frequent",
+      "Severe -- unable to meet basic needs"
+    ],
+    required: true,
+  },
+
+  // Step 2: Medical & Mental Health History
+  {
+    id: 9,
+    type: "multiselect",
+    title: "Health Conditions",
+    description: "Do you already have any of these diseases or health conditions? (Select all that apply)",
+    key: "mentalHealthConditions",
+    options: [
+      { id: "heartDiseaseMH", label: "Heart disease / Hypertension" },
+    { id: "diabetesMH", label: "Diabetes" },
+    { id: "respiratoryDiseaseMH", label: "Respiratory disease (e.g., asthma, COPD)" },
+    { id: "cancerMH", label: "Cancer (any type)" },
+    { id: "oralHealthMH", label: "Oral health problems (e.g., gum disease, mouth ulcers)" },
+    { id: "mentalHealthCondition", label: "Mental health conditions (e.g., anxiety, depression)" },
+    { id: "otherConditionMH", label: "Other" },
+    { id: "noneMH", label: "None of the above" }
+    ],
+    required: true,
+  },
+
+  // Step 3: Lifestyle & Daily Routine
+  {
+    id: 10,
+    type: "multiselect",
+    title: "Daily Routine",
+    description: "How would you describe your daily routine?",
+    key: "dailyRoutine",
+    options: [
+      { id: "sedentary", label: "Mostly sedentary / desk work / studying" },
+      { id: "active", label: "Physically active (walking, sports, exercise)" },
+      { id: "irregularMeals", label: "Irregular meals / poor diet" },
+      { id: "goodSleep", label: "Sleep 6-8 hours / good sleep hygiene" },
+      { id: "poorSleep", label: "Sleep <6 hours / poor sleep quality" },
+      { id: "heavyScreen", label: "Heavy screen time / social media" },
+      { id: "socialActive", label: "Socially active / regular friends or family interaction" },
+      { id: "socialIsolated", label: "Socially isolated / limited contact" }
+    ],
+    required: true,
+  },
+  {
+    id: 11,
+    type: "multiselect",
+    title: "Coping Mechanisms",
+    description: "When you feel stressed, how do you usually cope?",
+    key: "copingMechanisms",
+    options: [
+      { id: "talkToOthers", label: "Talk to friends/family" },
+      { id: "keepToMyself", label: "Keep it to myself" },
+      { id: "distract", label: "Distract with phone/social media/TV" },
+      { id: "sleep", label: "Sleep it off" },
+      { id: "eat", label: "Eat/snack" },
+      { id: "substances", label: "Use alcohol/smoking" },
+      { id: "otherCoping", label: "Other" }
+    ],
+    required: true,
+  },
+
+  // Step 4: Mental & Emotional State
+  {
+    id: 12,
+    type: "radio",
+    title: "Stress Frequency",
+    description: "How often do you feel stressed, anxious, or low in mood?",
+    key: "stressFrequency",
+    options: [
+      "Rarely -- I feel calm most of the time",
+      "Sometimes -- stress a few times a week",
+      "Often -- stress or low mood is frequent",
+      "Almost always -- I feel overwhelmed nearly every day"
+    ],
+    required: true,
+  },
+  {
+    id: 13,
+    type: "radio",
+    title: "Social Connection",
+    description: "How connected and supported do you feel socially?",
+    key: "socialConnection",
+    options: [
+      "Very connected -- I have friends/family to talk to",
+      "Moderately connected -- sometimes I feel supported",
+      "Rarely connected -- I often feel alone",
+      "Not connected -- I feel isolated"
+    ],
+    required: true,
+  },
+  {
+    id: 14,
+    type: "multiselect",
+    title: "Recent Feelings",
+    description: "In the past month, have you felt any of the following?",
+    key: "recentFeelings",
+    options: [
+      { id: "hopeless", label: "Hopeless about the future" },
+      { id: "concentration", label: "Difficulty concentrating" },
+      { id: "lossInterest", label: "Loss of interest in activities" },
+      { id: "nervousness", label: "Nervousness or excessive worry" },
+      { id: "sleepIssues", label: "Trouble sleeping or oversleeping" },
+      { id: "sadness", label: "Feeling down or sad most of the day" },
+      { id: "noneFeelings", label: "None of the above" }
+    ],
+    required: true,
+  },
+
+  // Step 5: Identify Root Causes / Triggers
+  {
+    id: 15,
+    type: "multiselect",
+    title: "Root Causes",
+    description: "Which areas do you think are most affecting your mood or stress?",
+    key: "rootCauses",
+    options: [
+      { id: "workStudies", label: "Work / studies / routine pressure" },
+      { id: "family", label: "Family / household responsibilities" },
+      { id: "financial", label: "Financial stress" },
+      { id: "healthLifestyle", label: "Physical health / exercise / diet / sleep" },
+      { id: "social", label: "Social / relationships" },
+      { id: "otherRoot", label: "Other" }
+    ],
+    required: true,
+  },
+
+  // Step 6: Goals & Readiness
+  {
+    id: 16,
+    type: "multiselect",
+    title: "Mental Health Goals",
+    description: "What would you like to achieve?",
+    key: "mentalHealthGoals",
+    options: [
+      { id: "reduceStress", label: "Reduce stress / improve mood" },
+      { id: "improveSleep", label: "Improve sleep / energy" },
+      { id: "improveHealth", label: "Improve health / lifestyle habits" },
+      { id: "improveSocial", label: "Improve social connections / relationships" },
+      { id: "otherGoals", label: "Other" }
+    ],
+    required: true,
+  }
+],
+ 
   // Prevent diseases Questions
   "Prevent diseases": [
     {
@@ -1341,98 +1515,7 @@ const conditionalFollowUps = {
     },
   ],
   // --- END PA FOLLOW-UPS ---
-// --- SLEEP FOLLOW-UPS ---
 
-// Sleep Disorder Diagnosis Follow-up
-"Yes": [ // For sleepDisorderDiagnosed = "Yes"
-  {
-    subKey: "sleepTreatments",
-    subTitle: "Are you currently using any treatments, medications, or supplements for sleep?",
-    subType: "radio",
-    options: [
-      "Prescription medication",
-      "Over-the-counter sleep aids", 
-      "Herbal / natural remedies",
-      "None"
-    ],
-    required: true,
-  }
-],
-
-// Biggest Sleep Challenge Follow-ups
-"Difficulty falling asleep": [
-  {
-    subKey: "fallingAsleepReason",
-    subTitle: "When you're trying to fall asleep, what is the primary thing keeping you awake?",
-    subType: "radio",
-    options: [
-      "Racing thoughts / Stress / Anxiety",
-      "Physical discomfort (pain, heat, noise, hunger)", 
-      "Not feeling tired (too much energy, late activity)"
-    ],
-    required: true,
-  }
-],
-
-"Waking up frequently during the night": [
-  {
-    subKey: "wakeupReason",
-    subTitle: "When you wake up at night, what usually causes it?",
-    subType: "radio", 
-    options: [
-      "Need to use the bathroom",
-      "Temperature (too hot or too cold)",
-      "Noise or a partner's movement",
-      "I just woke up and can't go back to sleep (no clear reason)"
-    ],
-    required: true,
-  }
-],
-
-"Waking up too early and can't go back to sleep": [
-  {
-    subKey: "earlyWakingThought",
-    subTitle: "When you wake up too early, what is your first thought or feeling?",
-    subType: "radio",
-    options: [
-      "Worrying about things I can't control (family, work, future)",
-      "Hunger or a desire for a morning beverage", 
-      "It's just my internal clock; I feel done sleeping"
-    ],
-    required: true,
-  }
-],
-
-"Feeling unrefreshed/tired even after a full night's sleep": [
-  {
-    subKey: "unrefreshedFeeling",
-    subTitle: "How do you feel after waking up?",
-    subType: "radio",
-    options: [
-      "Crash mid-day",
-      "Groggy, need caffeine",
-      "Rarely feel rested"
-    ],
-    required: true,
-  }
-],
-
-"My schedule is irregular (e.g., shift work)": [
-  {
-    subKey: "irregularScheduleReason", 
-    subTitle: "What is the main reason your bedtime and wake time change so much?",
-    subType: "radio",
-    options: [
-      "Necessary late work/studying or early duties",
-      "Social activities, chats or calls with friends or partner, late-night movies, or gaming",
-      "I have no fixed schedule/routine"
-    ],
-    required: true,
-  }
-],
-
-// Additional nested follow-ups for specific sleep issues would go here
-// (racing thoughts, physical discomfort, bathroom breaks, etc.)
   // --- TOBACCO FOLLOW-UPS ---
   "I used in the past, but quit": [
     {
@@ -1566,7 +1649,825 @@ const conditionalFollowUps = {
     },
   ],
   // --- END TOBACCO FOLLOW-UPS ---
+// Add to conditionalFollowUps object in questions.js
 
+// --- SLEEP FOLLOW-UPS ---
+
+// Q3: Sleep Disorder Diagnosis Follow-up
+"Yes": [
+  {
+    subKey: "sleepTreatments",
+    subTitle: "Are you currently using any treatments, medications, or supplements for sleep?",
+    subType: "multiselect",
+    options: [
+      { id: "prescription", label: "Prescription medication" },
+      { id: "overTheCounter", label: "Over-the-counter sleep aids" },
+      { id: "herbal", label: "Herbal / natural remedies" },
+      { id: "noneTreatment", label: "None" }
+    ],
+    required: true,
+  }
+],
+
+// Sleep Treatment Details Follow-ups
+"prescription": [
+  {
+    subKey: "prescriptionDetails",
+    subTitle: "Please provide details for your prescription sleep medication:",
+    subType: "medications",
+    required: true,
+    defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+    routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+  }
+],
+"overTheCounter": [
+  {
+    subKey: "otcDetails",
+    subTitle: "Please provide details for your over-the-counter sleep aids:",
+    subType: "medications",
+    required: true,
+    defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+    routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+  }
+],
+"herbal": [
+  {
+    subKey: "herbalDetails",
+    subTitle: "Please provide details for your herbal/natural remedies:",
+    subType: "medications",
+    required: true,
+    defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+    routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+  }
+],
+
+// Q4: Sleep Challenge Follow-ups
+"Difficulty falling asleep": [
+  {
+    subKey: "fallingAsleepReason",
+    subTitle: "When you're trying to fall asleep, what is the primary thing keeping you awake?",
+    subType: "radio",
+    options: [
+      "Racing thoughts / Stress / Anxiety",
+      "Physical discomfort (pain, heat, noise, hunger)",
+      "Not feeling tired (too much energy, late activity)"
+    ],
+    required: true,
+  }
+],
+
+"Waking up frequently during the night": [
+  {
+    subKey: "wakingUpReason",
+    subTitle: "When you wake up at night, what usually causes it?",
+    subType: "radio",
+    options: [
+      "Need to use the bathroom",
+      "Temperature (too hot or too cold)",
+      "Noise or a partner's movement",
+      "I just woke up and can't go back to sleep (no clear reason)"
+    ],
+    required: true,
+  }
+],
+
+"Waking up too early and can't go back to sleep": [
+  {
+    subKey: "earlyWakingReason",
+    subTitle: "When you wake up too early, what is your first thought or feeling?",
+    subType: "radio",
+    options: [
+      "Worrying about things I can't control (family, work, future)",
+      "Hunger or a desire for a morning beverage",
+      "It's just my internal clock; I feel done sleeping"
+    ],
+    required: true,
+  }
+],
+
+"Feeling unrefreshed/tired even after a full night's sleep": [
+  {
+    subKey: "unrefreshedFeeling",
+    subTitle: "How do you feel after waking up?",
+    subType: "radio",
+    options: [
+      "Crash mid-day",
+      "Groggy, need caffeine",
+      "Rarely feel rested"
+    ],
+    required: true,
+  }
+],
+
+"My schedule is irregular (e.g., shift work)": [
+  {
+    subKey: "irregularScheduleReason",
+    subTitle: "What is the main reason your bedtime and wake time change so much?",
+    subType: "radio",
+    options: [
+      "Necessary late work/studying or early duties",
+      "Social activities, chats or calls with friends or partner, late-night movies, or gaming",
+      "I have no fixed schedule/routine"
+    ],
+    required: true,
+  }
+],
+
+// Detailed follow-ups for each sleep challenge branch
+// Racing thoughts follow-up
+"Racing thoughts / Stress / Anxiety": [
+  {
+    subKey: "racingThoughtsContext",
+    subTitle: "What is usually on your mind when you try to sleep?",
+    subType: "multiselect",
+    options: [
+      { id: "academicStress", label: "Exams, assignments, or project deadlines" },
+      { id: "workStress", label: "Work emails, meetings, or next day's tasks" },
+      { id: "familyStress", label: "Family logistics, chores, or well-being of others" },
+      { id: "generalAnxiety", label: "General worries and anxiety" }
+    ],
+    required: true,
+  },
+  {
+    subKey: "mentalHealthDiagnosisSleep",
+    subTitle: "Do you have any diagnosed mental health condition (anxiety, depression, stress disorder)?",
+    subType: "radio",
+    options: ["Yes", "No"],
+    required: true,
+  }
+],
+
+// Physical discomfort follow-up
+"Physical discomfort (pain, heat, noise, hunger)": [
+  {
+    subKey: "discomfortType",
+    subTitle: "Which discomfort is most common?",
+    subType: "radio",
+    options: ["Pain", "Noise", "Heat", "Hunger", "Other"],
+    required: true,
+  }
+],
+
+// Not feeling tired follow-up
+"Not feeling tired (too much energy, late activity)": [
+  {
+    subKey: "energyHabits",
+    subTitle: "What activities keep you energized late at night?",
+    subType: "multiselect",
+    options: [
+      { id: "caffeine", label: "Drink tea/coffee/energy drinks within 4 hrs of bedtime" },
+      { id: "screens", label: "Use screens late at night" },
+      { id: "exercise", label: "Exercise late at night" },
+      { id: "otherActivities", label: "Other activities" }
+    ],
+    required: true,
+  }
+],
+
+// Bathroom visits follow-up
+"Need to use the bathroom": [
+  {
+    subKey: "bathroomFrequency",
+    subTitle: "How many times do you wake to urinate?",
+    subType: "radio",
+    options: ["1", "2", "3+"],
+    required: true,
+  },
+  {
+    subKey: "medicalConditionsBathroom",
+    subTitle: "Do you have diabetes, prostate issues, or kidney/liver problems?",
+    subType: "radio",
+    options: ["Yes", "No"],
+    required: true,
+  }
+],
+
+// Temperature follow-up
+"Temperature (too hot or too cold)": [
+  {
+    subKey: "temperatureIssues",
+    subTitle: "Do you often wake sweating or throwing blankets?",
+    subType: "radio",
+    options: ["Yes", "No"],
+    required: true,
+  }
+],
+
+// Worrying follow-up
+"Worrying about things I can't control (family, work, future)": [
+  {
+    subKey: "worryDuration",
+    subTitle: "How long do you stay awake when this happens?",
+    subType: "radio",
+    options: ["<30 mins", "30-60 mins", ">1 hr"],
+    required: true,
+  }
+],
+
+// Crash mid-day follow-up
+"Crash mid-day": [
+  {
+    subKey: "nappingHabit",
+    subTitle: "Do you nap during the day?",
+    subType: "radio",
+    options: ["Yes", "No"],
+    required: true,
+  }
+],
+
+// Groggy follow-up
+"Groggy, need caffeine": [
+  {
+    subKey: "morningHabits",
+    subTitle: "What do you do right after waking up?",
+    subType: "multiselect",
+    options: [
+      { id: "checkPhone", label: "Check phone immediately" },
+      { id: "getSunlight", label: "Get sunlight within 1 hr of waking" },
+      { id: "drinkCaffeine", label: "Need caffeine to feel awake" }
+    ],
+    required: true,
+  }
+],
+
+// Rarely rested follow-up
+"Rarely feel rested": [
+  {
+    subKey: "averageSleepDuration",
+    subTitle: "What is your average hours of sleep?",
+    subType: "radio",
+    options: ["<6 hours", "6-7.5 hours", ">7.5 hours"],
+    required: true,
+  }
+],
+// --- END SLEEP FOLLOW-UPS ---
+
+// Mental Health Follow-ups
+"Student (school, college, university)": [
+  {
+    subKey: "studentStressors",
+    subTitle: "What usually causes you the most stress at school or university?",
+    subType: "multiselect",
+    options: [
+      { id: "academicPressure", label: "Academic pressure / exams / results" },
+      { id: "tuitionPressure", label: "Tuition / extra classes pressure" },
+      { id: "timeManagement", label: "Managing time between studies and family expectations" },
+      { id: "peerPressure", label: "Peer pressure / social life" },
+      { id: "financialConcerns", label: "Financial concerns (fees, travel, living costs)" },
+      { id: "otherStudent", label: "Other" }
+    ],
+    required: true,
+  }
+],
+"Employed (full-time or part-time, private or government sector)": [
+  {
+    subKey: "workStressors",
+    subTitle: "What usually causes you the most stress at work?",
+    subType: "multiselect",
+    options: [
+      { id: "workload", label: "Heavy workload / long hours" },
+      { id: "jobInsecurity", label: "Job insecurity / contract uncertainty" },
+      { id: "workplaceConflict", label: "Difficult boss / workplace conflict" },
+      { id: "lowPay", label: "Low pay or limited benefits" },
+      { id: "commute", label: "Commute / travel stress" },
+      { id: "otherWork", label: "Other" }
+    ],
+    required: true,
+  }
+],
+"Self-employed / small business owner": [
+  {
+    subKey: "businessStressors",
+    subTitle: "What is your biggest stress factor in running your business?",
+    subType: "multiselect",
+    options: [
+      { id: "financialUncertainty", label: "Financial uncertainty / cash flow" },
+      { id: "regulations", label: "Government regulations or taxes" },
+      { id: "customerIssues", label: "Customer or client issues" },
+      { id: "marketChanges", label: "Lack of stability / market changes" },
+      { id: "workLifeBalance", label: "Work-life balance" },
+      { id: "otherBusiness", label: "Other" }
+    ],
+    required: true,
+  }
+],
+"Unemployed / looking for work": [
+  {
+    subKey: "unemploymentStressors",
+    subTitle: "What's the biggest source of stress while not working?",
+    subType: "multiselect",
+    options: [
+      { id: "financialWorries", label: "Financial worries / supporting family" },
+      { id: "familyPressure", label: "Pressure from family / society to find a job" },
+      { id: "selfEsteem", label: "Low self-esteem / confidence" },
+      { id: "opportunities", label: "Difficulty finding opportunities" },
+      { id: "otherUnemployment", label: "Other" }
+    ],
+    required: true,
+  }
+],
+
+"Homemaker / caregiver": [
+  {
+    subKey: "homemakerStressors",
+    subTitle: "What usually feels most stressful in your role?",
+    subType: "multiselect",
+    options: [
+      { id: "household", label: "Household responsibilities" },
+      { id: "caring", label: "Caring for children / elderly / family members" },
+      { id: "personalTime", label: "Lack of personal time / self-care" },
+      { id: "unsupported", label: "Feeling unrecognized / unsupported" },
+      { id: "financialConstraints", label: "Financial dependency / constraints" },
+      { id: "otherHomemaker", label: "Other" }
+    ],
+    required: true,
+  }
+],
+"Retired": [
+  {
+    subKey: "retirementStressors",
+    subTitle: "What is your biggest challenge in retirement?",
+    subType: "multiselect",
+    options: [
+      { id: "loneliness", label: "Loneliness / isolation" },
+      { id: "healthIssues", label: "Health issues / managing chronic conditions" },
+      { id: "financialConcernsRetirement", label: "Financial concerns / pension limitations" },
+      { id: "lackRoutine", label: "Lack of routine or purpose" },
+      { id: "otherRetirement", label: "Other" }
+    ],
+    required: true,
+  }
+],
+"heartDiseaseMH": [
+  {
+    subKey: "heartDiseaseMentalImpact",
+    subTitle: "Does this condition affect your mental health or daily functioning?",
+    subType: "radio",
+    options: ["Yes", "Sometimes", "No"],
+    required: true,
+  }
+],
+"diabetesMH": [
+  {
+    subKey: "diabetesMentalImpact",
+    subTitle: "Does this condition affect your mental health or daily functioning?",
+    subType: "radio",
+    options: ["Yes", "Sometimes", "No"],
+    required: true,
+  }
+],
+"respiratoryDiseaseMH": [
+  {
+    subKey: "respiratoryMentalImpact",
+    subTitle: "Does this condition affect your mental health or daily functioning?",
+    subType: "radio",
+    options: ["Yes", "Sometimes", "No"],
+    required: true,
+  }
+],
+"cancerMH": [
+  {
+    subKey: "cancerMentalImpact",
+    subTitle: "Does this condition affect your mental health or daily functioning?",
+    subType: "radio",
+    options: ["Yes", "Sometimes", "No"],
+    required: true,
+  }
+],
+"oralHealthMH": [
+  {
+    subKey: "oralHealthMentalImpact",
+    subTitle: "Does this condition affect your mental health or daily functioning?",
+    subType: "radio",
+    options: ["Yes", "Sometimes", "No"],
+    required: true,
+  }
+],
+"otherConditionMH": [
+  {
+    subKey: "otherConditionDetailsMH",
+    subTitle: "Please specify your condition.",
+    subType: "text",
+    placeholder: "e.g., Arthritis, Chronic Pain, Thyroid issues",
+    required: true,
+  },
+  {
+    subKey: "otherConditionMentalImpact",
+    subTitle: "Does this condition affect your mental health or daily functioning?",
+    subType: "radio",
+    options: ["Yes", "Sometimes", "No"],
+    required: true,
+  }
+],
+
+// Follow-ups for "Yes" answers
+"Yes": [
+  {
+    subKey: "mentalImpactAreas",
+    subTitle: "How does it affect you?",
+    subType: "multiselect",
+    options: [
+      { id: "causesStress", label: "Causes stress / anxiety" },
+      { id: "lowersMood", label: "Lowers mood / depressive feelings" },
+      { id: "affectsSleep", label: "Affects sleep" },
+      { id: "affectsEnergy", label: "Affects energy / motivation" },
+      { id: "affectsSocial", label: "Affects social relationships" },
+      { id: "otherImpact", label: "Other" }
+    ],
+    required: true,
+  }
+],
+"Sometimes": [
+  {
+    subKey: "mentalImpactAreasSometimes",
+    subTitle: "Which aspects are sometimes affected?",
+    subType: "multiselect",
+    options: [
+      { id: "causesStressSometimes", label: "Causes stress / anxiety" },
+      { id: "lowersMoodSometimes", label: "Lowers mood / depressive feelings" },
+      { id: "affectsSleepSometimes", label: "Affects sleep" },
+      { id: "affectsEnergySometimes", label: "Affects energy / motivation" },
+      { id: "affectsSocialSometimes", label: "Affects social relationships" },
+      { id: "otherImpactSometimes", label: "Other" }
+    ],
+    required: true,
+  }
+],
+
+// Follow-up for "Other" in impact areas
+"otherImpact": [
+  {
+    subKey: "otherImpactDetails",
+    subTitle: "Please specify how it affects you:",
+    subType: "text",
+    placeholder: "e.g., Affects concentration, causes physical pain, etc.",
+    required: true,
+  }
+],
+"otherImpactSometimes": [
+  {
+    subKey: "otherImpactDetailsSometimes",
+    subTitle: "Please specify how it affects you:",
+    subType: "text",
+    placeholder: "e.g., Affects concentration, causes physical pain, etc.",
+    required: true,
+  }
+],
+"mentalHealthCondition": [
+  {
+    subKey: "mentalHealthDiagnosis",
+    subTitle: "Which condition(s) have you been diagnosed with?",
+    subType: "multiselect",
+    options: [
+      { id: "depression", label: "Depression" },
+      { id: "anxiety", label: "Anxiety" },
+      { id: "bipolar", label: "Bipolar disorder" },
+      { id: "adhd", label: "ADHD" },
+      { id: "ptsd", label: "PTSD" },
+      { id: "otherDiagnosis", label: "Other" }
+    ],
+    required: true,
+  },
+  {
+    subKey: "mentalHealthTreatment",
+    subTitle: "Are you currently receiving any treatment or support?",
+    subType: "multiselect",
+    options: [
+      { id: "medication", label: "Medication prescribed by a doctor" },
+      { id: "counseling", label: "Counseling / psychotherapy" },
+      { id: "otherTherapies", label: "Other therapies (e.g., group therapy, support groups)" },
+      { id: "noneTreatment", label: "None" }
+    ],
+    required: true,
+  }
+],
+
+// Medication follow-up
+"medication": [
+  {
+    subKey: "medicationDetails",
+    subTitle: "Please provide details about your medication:",
+    subType: "medications", // Reusing the medications custom type
+    required: true,
+    defaultData: [{ id: 1, name: "", routine: "Morning", dose: "", duration: "", sideEffects: "" }],
+    routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+  }
+],
+
+// Counseling follow-up
+"counseling": [
+  {
+    subKey: "counselingDetails",
+    subTitle: "Please provide details about your counseling/therapy:",
+    subType: "radio",
+    options: ["Individual therapy", "Group therapy", "Couples/family therapy", "Other"],
+    required: true,
+  },
+  {
+    subKey: "counselingFrequency",
+    subTitle: "How often do you attend sessions?",
+    subType: "radio",
+    options: ["Weekly", "Bi-weekly", "Monthly", "As needed", "Just started"],
+    required: true,
+  }
+],
+
+// Other therapies follow-up
+"otherTherapies": [
+  {
+    subKey: "otherTherapyDetails",
+    subTitle: "Please specify the type of therapy:",
+    subType: "text",
+    placeholder: "e.g., Group therapy, support groups, art therapy, etc.",
+    required: true,
+  },
+  {
+    subKey: "otherTherapyFrequency",
+    subTitle: "How often do you participate?",
+    subType: "radio",
+    options: ["Weekly", "Bi-weekly", "Monthly", "As needed", "Occasionally"],
+    required: true,
+  }
+],
+
+// Other diagnosis follow-up
+"otherDiagnosis": [
+  {
+    subKey: "otherDiagnosisDetails",
+    subTitle: "Please specify the condition:",
+    subType: "text",
+    placeholder: "e.g., OCD, Eating disorder, Schizophrenia, etc.",
+    required: true,
+  }
+],
+// Add to conditionalFollowUps in questions.js
+
+// Recent Feelings Adaptive Follow-ups
+"hopeless": [
+  {
+    subKey: "hopelessFrequency",
+    subTitle: "How often do you feel hopeless?",
+    subType: "radio",
+    options: [
+      "Rarely (a few days in the month)",
+      "Sometimes (a few days each week)",
+      "Often (most days)",
+      "Almost always"
+    ],
+    required: true,
+  },
+  {
+    subKey: "hopelessMotivation",
+    subTitle: "Does this affect your motivation to do daily tasks?",
+    subType: "radio",
+    options: ["Yes, a lot", "Sometimes", "No"],
+    required: true,
+  }
+],
+"concentration": [
+  {
+    subKey: "concentrationAreas",
+    subTitle: "In which areas do you notice poor concentration most?",
+    subType: "multiselect",
+    options: [
+      { id: "studiesWork", label: "Studies/work" },
+      { id: "dailyChores", label: "Daily chores/household" },
+      { id: "conversations", label: "Conversations/social life" },
+      { id: "otherConcentration", label: "Other" }
+    ],
+    required: true,
+  },
+  {
+    subKey: "concentrationProblems",
+    subTitle: "Has this caused problems with performance (work, studies, daily tasks)?",
+    subType: "radio",
+    options: ["Yes", "Sometimes", "No"],
+    required: true,
+  }
+],
+"lossInterest": [
+  {
+    subKey: "interestAreas",
+    subTitle: "Which activities have you lost interest in?",
+    subType: "multiselect",
+    options: [
+      { id: "hobbies", label: "Hobbies/leisure" },
+      { id: "socialActivities", label: "Spending time with friends/family" },
+      { id: "workStudies", label: "Work/studies" },
+      { id: "selfCare", label: "Self-care/personal goals" },
+      { id: "otherInterest", label: "Other" }
+    ],
+    required: true,
+  },
+  {
+    subKey: "interestImpact",
+    subTitle: "How much does this affect your daily life?",
+    subType: "radio",
+    options: [
+      "A lot – I avoid most activities",
+      "Somewhat – I still do things but without interest",
+      "Little to none"
+    ],
+    required: true,
+  }
+],
+"nervousness": [
+  {
+    subKey: "anxietySymptoms",
+    subTitle: "When you feel anxious, what happens most?",
+    subType: "multiselect",
+    options: [
+      { id: "racingThoughts", label: "Racing thoughts" },
+      { id: "restlessness", label: "Restlessness / can't relax" },
+      { id: "physicalSymptoms", label: "Fast heartbeat / body tension" },
+      { id: "avoidance", label: "Avoiding situations" }
+    ],
+    required: true,
+  },
+  {
+    subKey: "worryImpact",
+    subTitle: "How often does worry stop you from doing things you want/need to do?",
+    subType: "radio",
+    options: ["Very often", "Sometimes", "Rarely", "Never"],
+    required: true,
+  }
+],
+"sleepIssues": [
+  {
+    subKey: "sleepProblems",
+    subTitle: "Which of these best describes your sleep issue?",
+    subType: "multiselect",
+    options: [
+      { id: "troubleFallingAsleep", label: "Trouble falling asleep" },
+      { id: "wakeUpOften", label: "Wake up often at night" },
+      { id: "wakeUpEarly", label: "Wake up too early" },
+      { id: "oversleeping", label: "Sleeping too much" }
+    ],
+    required: true,
+  },
+  {
+    subKey: "sleepRestfulness",
+    subTitle: "Do you feel rested after sleep?",
+    subType: "radio",
+    options: ["Rarely / Never", "Sometimes", "Yes, most of the time"],
+    required: true,
+  }
+],
+"sadness": [
+  {
+    subKey: "sadnessFrequency",
+    subTitle: "How many days in the past month did you feel this way?",
+    subType: "radio",
+    options: [
+      "Less than 5 days",
+      "5–10 days",
+      "More than 10 days",
+      "Almost every day"
+    ],
+    required: true,
+  },
+  {
+    subKey: "sadnessImpact",
+    subTitle: "Did this sadness affect your daily routine (work, studies, relationships, self-care)?",
+    subType: "radio",
+    options: ["Yes, significantly", "Yes, somewhat", "No"],
+    required: true,
+  }
+],
+
+// Additional follow-ups for "Other" options
+"otherConcentration": [
+  {
+    subKey: "otherConcentrationDetails",
+    subTitle: "Please specify other areas where you notice poor concentration:",
+    subType: "text",
+    placeholder: "e.g., Driving, reading, etc.",
+    required: true,
+  }
+],
+"otherInterest": [
+  {
+    subKey: "otherInterestDetails",
+    subTitle: "Please specify other activities you've lost interest in:",
+    subType: "text",
+    placeholder: "e.g., Exercise, cooking, etc.",
+    required: true,
+  }
+],
+
+
+
+
+// Lifestyle follow-ups
+"poorSleep": [
+  {
+    subKey: "sleepDisruptors",
+    subTitle: "What usually disrupts your sleep?",
+    subType: "multiselect",
+    options: [
+      { id: "stress", label: "Stress / anxiety" },
+      { id: "screenTime", label: "Screen time / late-night phone use" },
+      { id: "familyResponsibilities", label: "Family responsibilities" },
+      { id: "healthIssuesSleep", label: "Health issues" }
+    ],
+    required: true,
+  }
+],
+"sedentary": [
+  {
+    subKey: "activityBarriers",
+    subTitle: "What prevents you from moving more?",
+    subType: "multiselect",
+    options: [
+      { id: "lackTime", label: "Lack of time" },
+      { id: "lackMotivation", label: "Lack of motivation" },
+      { id: "physicalLimitations", label: "Physical limitations" },
+      { id: "dontKnowWhatToDo", label: "Don't know what to do" }
+    ],
+    required: true,
+  }
+],
+"irregularMeals": [
+  {
+    subKey: "mealIssues",
+    subTitle: "Which meals are usually skipped or unhealthy?",
+    subType: "multiselect",
+    options: [
+      { id: "breakfast", label: "Breakfast" },
+      { id: "lunch", label: "Lunch" },
+      { id: "dinner", label: "Dinner" },
+      { id: "snacks", label: "Snacks / sugary drinks" },
+      { id: "fastFood", label: "Mostly fast food / processed meals" }
+    ],
+    required: true,
+  }
+],
+
+// Mental health condition follow-ups
+"mentalHealth": [
+  {
+    subKey: "mentalHealthDiagnosis",
+    subTitle: "Which condition(s) have you been diagnosed with?",
+    subType: "multiselect",
+    options: [
+      { id: "depression", label: "Depression" },
+      { id: "anxiety", label: "Anxiety" },
+      { id: "bipolar", label: "Bipolar disorder" },
+      { id: "adhd", label: "ADHD" },
+      { id: "ptsd", label: "PTSD" },
+      { id: "otherDiagnosis", label: "Other" }
+    ],
+    required: true,
+  },
+  {
+    subKey: "mentalHealthTreatment",
+    subTitle: "Are you currently receiving any treatment or support?",
+    subType: "multiselect",
+    options: [
+      { id: "medication", label: "Medication prescribed by a doctor" },
+      { id: "counseling", label: "Counseling / psychotherapy" },
+      { id: "otherTherapies", label: "Other therapies (e.g., group therapy, support groups)" },
+      { id: "noneTreatment", label: "None" }
+    ],
+    required: true,
+  }
+],
+
+// Stress frequency follow-ups
+"Often -- stress or low mood is frequent": [
+  {
+    subKey: "stressSymptoms",
+    subTitle: "When you feel stressed or low, what do you notice first?",
+    subType: "multiselect",
+    options: [
+      { id: "lackMotivation", label: "Lack of motivation" },
+      { id: "racingThoughts", label: "Racing thoughts / worry" },
+      { id: "fatigue", label: "Fatigue / low energy" },
+      { id: "irritability", label: "Irritability / mood swings" },
+      { id: "tension", label: "Tension / headaches" },
+      { id: "sleepProblems", label: "Sleep problems" },
+      { id: "otherSymptoms", label: "Other" }
+    ],
+    required: true,
+  }
+],
+"Almost always -- I feel overwhelmed nearly every day": [
+  {
+    subKey: "stressSymptoms",
+    subTitle: "When you feel stressed or low, what do you notice first?",
+    subType: "multiselect",
+    options: [
+      { id: "lackMotivation", label: "Lack of motivation" },
+      { id: "racingThoughts", label: "Racing thoughts / worry" },
+      { id: "fatigue", label: "Fatigue / low energy" },
+      { id: "irritability", label: "Irritability / mood swings" },
+      { id: "tension", label: "Tension / headaches" },
+      { id: "sleepProblems", label: "Sleep problems" },
+      { id: "otherSymptoms", label: "Other" }
+    ],
+    required: true,
+  }
+],
   // --- ALCOHOL FOLLOW-UPS (CORRECTED) ---
   "Sometimes (1-2 times a week)": [
     {

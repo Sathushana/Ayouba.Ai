@@ -22,8 +22,13 @@ const BRANCHING_KEYS = {
   fitnessGoal: "Physical Activity",
   drinkingEffects: "Alcohol",
   tobaccoUse: "Tobacco",
-  sleepDisorderDiagnosed: "Sleep",
-  biggestSleepChallenge: "Sleep",
+  currentSituation: "Mental health",
+  mentalHealthConditions: "Mental health",
+  dailyRoutine: "Mental health",
+  stressFrequency: "Mental health",
+  recentFeelings: "Mental health",
+  //sleepDisorderDiagnosis: "Sleep",
+  sleepChallenge: "Sleep"
 };
 
 const APP_NAME = "Ayubo";
@@ -40,6 +45,7 @@ export default function Questionnaire() {
     []
   );
   const [alcoholQuestions, setAlcoholQuestions] = useState([]);
+  const [mentalHealthQuestions, setMentalHealthQuestions] = useState([]);
   const [sleepQuestions, setSleepQuestions] = useState([]);
 
   // Utility function to extract the clean goal key from the option string
@@ -107,6 +113,20 @@ export default function Questionnaire() {
   const isAnyEffectSelected = (effects) => {
     return Object.entries(effects || {}).some(
       ([key, isSelected]) => isSelected && key !== "noIssues"
+    );
+  };
+
+  // Helper to check if any mental health condition (excluding 'noneMH') is selected
+  const isAnyMentalHealthConditionSelected = (mentalHealthConditions) => {
+    return Object.entries(mentalHealthConditions || {}).some(
+      ([key, isSelected]) => isSelected && key !== "noneMH"
+    );
+  };
+
+  // Helper to check if any feeling (excluding 'noneFeelings') is selected
+  const isAnyFeelingSelected = (recentFeelings) => {
+    return Object.entries(recentFeelings || {}).some(
+      ([key, isSelected]) => isSelected && key !== "noneFeelings"
     );
   };
 
@@ -294,43 +314,6 @@ export default function Questionnaire() {
     isBranchingStep,
   ]);
 
-  // Handle sleep branching logic
-  useEffect(() => {
-    if (currentStepData && isBranchingStep && subStep === 1) {
-      const followUpAnswers = answers.followUps || {};
-      let sleepFollowUps = [];
-
-      // Handle sleep disorder diagnosis follow-up
-      if (
-        baseConditionalKey === "sleepDisorderDiagnosed" &&
-        baseConditionalAnswer === "Yes"
-      ) {
-        if (conditionalFollowUps[baseConditionalAnswer]) {
-          sleepFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
-        }
-      }
-
-      // Handle biggest sleep challenge follow-ups
-      if (
-        baseConditionalKey === "biggestSleepChallenge" &&
-        baseConditionalAnswer
-      ) {
-        if (conditionalFollowUps[baseConditionalAnswer]) {
-          sleepFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
-        }
-      }
-
-      setSleepQuestions(sleepFollowUps);
-    }
-  }, [
-    baseConditionalKey,
-    baseConditionalAnswer,
-    answers.followUps,
-    currentStepData,
-    subStep,
-    isBranchingStep,
-  ]);
-
   // Handle alcohol branching logic
   useEffect(() => {
     if (currentStepData && isBranchingStep && subStep === 1) {
@@ -412,6 +395,216 @@ export default function Questionnaire() {
     isBranchingStep,
   ]);
 
+  // Handle mental health branching logic
+  useEffect(() => {
+    if (currentStepData && isBranchingStep && subStep === 1) {
+      const followUpAnswers = answers.followUps || {};
+      let mentalHealthFollowUps = [];
+
+      // Handle current situation follow-ups
+      if (baseConditionalKey === "currentSituation" && baseConditionalAnswer) {
+        if (conditionalFollowUps[baseConditionalAnswer]) {
+          mentalHealthFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+        }
+      }
+
+      // Handle mental health conditions follow-ups
+      if (baseConditionalKey === "mentalHealthConditions" && baseConditionalAnswer) {
+        const selectedConditions = baseConditionalAnswer || {};
+        
+        Object.keys(selectedConditions).forEach((conditionId) => {
+          if (selectedConditions[conditionId] && conditionalFollowUps[conditionId]) {
+            mentalHealthFollowUps.push(...conditionalFollowUps[conditionId]);
+          }
+        });
+
+        // Handle mental health diagnosis and treatment follow-ups
+        // Handle diagnosis follow-ups
+        if (followUpAnswers.mentalHealthDiagnosis) {
+          Object.keys(followUpAnswers.mentalHealthDiagnosis).forEach((diagnosisId) => {
+            if (followUpAnswers.mentalHealthDiagnosis[diagnosisId] && conditionalFollowUps[diagnosisId]) {
+              mentalHealthFollowUps.push(...conditionalFollowUps[diagnosisId]);
+            }
+          });
+        }
+
+        // Handle treatment follow-ups
+        if (followUpAnswers.mentalHealthTreatment) {
+          Object.keys(followUpAnswers.mentalHealthTreatment).forEach((treatmentId) => {
+            if (followUpAnswers.mentalHealthTreatment[treatmentId] && conditionalFollowUps[treatmentId]) {
+              mentalHealthFollowUps.push(...conditionalFollowUps[treatmentId]);
+            }
+          });
+        }
+
+        // Handle physical condition mental impact (only for physical health conditions)
+        const physicalConditionImpactKeys = [
+          'heartDiseaseMentalImpact', 'diabetesMentalImpact', 'respiratoryMentalImpact',
+          'cancerMentalImpact', 'oralHealthMentalImpact', 'otherConditionMentalImpact'
+        ];
+        
+        physicalConditionImpactKeys.forEach(impactKey => {
+          const impactAnswer = followUpAnswers[impactKey];
+          if (impactAnswer && (impactAnswer === "Yes" || impactAnswer === "Sometimes")) {
+            if (conditionalFollowUps[impactAnswer]) {
+              mentalHealthFollowUps.push(...conditionalFollowUps[impactAnswer]);
+            }
+          }
+        });
+
+        // Handle "Other" impact details for physical conditions only
+        if (followUpAnswers.mentalImpactAreas?.otherImpact && conditionalFollowUps.otherImpact) {
+          mentalHealthFollowUps.push(...conditionalFollowUps.otherImpact);
+        }
+        if (followUpAnswers.mentalImpactAreasSometimes?.otherImpactSometimes && conditionalFollowUps.otherImpactSometimes) {
+          mentalHealthFollowUps.push(...conditionalFollowUps.otherImpactSometimes);
+        }
+      }
+
+      // Handle daily routine follow-ups
+      if (baseConditionalKey === "dailyRoutine" && baseConditionalAnswer) {
+        const selectedRoutines = baseConditionalAnswer || {};
+        
+        Object.keys(selectedRoutines).forEach((routineId) => {
+          if (selectedRoutines[routineId] && conditionalFollowUps[routineId]) {
+            mentalHealthFollowUps.push(...conditionalFollowUps[routineId]);
+          }
+        });
+      }
+
+      // Handle stress frequency follow-ups
+      if (baseConditionalKey === "stressFrequency" && baseConditionalAnswer) {
+        if (conditionalFollowUps[baseConditionalAnswer]) {
+          mentalHealthFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+        }
+      }
+
+      // Handle recent feelings follow-ups
+      if (baseConditionalKey === "recentFeelings" && baseConditionalAnswer) {
+        const selectedFeelings = baseConditionalAnswer || {};
+        
+        // Add follow-ups for specific feelings
+        Object.keys(selectedFeelings).forEach((feelingId) => {
+          if (selectedFeelings[feelingId] && conditionalFollowUps[feelingId]) {
+            mentalHealthFollowUps.push(...conditionalFollowUps[feelingId]);
+          }
+        });
+
+        // Handle "Other" follow-ups for concentration and interest
+        if (followUpAnswers.concentrationAreas?.otherConcentration && conditionalFollowUps.otherConcentration) {
+          mentalHealthFollowUps.push(...conditionalFollowUps.otherConcentration);
+        }
+        
+        if (followUpAnswers.interestAreas?.otherInterest && conditionalFollowUps.otherInterest) {
+          mentalHealthFollowUps.push(...conditionalFollowUps.otherInterest);
+        }
+      }
+
+      setMentalHealthQuestions(mentalHealthFollowUps);
+    }
+  }, [
+    baseConditionalKey,
+    baseConditionalAnswer,
+    answers.followUps,
+    currentStepData,
+    subStep,
+    isBranchingStep,
+  ]);
+
+  // Handle sleep branching logic - FIXED VERSION
+  useEffect(() => {
+    if (currentStepData && isBranchingStep && subStep === 1) {
+      const followUpAnswers = answers.followUps || {};
+      let sleepFollowUps = [];
+
+      console.log("Sleep branching triggered:", {
+        baseConditionalKey,
+        baseConditionalAnswer,
+        currentStep: currentStepData.key
+      });
+
+      // Handle sleep disorder diagnosis follow-up
+      if (baseConditionalKey === "sleepDisorderDiagnosis") {
+        console.log("Processing sleep disorder diagnosis:", baseConditionalAnswer);
+        
+        if (baseConditionalAnswer === "Yes") {
+          // Add the sleep treatments question
+          if (conditionalFollowUps[baseConditionalAnswer]) {
+            sleepFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+            console.log("Added sleep treatments question");
+          }
+
+          // Handle treatment type follow-ups if treatments are already selected
+          const selectedTreatments = followUpAnswers.sleepTreatments || {};
+          console.log("Selected treatments:", selectedTreatments);
+          
+          Object.keys(selectedTreatments).forEach((treatmentId) => {
+            if (selectedTreatments[treatmentId] && conditionalFollowUps[treatmentId] && treatmentId !== "noneTreatment") {
+              sleepFollowUps.push(...conditionalFollowUps[treatmentId]);
+              console.log("Added treatment follow-up for:", treatmentId);
+            }
+          });
+        }
+      }
+
+      // Handle sleep challenge follow-ups
+      if (baseConditionalKey === "sleepChallenge" && baseConditionalAnswer) {
+        console.log("Processing sleep challenge:", baseConditionalAnswer);
+        
+        if (conditionalFollowUps[baseConditionalAnswer]) {
+          sleepFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+          console.log("Added sleep challenge follow-up");
+        }
+
+        // Handle nested sleep challenge reasons
+        const challengeReasonKeys = [
+          'fallingAsleepReason', 'wakingUpReason', 'earlyWakingReason', 
+          'unrefreshedFeeling', 'irregularScheduleReason'
+        ];
+        
+        challengeReasonKeys.forEach(reasonKey => {
+          const reasonAnswer = followUpAnswers[reasonKey];
+          if (reasonAnswer && conditionalFollowUps[reasonAnswer]) {
+            sleepFollowUps.push(...conditionalFollowUps[reasonAnswer]);
+            console.log("Added reason follow-up for:", reasonKey, reasonAnswer);
+          }
+        });
+
+        // Handle specific condition follow-ups
+        if (followUpAnswers.mentalHealthDiagnosisSleep === "Yes") {
+          sleepFollowUps.push({
+            subKey: "sleepMedication",
+            subTitle: "Are you on any sleep-related medication (sleeping pills, anti-anxiety, antidepressants)?",
+            subType: "radio",
+            options: ["Yes", "No"],
+            required: true,
+          });
+
+          if (followUpAnswers.sleepMedication === "Yes") {
+            sleepFollowUps.push({
+              subKey: "sleepMedicationDetails",
+              subTitle: "Please provide details for your sleep-related medication:",
+              subType: "medications",
+              required: true,
+              defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+              routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+            });
+          }
+        }
+      }
+
+      console.log("Final sleep follow-ups:", sleepFollowUps);
+      setSleepQuestions(sleepFollowUps);
+    }
+  }, [
+    baseConditionalKey,
+    baseConditionalAnswer,
+    answers.followUps,
+    currentStepData,
+    subStep,
+    isBranchingStep,
+  ]);
+
   const conditionalQuestions = baseConditionalAnswer
     ? conditionalFollowUps[baseConditionalAnswer]
     : [];
@@ -455,6 +648,25 @@ export default function Questionnaire() {
     return "N/A";
   };
 
+  // Helper function to calculate sleep duration
+  const calculateSleepDuration = (bedtime, waketime) => {
+    if (!bedtime || !waketime) return "N/A";
+    
+    const bed = new Date(`2000-01-01T${bedtime}`);
+    let wake = new Date(`2000-01-01T${waketime}`);
+    
+    // If wake time is before bedtime, assume it's the next day
+    if (wake < bed) {
+      wake = new Date(wake.getTime() + 24 * 60 * 60 * 1000);
+    }
+    
+    const diffMs = wake - bed;
+    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `${diffHrs}h ${diffMins}m`;
+  };
+
   // --- Validation and Navigation Handlers ---
   const isStepValid = () => {
     if (!currentStepData) return false;
@@ -492,6 +704,21 @@ export default function Questionnaire() {
           questionsToValidate = physicalActivityQuestions;
         } else if (BRANCHING_KEYS[currentStepData.key] === "Alcohol") {
           questionsToValidate = alcoholQuestions;
+        } else if (BRANCHING_KEYS[currentStepData.key] === "Mental health") {
+          questionsToValidate = mentalHealthQuestions;
+          
+          // Special validation for mental health impact questions
+          // Check if we have impact questions that need validation
+          questionsToValidate = questionsToValidate.filter(q => {
+            // Skip questions that are conditionally hidden based on parent answers
+            if (q.subKey === "mentalImpactAreas" || q.subKey === "mentalImpactAreasSometimes") {
+              const parentAnswer = Object.values(followUpAnswers).find(val => 
+                val === "Yes" || val === "Sometimes"
+              );
+              return !!parentAnswer;
+            }
+            return true;
+          });
         } else if (BRANCHING_KEYS[currentStepData.key] === "Sleep") {
           questionsToValidate = sleepQuestions;
         } else {
@@ -512,6 +739,7 @@ export default function Questionnaire() {
               // Must have at least one entry, and all required fields in that entry must be filled
               if (meds.length === 0) return false;
               return meds.every((med) => med.name && med.routine && med.dose);
+              // Note: duration and sideEffects are optional
             }
 
             if (q.subType === "radio") return !!answer;
@@ -580,9 +808,19 @@ export default function Questionnaire() {
   };
 
   const handleNext = () => {
+    console.log("HandleNext called:", {
+      currentStep,
+      subStep,
+      isBranchingStep,
+      currentStepData: currentStepData?.key,
+      baseConditionalAnswer
+    });
+
     // A. If on a Branching Step's Base Question (subStep 0)
     if (isBranchingStep && subStep === 0) {
       if (isStepValid()) {
+        console.log("Branching step valid, moving to follow-ups");
+        
         // Special logic for healthConditions
         if (currentStepData.key === "healthConditions") {
           const selectedConditions = answers.healthConditions || {};
@@ -605,6 +843,33 @@ export default function Questionnaire() {
 
           // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
           if (!anySubstanceSelected) {
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
+        }
+
+        // Special logic for mentalHealthConditions
+        if (currentStepData.key === "mentalHealthConditions") {
+          const selectedConditions = answers.mentalHealthConditions || {};
+          const anyConditionSelected =
+            isAnyMentalHealthConditionSelected(selectedConditions);
+
+          // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
+          if (!anyConditionSelected) {
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
+        }
+
+        // Special logic for recentFeelings
+        if (currentStepData.key === "recentFeelings") {
+          const selectedFeelings = answers.recentFeelings || {};
+          const anyFeelingSelected = isAnyFeelingSelected(selectedFeelings);
+
+          // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
+          if (!anyFeelingSelected) {
             setCurrentStep(currentStep + 1);
             setSubStep(0);
             return;
@@ -642,6 +907,25 @@ export default function Questionnaire() {
           if (!anyEffectSelected) {
             setCurrentStep(currentStep + 1);
             setSubStep(0);
+            return;
+          }
+        }
+
+        // Special logic for sleepDisorderDiagnosis
+        if (currentStepData.key === "sleepDisorderDiagnosis") {
+          console.log("Sleep disorder diagnosis answered:", baseConditionalAnswer);
+          
+          // If user answers "No", skip follow-ups
+          if (baseConditionalAnswer === "No") {
+            console.log("Skipping sleep disorder follow-ups (answered No)");
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
+          // If user answers "Yes", show follow-ups
+          else if (baseConditionalAnswer === "Yes") {
+            console.log("Showing sleep disorder follow-ups");
+            setSubStep(1);
             return;
           }
         }
@@ -731,9 +1015,9 @@ export default function Questionnaire() {
           const subSectionAnswer = followUpAnswers[subKey] || {};
           newSubAnswer = { ...subSectionAnswer, [key]: !subSectionAnswer[key] };
         } else if (type === "medications") {
-          // key is the field (name/routine/dose), value is the input value, itemIndex is the row index
+          // key is the field (name/routine/dose/duration/sideEffects), value is the input value, itemIndex is the row index
           const meds =
-            followUpAnswers[subKey] || medicationDetailsFollowUp.defaultData;
+            followUpAnswers[subKey] || [{ id: 1, name: "", routine: "Morning", dose: "", duration: "", sideEffects: "" }];
           const updatedMeds = meds.map((item, index) =>
             index === itemIndex ? { ...item, [key]: value } : item
           );
@@ -838,39 +1122,51 @@ export default function Questionnaire() {
           // If 'noIssues' is selected (for drinking effects), clear all others and toggle 'noIssues'
           const isCurrentlySelected = !!newSelections.noIssues;
           newSelections = { noIssues: !isCurrentlySelected };
+        } else if (key === "noneMH") {
+          // If 'noneMH' is selected (for mental health), clear all others and toggle 'noneMH'
+          const isCurrentlySelected = !!newSelections.noneMH;
+          newSelections = { noneMH: !isCurrentlySelected };
+        } else if (key === "noneFeelings") {
+          // If 'noneFeelings' is selected, clear all others and toggle 'noneFeelings'
+          const isCurrentlySelected = !!newSelections.noneFeelings;
+          newSelections = { noneFeelings: !isCurrentlySelected };
         } else {
-          // If any other option is selected/deselected, ensure 'none'/'nothing'/'noIssues' is deselected
+          // If any other option is selected/deselected, ensure 'none'/'nothing'/'noIssues'/'noneMH'/'noneFeelings' is deselected
           newSelections = { ...newSelections, [key]: !newSelections[key] };
 
-          // Re-check: if no other options are selected, automatically check 'none' or 'nothing' or 'noIssues'
+          // Re-check: if no other options are selected, automatically check 'none' or 'nothing' or 'noIssues' or 'noneMH' or 'noneFeelings'
           const selectedKeys = Object.keys(newSelections).filter(
             (k) =>
               k !== "none" &&
               k !== "nothing" &&
               k !== "noIssues" &&
+              k !== "noneMH" &&
+              k !== "noneFeelings" &&
               newSelections[k]
           );
           if (selectedKeys.length === 0) {
-            if (
-              currentStepData.key === "healthConditions" ||
-              currentStepData.key === "substanceUse"
-            ) {
+            if (currentStepData.key === "healthConditions" || currentStepData.key === "substanceUse") {
               newSelections.none = true;
             } else if (currentStepData.key === "barriers") {
               newSelections.nothing = true;
             } else if (currentStepData.key === "drinkingEffects") {
               newSelections.noIssues = true;
+            } else if (currentStepData.key === "mentalHealthConditions") {
+              newSelections.noneMH = true;
+            } else if (currentStepData.key === "recentFeelings") {
+              newSelections.noneFeelings = true;
             }
           } else {
-            if (
-              currentStepData.key === "healthConditions" ||
-              currentStepData.key === "substanceUse"
-            ) {
+            if (currentStepData.key === "healthConditions" || currentStepData.key === "substanceUse") {
               newSelections.none = false;
             } else if (currentStepData.key === "barriers") {
               newSelections.nothing = false;
             } else if (currentStepData.key === "drinkingEffects") {
               newSelections.noIssues = false;
+            } else if (currentStepData.key === "mentalHealthConditions") {
+              newSelections.noneMH = false;
+            } else if (currentStepData.key === "recentFeelings") {
+              newSelections.noneFeelings = false;
             }
           }
         }
@@ -903,8 +1199,10 @@ export default function Questionnaire() {
           {
             id: newId,
             name: "",
-            routine: medicationDetailsFollowUp.routineOptions[0],
+            routine: "Morning",
             dose: "",
+            duration: "",
+            sideEffects: ""
           },
         ],
       },
@@ -1151,6 +1449,7 @@ export default function Questionnaire() {
                   handleMeasurementInput("height", e.target.value)
                 }
                 placeholder="e.g., 170"
+                // REMOVED ml-2 and adjusted to flex-1 for alignment
                 className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition ml-2 text-black"
                 min="1"
               />
@@ -1170,6 +1469,7 @@ export default function Questionnaire() {
                   handleMeasurementInput("weight", e.target.value)
                 }
                 placeholder="e.g., 65"
+                // REMOVED ml-2 and adjusted to flex-1 for alignment
                 className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition ml-2 text-black"
                 min="1"
               />
@@ -1227,6 +1527,7 @@ export default function Questionnaire() {
                   handleMeasurementInput("weight", e.target.value)
                 }
                 placeholder="e.g., 143"
+                // On mobile: Full width. On sm+: Flex-1 and ml-2 to align with metric inputs.
                 className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition sm:ml-2 text-black"
                 min="1"
               />
@@ -1244,57 +1545,48 @@ export default function Questionnaire() {
 
   // Renders Sleep Schedule Inputs (type: sleepSchedule)
   const renderSleepSchedule = () => {
-    const sleepAnswers = answers[currentStepData.key] || {};
-    const {
-      bedtime = "",
-      waketime = "",
-    } = sleepAnswers;
+    const scheduleAnswers = answers[currentStepData.key] || {};
+    const { bedtime = "", waketime = "" } = scheduleAnswers;
 
-    // Handler for sleep schedule inputs
-    const handleSleepInput = (key, value) => {
+    const handleScheduleInput = (key, value) => {
       handleInputChange(key, value, null, "sleepSchedule");
     };
 
     return (
       <div className="w-full max-w-lg space-y-6">
-        {/* Bedtime Input */}
-        <div className="space-y-3">
-          <label className="w-full text-gray-700 font-medium block text-left">
-            Sleep Time:
-          </label>
-          <input
-            type="time"
-            value={bedtime}
-            onChange={(e) => handleSleepInput("bedtime", e.target.value)}
-            className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
-            required
-          />
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <label className="w-full sm:w-32 text-gray-700 font-medium">
+              Bedtime:
+            </label>
+            <input
+              type="time"
+              value={bedtime}
+              onChange={(e) => handleScheduleInput("bedtime", e.target.value)}
+              className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+              required
+            />
+          </div>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <label className="w-full sm:w-32 text-gray-700 font-medium">
+              Wake Time:
+            </label>
+            <input
+              type="time"
+              value={waketime}
+              onChange={(e) => handleScheduleInput("waketime", e.target.value)}
+              className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+              required
+            />
+          </div>
         </div>
-
-        {/* Wake Time Input */}
-        <div className="space-y-3">
-          <label className="w-full text-gray-700 font-medium block text-left">
-            Wake Up Time:
-          </label>
-          <input
-            type="time"
-            value={waketime}
-            onChange={(e) => handleSleepInput("waketime", e.target.value)}
-            className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
-            required
-          />
-        </div>
-
-        {/* Display the schedule summary */}
-        {(bedtime || waketime) && (
-          <div className="mt-4 p-4 bg-[#e0e4ef] rounded-lg text-lg font-semibold">
-            <div className="flex justify-between">
-              <span className="text-black">Your Sleep Schedule:</span>
-            </div>
-            <div className="mt-2 text-sm text-gray-700">
-              {bedtime && <div>Sleep: {bedtime}</div>}
-              {waketime && <div>Wake: {waketime}</div>}
-            </div>
+        
+        {/* Display sleep duration if both times are provided */}
+        {bedtime && waketime && (
+          <div className="mt-4 p-4 bg-[#e0e4ef] rounded-lg text-lg font-semibold flex justify-between">
+            <span className="text-black">Estimated Sleep Duration:</span>
+            <span className="text-black">{calculateSleepDuration(bedtime, waketime)}</span>
           </div>
         )}
       </div>
@@ -1304,7 +1596,7 @@ export default function Questionnaire() {
   // Renders the new custom medication input
   const renderMedicationInputs = (q) => {
     // Use answers.followUps for the data, falling back to defaultData if empty
-    const medications = answers.followUps?.[q.subKey] || q.defaultData;
+    const medications = answers.followUps?.[q.subKey] || q.defaultData || [{ id: 1, name: "", routine: "Morning", dose: "", duration: "", sideEffects: "" }];
     const subKey = q.subKey;
 
     return (
@@ -1348,7 +1640,7 @@ export default function Questionnaire() {
                 required
               />
 
-              <div className="flex gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 {/* Routine Dropdown */}
                 <select
                   value={med.routine}
@@ -1361,7 +1653,7 @@ export default function Questionnaire() {
                       index
                     )
                   }
-                  className="w-1/2 p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                  className="p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
                   required
                 >
                   {q.routineOptions.map((opt) => (
@@ -1371,7 +1663,7 @@ export default function Questionnaire() {
                   ))}
                 </select>
 
-                {/* Dose/Mg */}
+                {/* Dose */}
                 <input
                   type="text"
                   value={med.dose}
@@ -1384,11 +1676,45 @@ export default function Questionnaire() {
                       index
                     )
                   }
-                  placeholder="Dose (e.g., 500mg/day)"
-                  className="w-1/2 p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                  placeholder="Dose (e.g., 50mg)"
+                  className="p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
                   required
                 />
               </div>
+
+              {/* Duration */}
+              <input
+                type="text"
+                value={med.duration || ""}
+                onChange={(e) =>
+                  handleInputChange(
+                    "duration",
+                    e.target.value,
+                    subKey,
+                    "medications",
+                    index
+                  )
+                }
+                placeholder="Duration (e.g., 6 months, ongoing)"
+                className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+              />
+
+              {/* Side Effects */}
+              <input
+                type="text"
+                value={med.sideEffects || ""}
+                onChange={(e) =>
+                  handleInputChange(
+                    "sideEffects",
+                    e.target.value,
+                    subKey,
+                    "medications",
+                    index
+                  )
+                }
+                placeholder="Side effects (if any)"
+                className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+              />
             </div>
           </div>
         ))}
@@ -1410,6 +1736,7 @@ export default function Questionnaire() {
     // Determine the correct set of questions to render
     let questionsToRender = [];
     if (currentStepData.key === "healthConditions") {
+      // Use the dynamically generated list which includes the nested logic
       questionsToRender = healthConditionQuestions;
     } else if (currentStepData.key === "substanceUse") {
       questionsToRender = substanceUseQuestions;
@@ -1417,8 +1744,11 @@ export default function Questionnaire() {
       questionsToRender = physicalActivityQuestions;
     } else if (BRANCHING_KEYS[currentStepData.key] === "Alcohol") {
       questionsToRender = alcoholQuestions;
+    } else if (BRANCHING_KEYS[currentStepData.key] === "Mental health") {
+      questionsToRender = mentalHealthQuestions;
     } else if (BRANCHING_KEYS[currentStepData.key] === "Sleep") {
       questionsToRender = sleepQuestions;
+      console.log("Rendering sleep questions:", questionsToRender);
     } else {
       questionsToRender = conditionalQuestions || [];
     }
@@ -1426,7 +1756,7 @@ export default function Questionnaire() {
     return (
       <div className="w-full max-w-lg space-y-12 text-left">
         {questionsToRender.map((q) => {
-          // If a question is nested deep (like cancerAdviceDetails) and the parent radio is NO, skip rendering.
+          // If a question is nested deep and the parent radio is NO, skip rendering.
           // This prevents validation errors on skipped but required fields.
 
           let isSkippedByParent = false;
@@ -1451,8 +1781,20 @@ export default function Questionnaire() {
           ) {
             isSkippedByParent = true;
           }
-          // Note: The use of dynamic state arrays (like healthConditionQuestions) usually handles
-          // this filtering upstream, but this check adds safety for very deep nested required fields.
+          // Skip mental impact areas if parent answer doesn't require them
+          if (
+            (q.subKey === "mentalImpactAreas" || q.subKey === "mentalImpactAreasSometimes") &&
+            !Object.values(followUpAnswers).some(val => val === "Yes" || val === "Sometimes")
+          ) {
+            isSkippedByParent = true;
+          }
+          // Skip treatment follow-ups if "None" is selected for treatment
+          if (
+            (q.subKey === "medicationDetails" || q.subKey === "counselingDetails" || q.subKey === "otherTherapyDetails") &&
+            followUpAnswers.mentalHealthTreatment?.noneTreatment
+          ) {
+            isSkippedByParent = true;
+          }
 
           if (isSkippedByParent) return null;
 
@@ -1613,7 +1955,7 @@ export default function Questionnaire() {
   return (
     <section id="questionnaire" className="w-full min-h-screen bg-gray-50">
       {/* Header (Top progress bar and Skip button) */}
-      <div className="w-full bg-white shadow-sm">
+      <div className="w-full bg-white shadow-sm ">
         <div className="max-w-3xl mx-auto py-5 px-4 flex justify-between items-center">
           <div className="text-xl font-bold text-[#e72638]">{APP_NAME}</div>
           <div className="flex-1 mx-4 h-2 bg-gray-200 rounded-full">
