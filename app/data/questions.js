@@ -41,9 +41,15 @@ const baseQuestions = [
     type: "measurements",
     title: "What are your height and weight?",
     description:
-      "This helps calculate your BMI, which is an important indicator of health risk in Sri Lankan adults. For South Asians, health risks can appear at lower BMI than in other populations.",
+      "This helps calculate your BMI, which is an important indicator of health risk in Sri Lankan adults. For South Asians, health risks can appear at lower BMI than in other populations. Please select your preferred unit system.",
     key: "measurements",
     inputs: [
+      {
+        key: "unitSystem",
+        type: "radio",
+        options: ["Metric (cm, kg)", "Imperial (ft/in, lbs)"],
+        required: true,
+      }, // <--- NEW UNIT SELECTOR
       { key: "height", unit: "cm", placeholder: "e.g., 170", required: true },
       { key: "weight", unit: "kg", placeholder: "e.g., 65", required: true },
     ],
@@ -979,12 +985,16 @@ const conditionalFollowUps = {
   Yes: [
     {
       subKey: "medicalConditions",
-      subTitle: "Please select any conditions or injuries you have that may affect your exercise.",
+      subTitle:
+        "Please select any conditions or injuries you have that may affect your exercise.",
       subType: "multiselect",
       options: [
         { id: "heartDisease", label: "Heart disease / High blood pressure" },
         { id: "diabetes", label: "Diabetes / Blood sugar issues" },
-        { id: "jointIssues", label: "Joint or mobility issues (knees, hips, back)" },
+        {
+          id: "jointIssues",
+          label: "Joint or mobility issues (knees, hips, back)",
+        },
         { id: "respiratory", label: "Respiratory issues (asthma, COPD)" },
         { id: "surgery", label: "Recent surgery or injury" },
         { id: "tobacco", label: "Tobacco use" },
@@ -996,40 +1006,175 @@ const conditionalFollowUps = {
     },
   ],
   heartDisease: [
-    { subKey: "heartControl", subTitle: "How would you describe your current condition?", subType: "radio", options: ["Well controlled with medication", "Sometimes fluctuates, but manageable", "Not well controlled / frequent issues"], required: true, },
-    { subKey: "heartClearance", subTitle: "Do you have medical clearance to exercise?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
+    {
+      subKey: "heartControl",
+      subTitle: "How would you describe your current condition?",
+      subType: "radio",
+      options: [
+        "Well controlled with medication",
+        "Sometimes fluctuates, but manageable",
+        "Not well controlled / frequent issues",
+      ],
+      required: true,
+    },
+    {
+      subKey: "heartClearance",
+      subTitle: "Do you have medical clearance to exercise?",
+      subType: "radio",
+      options: ["Yes", "No", "Not sure"],
+      required: true,
+    },
   ],
   diabetes: [
-    { subKey: "sugarManagement", subTitle: "How is your blood sugar usually managed?", subType: "radio", options: ["Controlled with medication or insulin", "Sometimes fluctuates", "Frequently unstable"], required: true, },
-    { subKey: "hypoglycemia", subTitle: "Do you experience frequent low sugar episodes (hypoglycemia)?", subType: "radio", options: ["Yes", "No", "Sometimes"], required: true, },
+    {
+      subKey: "sugarManagement",
+      subTitle: "How is your blood sugar usually managed?",
+      subType: "radio",
+      options: [
+        "Controlled with medication or insulin",
+        "Sometimes fluctuates",
+        "Frequently unstable",
+      ],
+      required: true,
+    },
+    {
+      subKey: "hypoglycemia",
+      subTitle: "Do you experience frequent low sugar episodes (hypoglycemia)?",
+      subType: "radio",
+      options: ["Yes", "No", "Sometimes"],
+      required: true,
+    },
   ],
   jointIssues: [
-    { subKey: "affectedAreas", subTitle: "Which areas are affected?", subType: "multiselect", options: [{ id: "knees", label: "Knees" }, { id: "hips", label: "Hips" }, { id: "back", label: "Back" }, { id: "multiple", label: "Multiple areas" }], required: true, },
-    { subKey: "limitLevel", subTitle: "How much does this limit your movement?", subType: "radio", options: ["Mild (can move with little discomfort)", "Moderate (some exercises are difficult)", "Severe (movement is very limited / painful)"], required: true, },
+    {
+      subKey: "affectedAreas",
+      subTitle: "Which areas are affected?",
+      subType: "multiselect",
+      options: [
+        { id: "knees", label: "Knees" },
+        { id: "hips", label: "Hips" },
+        { id: "back", label: "Back" },
+        { id: "multiple", label: "Multiple areas" },
+      ],
+      required: true,
+    },
+    {
+      subKey: "limitLevel",
+      subTitle: "How much does this limit your movement?",
+      subType: "radio",
+      options: [
+        "Mild (can move with little discomfort)",
+        "Moderate (some exercises are difficult)",
+        "Severe (movement is very limited / painful)",
+      ],
+      required: true,
+    },
   ],
   respiratory: [
-    { subKey: "respiratorySymptoms", subTitle: "How often do you experience symptoms while moving/exercising?", subType: "radio", options: ["Rarely", "Sometimes", "Often"], required: true, },
-    { subKey: "inhalerUse", subTitle: "Do you use an inhaler or medication before activity?", subType: "radio", options: ["Yes", "No", "Sometimes"], required: true, },
+    {
+      subKey: "respiratorySymptoms",
+      subTitle: "How often do you experience symptoms while moving/exercising?",
+      subType: "radio",
+      options: ["Rarely", "Sometimes", "Often"],
+      required: true,
+    },
+    {
+      subKey: "inhalerUse",
+      subTitle: "Do you use an inhaler or medication before activity?",
+      subType: "radio",
+      options: ["Yes", "No", "Sometimes"],
+      required: true,
+    },
   ],
   surgery: [
-    { subKey: "surgeryTiming", subTitle: "When did this occur?", subType: "radio", options: ["Less than 2 weeks ago", "Less than 1 month ago", "Less than 3 months ago", "3–6 months ago", "More than 6 months ago"], required: true, },
-    { subKey: "recoveryPlan", subTitle: "Are you currently under a doctor’s or physiotherapist’s recovery plan?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
+    {
+      subKey: "surgeryTiming",
+      subTitle: "When did this occur?",
+      subType: "radio",
+      options: [
+        "Less than 2 weeks ago",
+        "Less than 1 month ago",
+        "Less than 3 months ago",
+        "3–6 months ago",
+        "More than 6 months ago",
+      ],
+      required: true,
+    },
+    {
+      subKey: "recoveryPlan",
+      subTitle:
+        "Are you currently under a doctor’s or physiotherapist’s recovery plan?",
+      subType: "radio",
+      options: ["Yes", "No", "Not sure"],
+      required: true,
+    },
   ],
   tobacco: [
-    { subKey: "tobaccoFrequencyPA", subTitle: "How often do you smoke?", subType: "radio", options: ["Daily", "A few times a week", "Occasionally", "Rarely"], required: true, },
-    { subKey: "tobaccoStamina", subTitle: "Would you like us to suggest tips for improving stamina if you continue smoking?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true, },
+    {
+      subKey: "tobaccoFrequencyPA",
+      subTitle: "How often do you smoke?",
+      subType: "radio",
+      options: ["Daily", "A few times a week", "Occasionally", "Rarely"],
+      required: true,
+    },
+    {
+      subKey: "tobaccoStamina",
+      subTitle:
+        "Would you like us to suggest tips for improving stamina if you continue smoking?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
   ],
   alcohol: [
-    { subKey: "alcoholFrequencyPA", subTitle: "How often do you drink alcohol?", subType: "radio", options: ["Daily", "Weekly", "Occasionally", "Rarely"], required: true, },
-    { subKey: "alcoholQuantityPA", subTitle: "On days you drink, how many drinks do you usually have?", subType: "radio", options: ["1–2", "3–4", "5+"], required: true, },
+    {
+      subKey: "alcoholFrequencyPA",
+      subTitle: "How often do you drink alcohol?",
+      subType: "radio",
+      options: ["Daily", "Weekly", "Occasionally", "Rarely"],
+      required: true,
+    },
+    {
+      subKey: "alcoholQuantityPA",
+      subTitle: "On days you drink, how many drinks do you usually have?",
+      subType: "radio",
+      options: ["1–2", "3–4", "5+"],
+      required: true,
+    },
   ],
   drugs: [
-    { subKey: "drugFrequency", subTitle: "How often do you use recreational drugs?", subType: "radio", options: ["Daily", "Weekly", "Occasionally", "Rarely"], required: true, },
-    { subKey: "saferExercise", subTitle: "Would you like us to suggest safer exercise options that consider your lifestyle?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true, },
+    {
+      subKey: "drugFrequency",
+      subTitle: "How often do you use recreational drugs?",
+      subType: "radio",
+      options: ["Daily", "Weekly", "Occasionally", "Rarely"],
+      required: true,
+    },
+    {
+      subKey: "saferExercise",
+      subTitle:
+        "Would you like us to suggest safer exercise options that consider your lifestyle?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
   ],
   other: [
-    { subKey: "otherConditionDetailsPA", subTitle: "Please briefly describe your condition.", subType: "text", placeholder: "e.g., Arthritis, Chronic Pain", required: true, },
-    { subKey: "safeLowIntensity", subTitle: "Would you like us to recommend only safe, low-intensity activities to start with?", subType: "radio", options: ["Yes", "No", "Not sure"], required: true, },
+    {
+      subKey: "otherConditionDetailsPA",
+      subTitle: "Please briefly describe your condition.",
+      subType: "text",
+      placeholder: "e.g., Arthritis, Chronic Pain",
+      required: true,
+    },
+    {
+      subKey: "safeLowIntensity",
+      subTitle:
+        "Would you like us to recommend only safe, low-intensity activities to start with?",
+      subType: "radio",
+      options: ["Yes", "No", "Not sure"],
+      required: true,
+    },
   ],
   "At home": [
     {
@@ -1300,7 +1445,8 @@ const conditionalFollowUps = {
   "At home alone": [
     {
       subKey: "homeAloneReason",
-      subTitle: "When you drink at home, is it usually because you feel bored, lonely, or stressed?",
+      subTitle:
+        "When you drink at home, is it usually because you feel bored, lonely, or stressed?",
       subType: "radio",
       options: ["Boredom", "Loneliness", "Stress", "Habit", "Other"],
       required: true,
@@ -1309,7 +1455,8 @@ const conditionalFollowUps = {
   "At social gatherings / with friends": [
     {
       subKey: "socialPressure",
-      subTitle: "Do you feel pressured to drink in social settings, or is it mostly by choice?",
+      subTitle:
+        "Do you feel pressured to drink in social settings, or is it mostly by choice?",
       subType: "radio",
       options: ["Peer pressure", "By choice", "Both"],
       required: true,
@@ -1327,7 +1474,8 @@ const conditionalFollowUps = {
   "During meals": [
     {
       subKey: "mealDrinkingReason",
-      subTitle: "Is drinking with meals more of a routine, cultural habit, or for taste/enjoyment?",
+      subTitle:
+        "Is drinking with meals more of a routine, cultural habit, or for taste/enjoyment?",
       subType: "radio",
       options: ["Routine", "Cultural", "For taste", "Other"],
       required: true,
@@ -1336,7 +1484,8 @@ const conditionalFollowUps = {
   "Weekends only": [
     {
       subKey: "weekendDrinkingPattern",
-      subTitle: "When you drink on weekends, is it usually moderate or heavy (more than 4–5 drinks at a time)?",
+      subTitle:
+        "When you drink on weekends, is it usually moderate or heavy (more than 4–5 drinks at a time)?",
       subType: "radio",
       options: [
         "Always moderate",
@@ -1359,14 +1508,16 @@ const conditionalFollowUps = {
   sleepEnergy: [
     {
       subKey: "sleepEnergyFrequency",
-      subTitle: "How often do you notice these sleep or energy problems after drinking?",
+      subTitle:
+        "How often do you notice these sleep or energy problems after drinking?",
       subType: "radio",
       options: ["Every time I drink", "Sometimes", "Rarely"],
       required: true,
     },
     {
       subKey: "sleepEnergyTips",
-      subTitle: "Would you like tips on improving sleep and energy while managing alcohol?",
+      subTitle:
+        "Would you like tips on improving sleep and energy while managing alcohol?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -1382,7 +1533,8 @@ const conditionalFollowUps = {
     },
     {
       subKey: "focusStrategies",
-      subTitle: "Would you like strategies to maintain focus while reducing alcohol effects?",
+      subTitle:
+        "Would you like strategies to maintain focus while reducing alcohol effects?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -1398,7 +1550,8 @@ const conditionalFollowUps = {
     },
     {
       subKey: "conflictGuidance",
-      subTitle: "Would you like guidance on reducing social conflicts related to alcohol?",
+      subTitle:
+        "Would you like guidance on reducing social conflicts related to alcohol?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -1407,7 +1560,8 @@ const conditionalFollowUps = {
   healthImpact: [
     {
       subKey: "doctorAdvice",
-      subTitle: "Have you been told by a doctor that alcohol is affecting your health?", // Q6
+      subTitle:
+        "Have you been told by a doctor that alcohol is affecting your health?", // Q6
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -1416,7 +1570,8 @@ const conditionalFollowUps = {
   noIssues: [
     {
       subKey: "healthRiskAssessment",
-      subTitle: "Even if you haven’t noticed effects, alcohol can still impact long-term health. Would you like a personalized health risk assessment?", // Q7
+      subTitle:
+        "Even if you haven’t noticed effects, alcohol can still impact long-term health. Would you like a personalized health risk assessment?", // Q7
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -1424,7 +1579,8 @@ const conditionalFollowUps = {
   ],
 
   // Q6a/Q7: Health Impact Sub-Follow-ups
-  doctorAdviceYes: [ // Triggered by healthImpact.doctorAdvice = 'Yes'
+  doctorAdviceYes: [
+    // Triggered by healthImpact.doctorAdvice = 'Yes'
     {
       subKey: "healthAreasAffected",
       subTitle: "Which health area is most affected?", // Q6a
@@ -1440,10 +1596,12 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  doctorAdviceNo: [ // Triggered by healthImpact.doctorAdvice = 'No'
+  doctorAdviceNo: [
+    // Triggered by healthImpact.doctorAdvice = 'No'
     {
       subKey: "healthInfo",
-      subTitle: "Would you like us to provide information on how alcohol may affect your health?", // Q6b
+      subTitle:
+        "Would you like us to provide information on how alcohol may affect your health?", // Q6b
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -1454,7 +1612,8 @@ const conditionalFollowUps = {
   liver: [
     {
       subKey: "liverDiagnosis",
-      subTitle: "Has a doctor diagnosed liver damage or elevated liver enzymes?",
+      subTitle:
+        "Has a doctor diagnosed liver damage or elevated liver enzymes?",
       subType: "radio",
       options: [
         "Yes, confirmed diagnosis",
@@ -1474,7 +1633,8 @@ const conditionalFollowUps = {
   heartBP: [
     {
       subKey: "heartConditionLink",
-      subTitle: "Has alcohol been linked to your blood pressure or heart condition?",
+      subTitle:
+        "Has alcohol been linked to your blood pressure or heart condition?",
       subType: "radio",
       options: ["Yes, diagnosed condition", "Suspected / borderline", "No"],
       required: true,
@@ -1527,12 +1687,9 @@ const conditionalFollowUps = {
     },
   ],
   // --- END ALCOHOL FOLLOW-UPS ---
-
-
 };
 
-
-// Health condition specific follow-ups 
+// Health condition specific follow-ups
 const healthConditionFollowUps = {
   // Specific condition follow-ups
   diabetes: [
@@ -1585,7 +1742,6 @@ const healthConditionFollowUps = {
   ],
 };
 
-
 const medicationQuestion = {
   subKey: "takingMedications",
   subTitle: "Are you currently taking medications?",
@@ -1594,7 +1750,7 @@ const medicationQuestion = {
   required: true,
 };
 
-// Conditional follow-up for the new cancer radio question's "Yes" answer 
+// Conditional follow-up for the new cancer radio question's "Yes" answer
 const cancerYesFollowUp = {
   subKey: "cancerAdviceDetails",
   subTitle: "Please describe your doctor's nutrition advice:",
@@ -1613,7 +1769,7 @@ const medicationDetailsFollowUp = {
   routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
 };
 
-// Conditional follow-up for "Other Condition" selection 
+// Conditional follow-up for "Other Condition" selection
 const otherConditionFollowUp = {
   subKey: "otherConditionDetails",
   subTitle: "Please specify the other health condition(s):",
