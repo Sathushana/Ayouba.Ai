@@ -623,14 +623,13 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Alcohol Questions (UPDATED)
+  // Alcohol Questions (COMPLETELY UPDATED TO MATCH DOCUMENT STRUCTURE)
   Alcohol: [
-    // Step 1: Frequency (Q1) - BRANCHING STEP
+    // Step 1: Frequency & Quantity
     {
       id: 6,
       type: "radio",
       title: "How often do you usually drink alcohol?",
-      description: "Your answer helps us assess your health risk.",
       key: "alcoholFrequency",
       options: [
         "Rarely (special occasions only)",
@@ -640,12 +639,11 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 2: Motivation Behind Drinking (Q2)
+    // Step 2: Motivation Behind Drinking (Key for user type)
     {
       id: 7,
       type: "radio",
       title: "When you drink, what's the main reason?",
-      description: "Understanding your motivation is key to a successful plan.",
       key: "drinkingMotivation",
       options: [
         "To relax or deal with stress (Stress-Relief Drinker)",
@@ -656,20 +654,15 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 3: Context & Triggers (Q3) - BRANCHING STEP
+    // Step 3: Context & Triggers - BRANCHING STEP
     {
       id: 8,
       type: "multiselect",
       title: "In what situations do you usually drink?",
-      description:
-        "Select all that apply. This helps us understand your triggers.",
       key: "drinkingContext",
       options: [
         { id: "homeAlone", label: "At home alone" },
-        {
-          id: "socialGatherings",
-          label: "At social gatherings / with friends",
-        },
+        { id: "socialGatherings", label: "At social gatherings / with friends" },
         { id: "afterWork", label: "After work or stressful days" },
         { id: "duringMeals", label: "During meals" },
         { id: "weekendsOnly", label: "Weekends only" },
@@ -677,31 +670,26 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 4: Consequences & Self-Reflection (Q4) - BRANCHING STEP
+    // Step 4: Consequences & Self-Reflection - BRANCHING STEP
     {
       id: 9,
       type: "multiselect",
       title: "Have you noticed any of these effects from your drinking?",
-      description: "Be honest—it's just between you and us.",
       key: "drinkingEffects",
       options: [
         { id: "sleepEnergy", label: "Trouble with sleep or energy" },
         { id: "focusProductivity", label: "Affects focus or productivity" },
         { id: "familyTension", label: "Causes tension with family / friends" },
-        {
-          id: "healthImpact",
-          label: "Impacts health (weight, blood pressure, digestion, etc.)",
-        },
+        { id: "healthImpact", label: "Impacts health (weight, blood pressure, digestion, etc.)" },
         { id: "noIssues", label: "No noticeable issues" },
       ],
       required: true,
     },
-    // Step 5: Goal & Readiness (Q5)
+    // Step 5: Goal & Readiness
     {
       id: 10,
       type: "radio",
       title: "What's your goal with alcohol use?",
-      description: "Your commitment level guides our recommendations.",
       key: "alcoholGoal",
       options: [
         "I want to quit completely",
@@ -1723,6 +1711,256 @@ const conditionalFollowUps = {
     },
   ],
 
+  // ========== ALCOHOL FOLLOW-UPS - COMPLETELY UPDATED TO MATCH DOCUMENT ==========
+  
+  // Step 1: Frequency & Quantity Follow-ups (Q2)
+  "Sometimes (1–2 times a week)": [
+    {
+      subKey: "alcoholQuantity",
+      subTitle: "When you drink, how much do you usually have?",
+      subType: "radio",
+      options: ["1–2 drinks", "3–4 drinks", "5+ drinks"],
+      required: true,
+    },
+  ],
+  "Often (3–5 times a week)": [
+    {
+      subKey: "alcoholQuantity",
+      subTitle: "When you drink, how much do you usually have?",
+      subType: "radio",
+      options: ["1–2 drinks", "3–4 drinks", "5+ drinks"],
+      required: true,
+    },
+  ],
+  "Daily or almost daily": [
+    {
+      subKey: "alcoholQuantity",
+      subTitle: "When you drink, how much do you usually have?",
+      subType: "radio",
+      options: ["1–2 drinks", "3–4 drinks", "5+ drinks"],
+      required: true,
+    },
+  ],
+
+  // Step 3: Context & Triggers Follow-ups (Q4b Adaptive Follow-Ups)
+  homeAlone: [
+    {
+      subKey: "homeAloneReason",
+      subTitle: "When you drink at home, is it usually because you feel bored, lonely, or stressed?",
+      subType: "radio",
+      options: ["Boredom", "Loneliness", "Stress", "Habit", "Other"],
+      required: true,
+    },
+  ],
+  socialGatherings: [
+    {
+      subKey: "socialPressure",
+      subTitle: "Do you feel pressured to drink in social settings, or is it mostly by choice?",
+      subType: "radio",
+      options: ["Peer pressure", "By choice", "Both"],
+      required: true,
+    },
+  ],
+  afterWork: [
+    {
+      subKey: "stressCoping",
+      subTitle: "Do you usually drink as your main way to cope with stress?",
+      subType: "radio",
+      options: ["Yes, often", "Sometimes", "Rarely", "No"],
+      required: true,
+    },
+  ],
+  duringMeals: [
+    {
+      subKey: "mealDrinkingReason",
+      subTitle: "Is drinking with meals more of a routine, cultural habit, or for taste/enjoyment?",
+      subType: "radio",
+      options: ["Routine", "Cultural", "For taste", "Other"],
+      required: true,
+    },
+  ],
+  weekendsOnly: [
+    {
+      subKey: "weekendDrinkingPattern",
+      subTitle: "When you drink on weekends, is it usually moderate or heavy (more than 4–5 drinks at a time)?",
+      subType: "radio",
+      options: ["Always moderate", "Sometimes heavy", "Often heavy", "Not sure"],
+      required: true,
+    },
+  ],
+  otherContext: [
+    {
+      subKey: "otherContextDetails",
+      subTitle: "Please describe when you usually drink.",
+      subType: "text",
+      placeholder: "e.g., During business meetings, at family events, etc.",
+      required: true,
+    },
+  ],
+
+  // Step 4: Consequences & Self-Reflection Follow-ups (Q5 Adaptive Follow-Ups)
+  sleepEnergy: [
+    {
+      subKey: "sleepEnergyFrequency",
+      subTitle: "How often do you notice these sleep or energy problems after drinking?",
+      subType: "radio",
+      options: ["Every time I drink", "Sometimes", "Rarely"],
+      required: true,
+    },
+    {
+      subKey: "sleepEnergyTips",
+      subTitle: "Would you like tips on improving sleep and energy while managing alcohol?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  focusProductivity: [
+    {
+      subKey: "focusAffectedAreas",
+      subTitle: "Do you notice this mainly at work, home, or both?",
+      subType: "radio",
+      options: ["Work", "Home", "Both"],
+      required: true,
+    },
+    {
+      subKey: "focusStrategies",
+      subTitle: "Would you like strategies to maintain focus while reducing alcohol effects?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  familyTension: [
+    {
+      subKey: "conflictTiming",
+      subTitle: "Do conflicts usually happen when you drink or after drinking?",
+      subType: "radio",
+      options: ["During drinking", "After drinking", "Both"],
+      required: true,
+    },
+    {
+      subKey: "conflictGuidance",
+      subTitle: "Would you like guidance on reducing social conflicts related to alcohol?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+  healthImpact: [
+    {
+      subKey: "doctorAdvice",
+      subTitle: "Have you been told by a doctor that alcohol is affecting your health?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  noIssues: [
+    {
+      subKey: "healthRiskAssessment",
+      subTitle: "Even if you haven't noticed effects, alcohol can still impact long-term health. Would you like a personalized health risk assessment?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+
+  // Doctor Advice Follow-ups
+  doctorAdviceYes: [
+    {
+      subKey: "healthAreasAffected",
+      subTitle: "Which health area is most affected?",
+      subType: "multiselect",
+      options: [
+        { id: "liver", label: "Liver" },
+        { id: "heartBP", label: "Heart/Blood pressure" },
+        { id: "digestion", label: "Digestion" },
+        { id: "weight", label: "Weight" },
+        { id: "none", label: "None of above" },
+        { id: "otherHealth", label: "Other" },
+      ],
+      required: true,
+    },
+  ],
+  doctorAdviceNo: [
+    {
+      subKey: "healthInfo",
+      subTitle: "Would you like us to provide information on how alcohol may affect your health?",
+      subType: "radio",
+      options: ["Yes", "Maybe", "No"],
+      required: true,
+    },
+  ],
+
+  // Specific Health Areas Affected Follow-ups (Q6a)
+  liver: [
+    {
+      subKey: "liverDiagnosis",
+      subTitle: "Has a doctor diagnosed liver damage or elevated liver enzymes?",
+      subType: "radio",
+      options: ["Yes, confirmed diagnosis", "Suspected / borderline results", "No"],
+      required: true,
+    },
+    {
+      subKey: "alcoholAvoidance",
+      subTitle: "Have you been advised to avoid alcohol completely?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  heartBP: [
+    {
+      subKey: "heartConditionLink",
+      subTitle: "Has alcohol been linked to your blood pressure or heart condition?",
+      subType: "radio",
+      options: ["Yes, diagnosed condition", "Suspected / borderline", "No"],
+      required: true,
+    },
+    {
+      subKey: "medicalClearance",
+      subTitle: "Do you have medical clearance to drink in moderation?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  digestion: [
+    {
+      subKey: "digestiveIssues",
+      subTitle: "Which digestive issues are affected?",
+      subType: "radio",
+      options: ["Stomach irritation / gastritis", "Acid reflux / heartburn", "Pancreatitis", "Other"],
+      required: true,
+    },
+    {
+      subKey: "symptomWorsening",
+      subTitle: "Have symptoms worsened after drinking?",
+      subType: "radio",
+      options: ["Yes, frequently", "Sometimes", "Rarely"],
+      required: true,
+    },
+  ],
+  weight: [
+    {
+      subKey: "weightConcern",
+      subTitle: "Are you concerned about alcohol contributing to weight gain?",
+      subType: "radio",
+      options: ["Yes", "Somewhat", "No"],
+      required: true,
+    },
+  ],
+  otherHealth: [
+    {
+      subKey: "otherHealthDetails",
+      subTitle: "Please specify the health impact.",
+      subType: "text",
+      placeholder: "e.g., Mental health, skin conditions, etc.",
+      required: true,
+    },
+  ],
+
   // ========== SLEEP FOLLOW-UPS ==========
   
   // Q3: Sleep Disorder Diagnosis Follow-ups
@@ -2179,284 +2417,6 @@ const conditionalFollowUps = {
       subTitle: "How many drinks?",
       subType: "text",
       placeholder: "e.g., 2 glasses of wine, 3 beers",
-      required: true,
-    },
-  ],
-
-  // Alcohol follow-ups (UPDATED)
-  // Q1 Frequency Follow-ups (New Q2: Quantity)
-  "Sometimes (1–2 times a week)": [
-    {
-      subKey: "alcoholQuantity",
-      subTitle: "When you drink, how much do you usually have?",
-      subType: "radio",
-      options: ["1–2 drinks", "3–4 drinks", "5+ drinks"],
-      required: true,
-    },
-  ],
-  "Often (3–5 times a week)": [
-    {
-      subKey: "alcoholQuantity",
-      subTitle: "When you drink, how much do you usually have?",
-      subType: "radio",
-      options: ["1–2 drinks", "3–4 drinks", "5+ drinks"],
-      required: true,
-    },
-  ],
-  "Daily or almost daily": [
-    {
-      subKey: "alcoholQuantity",
-      subTitle: "When you drink, how much do you usually have?",
-      subType: "radio",
-      options: ["1–2 drinks", "3–4 drinks", "5+ drinks"],
-      required: true,
-    },
-  ],
-
-  // Q3 Context & Triggers Follow-ups (The new Q4b questions) - VERIFIED/ALREADY EXIST
-  homeAlone: [
-    // Q4b1
-    {
-      subKey: "homeAloneReason",
-      subTitle:
-        "When you drink at home, is it usually because you feel bored, lonely, or stressed?",
-      subType: "radio",
-      options: ["Boredom", "Loneliness", "Stress", "Habit", "Other"],
-      required: true,
-    },
-  ],
-  socialGatherings: [
-    // Q4b2
-    {
-      subKey: "socialPressure",
-      subTitle:
-        "Do you feel pressured to drink in social settings, or is it mostly by choice?",
-      subType: "radio",
-      options: ["Peer pressure", "By choice", "Both"],
-      required: true,
-    },
-  ],
-  afterWork: [
-    // Q4b3
-    {
-      subKey: "stressCoping",
-      subTitle: "Do you usually drink as your main way to cope with stress?",
-      subType: "radio",
-      options: ["Yes, often", "Sometimes", "Rarely", "No"],
-      required: true,
-    },
-  ],
-  duringMeals: [
-    // Q4b4
-    {
-      subKey: "mealDrinkingReason",
-      subTitle:
-        "Is drinking with meals more of a routine, cultural habit, or for taste/enjoyment?",
-      subType: "radio",
-      options: ["Routine", "Cultural", "For taste", "Other"],
-      required: true,
-    },
-  ],
-  weekendsOnly: [
-    // Q4b5
-    {
-      subKey: "weekendDrinkingPattern",
-      subTitle:
-        "When you drink on weekends, is it usually moderate or heavy (more than 4–5 drinks at a time)?",
-      subType: "radio",
-      options: [
-        "Always moderate",
-        "Sometimes heavy",
-        "Often heavy",
-        "Not sure",
-      ],
-      required: true,
-    },
-  ],
-  otherContext: [
-    // Q4b6
-    {
-      subKey: "otherContextDetails",
-      subTitle: "Please describe when you usually drink.",
-      subType: "text",
-      placeholder: "e.g., During business meetings, at family events, etc.",
-      required: true,
-    },
-  ],
-
-  // Q4 Consequences & Self-Reflection (Q5) - REMAIN AS IS
-  sleepEnergy: [
-    {
-      subKey: "sleepEnergyFrequency",
-      subTitle:
-        "How often do you notice these sleep or energy problems after drinking?",
-      subType: "radio",
-      options: ["Every time I drink", "Sometimes", "Rarely"],
-      required: true,
-    },
-    {
-      subKey: "sleepEnergyTips",
-      subTitle:
-        "Would you like tips on improving sleep and energy while managing alcohol?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  focusProductivity: [
-    {
-      subKey: "focusAffectedAreas",
-      subTitle: "Do you notice this mainly at work, home, or both?",
-      subType: "radio",
-      options: ["Work", "Home", "Both"],
-      required: true,
-    },
-    {
-      subKey: "focusStrategies",
-      subTitle:
-        "Would you like strategies to maintain focus while reducing alcohol effects?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  familyTension: [
-    {
-      subKey: "conflictTiming",
-      subTitle: "Do conflicts usually happen when you drink or after drinking?",
-      subType: "radio",
-      options: ["During drinking", "After drinking", "Both"],
-      required: true,
-    },
-    {
-      subKey: "conflictGuidance",
-      subTitle:
-        "Would you like guidance on reducing social conflicts related to alcohol?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  healthImpact: [
-    {
-      subKey: "doctorAdvice",
-      subTitle:
-        "Have you been told by a doctor that alcohol is affecting your health?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    },
-  ],
-  noIssues: [
-    {
-      subKey: "healthRiskAssessment",
-      subTitle:
-        "Even if you haven't noticed effects, alcohol can still impact long-term health. Would you like a personalized health risk assessment?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  doctorAdviceYes: [
-    {
-      subKey: "healthAreasAffected",
-      subTitle: "Which health area is most affected?",
-      subType: "multiselect",
-      options: [
-        { id: "liver", label: "Liver" },
-        { id: "heartBP", label: "Heart/Blood pressure" },
-        { id: "digestion", label: "Digestion" },
-        { id: "weight", label: "Weight" },
-        { id: "none", label: "None of above" },
-        { id: "otherHealth", label: "Other" },
-      ],
-      required: true,
-    },
-  ],
-  doctorAdviceNo: [
-    {
-      subKey: "healthInfo",
-      subTitle:
-        "Would you like us to provide information on how alcohol may affect your health?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  liver: [
-    {
-      subKey: "liverDiagnosis",
-      subTitle:
-        "Has a doctor diagnosed liver damage or elevated liver enzymes?",
-      subType: "radio",
-      options: [
-        "Yes, confirmed diagnosis",
-        "Suspected / borderline results",
-        "No",
-      ],
-      required: true,
-    },
-    {
-      subKey: "alcoholAvoidance",
-      subTitle: "Have you been advised to avoid alcohol completely?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    },
-  ],
-  heartBP: [
-    {
-      subKey: "heartConditionLink",
-      subTitle:
-        "Has alcohol been linked to your blood pressure or heart condition?",
-      subType: "radio",
-      options: ["Yes, diagnosed condition", "Suspected / borderline", "No"],
-      required: true,
-    },
-    {
-      subKey: "medicalClearance",
-      subTitle: "Do you have medical clearance to drink in moderation?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    },
-  ],
-  digestion: [
-    {
-      subKey: "digestiveIssues",
-      subTitle: "Which digestive issues are affected?",
-      subType: "radio",
-      options: [
-        "Stomach irritation / gastritis",
-        "Acid reflux / heartburn",
-        "Pancreatitis",
-        "Other",
-      ],
-      required: true,
-    },
-    {
-      subKey: "symptomWorsening",
-      subTitle: "Have symptoms worsened after drinking?",
-      subType: "radio",
-      options: ["Yes, frequently", "Sometimes", "Rarely"],
-      required: true,
-    },
-  ],
-  weight: [
-    {
-      subKey: "weightConcern",
-      subTitle: "Are you concerned about alcohol contributing to weight gain?",
-      subType: "radio",
-      options: ["Yes", "Somewhat", "No"],
-      required: true,
-    },
-  ],
-  otherHealth: [
-    {
-      subKey: "otherHealthDetails",
-      subTitle: "Please specify the health impact.",
-      subType: "text",
-      placeholder: "e.g., Mental health, skin conditions, etc.",
       required: true,
     },
   ],

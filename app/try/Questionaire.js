@@ -21,6 +21,8 @@ const BRANCHING_KEYS = {
   medicalConditions: "Physical Activity",
   exerciseLocation: "Physical Activity",
   fitnessGoal: "Physical Activity",
+  alcoholFrequency: "Alcohol",
+  drinkingContext: "Alcohol",
   drinkingEffects: "Alcohol",
   tobaccoUse: "Tobacco",
   //currentSituation: "Mental health",
@@ -321,76 +323,93 @@ export default function Questionnaire() {
     isBranchingStep,
   ]);
 
-  // Handle alcohol branching logic
+  // Handle alcohol branching logic - COMPLETELY UPDATED WITH HEALTH IMPACT FIX
   useEffect(() => {
     if (currentStepData && isBranchingStep && subStep === 1) {
       const followUpAnswers = answers.followUps || {};
       let alcoholFollowUps = [];
 
-      // Handle alcohol frequency follow-ups
+      console.log("Alcohol branching triggered:", {
+        baseConditionalKey,
+        baseConditionalAnswer,
+        currentStep: currentStepData.key,
+        followUpAnswers
+      });
+
+      // Handle alcohol frequency follow-ups (Step 1: Q2 Quantity)
       if (baseConditionalKey === "alcoholFrequency" && baseConditionalAnswer) {
-        if (conditionalFollowUps[baseConditionalAnswer]) {
-          alcoholFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+        console.log("Processing alcohol frequency:", baseConditionalAnswer);
+        
+        // Only show quantity question for Sometimes, Often, Daily (not Rarely)
+        if (baseConditionalAnswer !== "Rarely (special occasions only)") {
+          if (conditionalFollowUps[baseConditionalAnswer]) {
+            alcoholFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+            console.log("Added alcohol quantity follow-up");
+          }
         }
       }
 
-      // Handle drinking context follow-ups
+      // Handle drinking context follow-ups (Step 3: Q4b Adaptive Follow-Ups)
       if (baseConditionalKey === "drinkingContext" && baseConditionalAnswer) {
+        console.log("Processing drinking context:", baseConditionalAnswer);
         const selectedContexts = baseConditionalAnswer || {};
 
         Object.keys(selectedContexts).forEach((contextId) => {
           if (selectedContexts[contextId] && conditionalFollowUps[contextId]) {
             alcoholFollowUps.push(...conditionalFollowUps[contextId]);
+            console.log("Added context follow-up for:", contextId);
           }
         });
       }
 
-      // Handle drinking effects follow-ups (Q5 Adaptive Follow-Ups)
+      // Handle drinking effects follow-ups (Step 4: Q5 Adaptive Follow-Ups)
       if (baseConditionalKey === "drinkingEffects" && baseConditionalAnswer) {
+        console.log("Processing drinking effects:", baseConditionalAnswer);
         const selectedEffects = baseConditionalAnswer || {};
 
         Object.keys(selectedEffects).forEach((effectId) => {
           if (selectedEffects[effectId] && conditionalFollowUps[effectId]) {
             alcoholFollowUps.push(...conditionalFollowUps[effectId]);
+            console.log("Added effect follow-up for:", effectId);
           }
         });
 
         // Special case: Health impact doctor advice follow-up (Q6)
-        if (
-          selectedEffects.healthImpact &&
-          followUpAnswers.doctorAdvice === "Yes"
-        ) {
-          if (conditionalFollowUps["doctorAdviceYes"]) {
-            alcoholFollowUps.push(...conditionalFollowUps["doctorAdviceYes"]);
-          }
-        } else if (
-          selectedEffects.healthImpact &&
-          followUpAnswers.doctorAdvice === "No"
-        ) {
-          if (conditionalFollowUps["doctorAdviceNo"]) {
-            alcoholFollowUps.push(...conditionalFollowUps["doctorAdviceNo"]);
-          }
-        }
-
-        // Handle specific health areas affected (Q6a multi-select follow-up)
-        if (
-          selectedEffects.healthImpact &&
-          followUpAnswers.doctorAdvice === "Yes" &&
-          followUpAnswers.healthAreasAffected
-        ) {
-          Object.keys(followUpAnswers.healthAreasAffected).forEach(
-            (healthArea) => {
-              if (
-                followUpAnswers.healthAreasAffected[healthArea] &&
-                conditionalFollowUps[healthArea]
-              ) {
-                alcoholFollowUps.push(...conditionalFollowUps[healthArea]);
-              }
+        if (selectedEffects.healthImpact) {
+          console.log("Health impact selected, checking doctor advice:", followUpAnswers.doctorAdvice);
+          
+          if (followUpAnswers.doctorAdvice === "Yes") {
+            if (conditionalFollowUps["doctorAdviceYes"]) {
+              alcoholFollowUps.push(...conditionalFollowUps["doctorAdviceYes"]);
+              console.log("Added doctor advice Yes follow-up");
             }
-          );
+
+            // Handle specific health areas affected (Q6a multi-select follow-up)
+            if (followUpAnswers.healthAreasAffected) {
+              console.log("Health areas affected:", followUpAnswers.healthAreasAffected);
+              
+              Object.keys(followUpAnswers.healthAreasAffected).forEach(
+                (healthArea) => {
+                  if (
+                    followUpAnswers.healthAreasAffected[healthArea] &&
+                    conditionalFollowUps[healthArea]
+                  ) {
+                    alcoholFollowUps.push(...conditionalFollowUps[healthArea]);
+                    console.log("Added health area follow-up for:", healthArea);
+                  }
+                }
+              );
+            }
+          } else if (followUpAnswers.doctorAdvice === "No") {
+            if (conditionalFollowUps["doctorAdviceNo"]) {
+              alcoholFollowUps.push(...conditionalFollowUps["doctorAdviceNo"]);
+              console.log("Added doctor advice No follow-up");
+            }
+          }
         }
       }
 
+      console.log("Final alcohol follow-ups:", alcoholFollowUps);
       setAlcoholQuestions(alcoholFollowUps);
     }
   }, [
@@ -899,7 +918,7 @@ export default function Questionnaire() {
     }
   };
 
-  // UPDATED HANDLE NEXT FUNCTION WITH NEW PHYSICAL ACTIVITY FLOW
+  // UPDATED HANDLE NEXT FUNCTION WITH ALCOHOL HEALTH IMPACT FIX
   const handleNext = () => {
     console.log("HandleNext called:", {
       currentStep,
@@ -907,6 +926,7 @@ export default function Questionnaire() {
       isBranchingStep,
       currentStepData: currentStepData?.key,
       baseConditionalAnswer,
+      answers: answers.followUps // Log follow-up answers for debugging
     });
 
     // A. If on a Branching Step's Base Question (subStep 0)
@@ -1016,6 +1036,23 @@ export default function Questionnaire() {
           }
         }
 
+        // UPDATED ALCOHOL LOGIC - NEW FLOW
+        // Skip alcohol quantity follow-up if user answers "Rarely" to frequency
+        if (currentStepData.key === "alcoholFrequency") {
+          if (baseConditionalAnswer === "Rarely (special occasions only)") {
+            console.log("Skipping alcohol quantity follow-ups (answered Rarely)");
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
+          // For other frequency answers, show quantity follow-up
+          else {
+            console.log("Showing alcohol quantity follow-ups");
+            setSubStep(1);
+            return;
+          }
+        }
+
         // Special logic for drinking effects
         if (currentStepData.key === "drinkingEffects") {
           const selectedEffects = answers.drinkingEffects || {};
@@ -1023,10 +1060,16 @@ export default function Questionnaire() {
 
           // If the user selects ONLY 'No noticeable issues' or nothing at all, skip all follow-ups
           if (!anyEffectSelected) {
+            console.log("Skipping drinking effects follow-ups (no effects selected)");
             setCurrentStep(currentStep + 1);
             setSubStep(0);
             return;
           }
+          
+          // SPECIAL FIX: Always show follow-ups for drinking effects when any effect is selected
+          console.log("Showing drinking effects follow-ups (effects selected):", selectedEffects);
+          setSubStep(1);
+          return;
         }
 
         // Special logic for sleepDisorderDiagnosis
