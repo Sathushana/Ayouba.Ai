@@ -780,14 +780,13 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Mental Health Questions
+  // Mental Health Questions - COMPLETELY UPDATED TO MATCH DOCUMENT STRUCTURE
   "Mental health": [
     // Step 1: Baseline & Life Situation
     {
       id: 6,
       type: "radio",
-      title: "Current Situation",
-      description: "Which of these best describes your current situation?",
+      title: "Which of these best describes your current situation?",
       key: "currentSituation",
       options: [
         "Student (school, college, university)",
@@ -803,8 +802,7 @@ const goalSpecificQuestions = {
     {
       id: 7,
       type: "radio",
-      title: "Living Situation",
-      description: "Who do you currently live with?",
+      title: "Who do you currently live with?",
       key: "livingSituation",
       options: [
         "With parents/family",
@@ -817,8 +815,7 @@ const goalSpecificQuestions = {
     {
       id: 8,
       type: "radio",
-      title: "Financial Situation",
-      description: "How would you describe your financial situation?",
+      title: "How would you describe your financial situation?",
       key: "financialSituation",
       options: [
         "Comfortable -- basic needs met without worry",
@@ -833,28 +830,17 @@ const goalSpecificQuestions = {
     {
       id: 9,
       type: "multiselect",
-      title: "Health Conditions",
-      description:
-        "Do you already have any of these diseases or health conditions? (Select all that apply)",
-      key: "mentalHealthConditions",
+      title: "Do you already have any of these diseases or health conditions? (Select all that apply)",
+      key: "healthConditionsMH",
       options: [
-        { id: "heartDiseaseMH", label: "Heart disease / Hypertension" },
-        { id: "diabetesMH", label: "Diabetes" },
-        {
-          id: "respiratoryDiseaseMH",
-          label: "Respiratory disease (e.g., asthma, COPD)",
-        },
-        { id: "cancerMH", label: "Cancer (any type)" },
-        {
-          id: "oralHealthMH",
-          label: "Oral health problems (e.g., gum disease, mouth ulcers)",
-        },
-        {
-          id: "mentalHealthCondition",
-          label: "Mental health conditions (e.g., anxiety, depression)",
-        },
-        { id: "otherConditionMH", label: "Other" },
-        { id: "noneMH", label: "None of the above" },
+        { id: "heartDisease", label: "Heart disease / Hypertension" },
+        { id: "diabetes", label: "Diabetes" },
+        { id: "respiratoryDisease", label: "Respiratory disease (e.g., asthma, COPD)" },
+        { id: "cancer", label: "Cancer (any type)" },
+        { id: "oralHealth", label: "Oral health problems (e.g., gum disease, mouth ulcers)" },
+        { id: "mentalHealthCondition", label: "Mental health conditions (e.g., anxiety, depression)" },
+        { id: "otherCondition", label: "Other (please specify)" },
+        { id: "none", label: "None of the above" },
       ],
       required: true,
     },
@@ -863,23 +849,16 @@ const goalSpecificQuestions = {
     {
       id: 10,
       type: "multiselect",
-      title: "Daily Routine",
-      description: "How would you describe your daily routine?",
+      title: "How would you describe your daily routine?",
       key: "dailyRoutine",
       options: [
         { id: "sedentary", label: "Mostly sedentary / desk work / studying" },
-        {
-          id: "active",
-          label: "Physically active (walking, sports, exercise)",
-        },
+        { id: "active", label: "Physically active (walking, sports, exercise)" },
         { id: "irregularMeals", label: "Irregular meals / poor diet" },
         { id: "goodSleep", label: "Sleep 6-8 hours / good sleep hygiene" },
         { id: "poorSleep", label: "Sleep <6 hours / poor sleep quality" },
         { id: "heavyScreen", label: "Heavy screen time / social media" },
-        {
-          id: "socialActive",
-          label: "Socially active / regular friends or family interaction",
-        },
+        { id: "socialActive", label: "Socially active / regular friends or family interaction" },
         { id: "socialIsolated", label: "Socially isolated / limited contact" },
       ],
       required: true,
@@ -887,8 +866,7 @@ const goalSpecificQuestions = {
     {
       id: 11,
       type: "multiselect",
-      title: "Coping Mechanisms",
-      description: "When you feel stressed, how do you usually cope?",
+      title: "When you feel stressed, how do you usually cope?",
       key: "copingMechanisms",
       options: [
         { id: "talkToOthers", label: "Talk to friends/family" },
@@ -906,8 +884,7 @@ const goalSpecificQuestions = {
     {
       id: 12,
       type: "radio",
-      title: "Stress Frequency",
-      description: "How often do you feel stressed, anxious, or low in mood?",
+      title: "How often do you feel stressed, anxious, or low in mood?",
       key: "stressFrequency",
       options: [
         "Rarely -- I feel calm most of the time",
@@ -920,8 +897,7 @@ const goalSpecificQuestions = {
     {
       id: 13,
       type: "radio",
-      title: "Social Connection",
-      description: "How connected and supported do you feel socially?",
+      title: "How connected and supported do you feel socially?",
       key: "socialConnection",
       options: [
         "Very connected -- I have friends/family to talk to",
@@ -934,8 +910,7 @@ const goalSpecificQuestions = {
     {
       id: 14,
       type: "multiselect",
-      title: "Recent Feelings",
-      description: "In the past month, have you felt any of the following?",
+      title: "In the past month, have you felt any of the following?",
       key: "recentFeelings",
       options: [
         { id: "hopeless", label: "Hopeless about the future" },
@@ -953,18 +928,13 @@ const goalSpecificQuestions = {
     {
       id: 15,
       type: "multiselect",
-      title: "Root Causes",
-      description:
-        "Which areas do you think are most affecting your mood or stress?",
+      title: "Which areas do you think are most affecting your mood or stress?",
       key: "rootCauses",
       options: [
         { id: "workStudies", label: "Work / studies / routine pressure" },
         { id: "family", label: "Family / household responsibilities" },
         { id: "financial", label: "Financial stress" },
-        {
-          id: "healthLifestyle",
-          label: "Physical health / exercise / diet / sleep",
-        },
+        { id: "healthLifestyle", label: "Physical health / exercise / diet / sleep" },
         { id: "social", label: "Social / relationships" },
         { id: "otherRoot", label: "Other" },
       ],
@@ -975,18 +945,14 @@ const goalSpecificQuestions = {
     {
       id: 16,
       type: "multiselect",
-      title: "Mental Health Goals",
-      description: "What would you like to achieve?",
+      title: "What would you like to achieve?",
       key: "mentalHealthGoals",
       options: [
         { id: "reduceStress", label: "Reduce stress / improve mood" },
         { id: "improveSleep", label: "Improve sleep / energy" },
         { id: "improveHealth", label: "Improve health / lifestyle habits" },
-        {
-          id: "improveSocial",
-          label: "Improve social connections / relationships",
-        },
-        { id: "otherGoals", label: "Other" },
+        { id: "improveSocial", label: "Improve social connections / relationships" },
+        { id: "otherGoals", label: "Other (please specify)" },
       ],
       required: true,
     },
@@ -1095,6 +1061,530 @@ const conditionalFollowUps = {
   ],
   // --- END NUTRITION FOLLOW-UPS ---
 
+  // --- MENTAL HEALTH FOLLOW-UPS ---
+  
+  // Step 1: Current Situation Follow-ups
+  "Student (school, college, university)": [
+    {
+      subKey: "studentStress",
+      subTitle: "What usually causes you the most stress at school or university?",
+      subType: "multiselect",
+      options: [
+        { id: "academicPressure", label: "Academic pressure / exams / results" },
+        { id: "tuitionPressure", label: "Tuition / extra classes pressure" },
+        { id: "timeManagement", label: "Managing time between studies and family expectations" },
+        { id: "peerPressure", label: "Peer pressure / social life" },
+        { id: "financialConcerns", label: "Financial concerns (fees, travel, living costs)" },
+        { id: "otherStudent", label: "Other" },
+      ],
+      required: true,
+    },
+  ],
+  "Employed (full-time or part-time, private or government sector)": [
+    {
+      subKey: "workStress",
+      subTitle: "What usually causes you the most stress at work?",
+      subType: "multiselect",
+      options: [
+        { id: "workload", label: "Heavy workload / long hours" },
+        { id: "jobInsecurity", label: "Job insecurity / contract uncertainty" },
+        { id: "workplaceConflict", label: "Difficult boss / workplace conflict" },
+        { id: "lowPay", label: "Low pay or limited benefits" },
+        { id: "commuteStress", label: "Commute / travel stress (traffic is a big factor in Colombo & other cities)" },
+        { id: "otherWork", label: "Other" },
+      ],
+      required: true,
+    },
+  ],
+  "Self-employed / small business owner": [
+    {
+      subKey: "businessStress",
+      subTitle: "What is your biggest stress factor in running your business?",
+      subType: "multiselect",
+      options: [
+        { id: "financialUncertainty", label: "Financial uncertainty / cash flow" },
+        { id: "governmentRegulations", label: "Government regulations or taxes" },
+        { id: "customerIssues", label: "Customer or client issues" },
+        { id: "lackStability", label: "Lack of stability / market changes" },
+        { id: "workLifeBalance", label: "Work-life balance" },
+        { id: "otherBusiness", label: "Other" },
+      ],
+      required: true,
+    },
+  ],
+  "Unemployed / looking for work": [
+    {
+      subKey: "unemployedStress",
+      subTitle: "What's the biggest source of stress while not working?",
+      subType: "multiselect",
+      options: [
+        { id: "financialWorries", label: "Financial worries / supporting family" },
+        { id: "familyPressure", label: "Pressure from family / society to find a job" },
+        { id: "lowSelfEsteem", label: "Low self-esteem / confidence" },
+        { id: "difficultyFinding", label: "Difficulty finding opportunities" },
+        { id: "otherUnemployed", label: "Other" },
+      ],
+      required: true,
+    },
+  ],
+  "Homemaker / caregiver": [
+    {
+      subKey: "homemakerStress",
+      subTitle: "What usually feels most stressful in your role?",
+      subType: "multiselect",
+      options: [
+        { id: "householdResponsibilities", label: "Household responsibilities" },
+        { id: "caringForOthers", label: "Caring for children / elderly / family members" },
+        { id: "lackPersonalTime", label: "Lack of personal time / self-care" },
+        { id: "feelingUnrecognized", label: "Feeling unrecognized / unsupported" },
+        { id: "financialDependency", label: "Financial dependency / constraints" },
+        { id: "otherHomemaker", label: "Other" },
+      ],
+      required: true,
+    },
+  ],
+  "Retired": [
+    {
+      subKey: "retiredChallenges",
+      subTitle: "What is your biggest challenge in retirement?",
+      subType: "multiselect",
+      options: [
+        { id: "loneliness", label: "Loneliness / isolation" },
+        { id: "healthIssues", label: "Health issues / managing chronic conditions" },
+        { id: "financialConcernsRetired", label: "Financial concerns / pension limitations" },
+        { id: "lackRoutine", label: "Lack of routine or purpose" },
+        { id: "otherRetired", label: "Other" },
+      ],
+      required: true,
+    },
+  ],
+
+  // Step 2: Health Conditions Follow-ups
+  "mentalHealthCondition": [
+    {
+      subKey: "mentalHealthDiagnosis",
+      subTitle: "Which condition(s) have you been diagnosed with?",
+      subType: "multiselect",
+      options: [
+        { id: "depression", label: "Depression" },
+        { id: "anxiety", label: "Anxiety" },
+        { id: "bipolar", label: "Bipolar disorder" },
+        { id: "adhd", label: "ADHD" },
+        { id: "ptsd", label: "PTSD" },
+        { id: "otherDiagnosis", label: "Other (please specify)" },
+      ],
+      required: true,
+    },
+    {
+      subKey: "mentalHealthTreatment",
+      subTitle: "Are you currently receiving any treatment or support?",
+      subType: "multiselect",
+      options: [
+        { id: "medication", label: "Medication prescribed by a doctor" },
+        { id: "counseling", label: "Counseling / psychotherapy" },
+        { id: "otherTherapies", label: "Other therapies (e.g., group therapy, support groups)" },
+        { id: "noneTreatment", label: "None" },
+      ],
+      required: true,
+    },
+  ],
+
+  // Treatment type follow-ups
+  "medication": [
+    {
+      subKey: "medicationDetails",
+      subTitle: "Please provide details about your medication:",
+      subType: "medications",
+      required: true,
+      defaultData: [{ id: 1, name: "", routine: "Morning", dose: "", duration: "", sideEffects: "" }],
+      routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+    },
+  ],
+  "counseling": [
+    {
+      subKey: "counselingDetails",
+      subTitle: "Please provide details about your counseling/therapy:",
+      subType: "text",
+      placeholder: "Type and frequency (e.g., CBT weekly)",
+      required: true,
+    },
+  ],
+  "otherTherapies": [
+    {
+      subKey: "otherTherapyDetails",
+      subTitle: "Please provide details about your other therapies:",
+      subType: "text",
+      placeholder: "Type and frequency (e.g., group therapy bi-weekly)",
+      required: true,
+    },
+  ],
+
+  // Physical health condition mental impact follow-ups
+  "heartDisease": [
+    {
+      subKey: "heartDiseaseMentalImpact",
+      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "diabetes": [
+    {
+      subKey: "diabetesMentalImpact",
+      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "respiratoryDisease": [
+    {
+      subKey: "respiratoryMentalImpact",
+      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "cancer": [
+    {
+      subKey: "cancerMentalImpact",
+      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "oralHealth": [
+    {
+      subKey: "oralHealthMentalImpact",
+      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "otherCondition": [
+    {
+      subKey: "otherConditionMentalImpact",
+      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+    {
+      subKey: "otherConditionDetails",
+      subTitle: "Please specify your condition:",
+      subType: "text",
+      placeholder: "Enter your specific health condition",
+      required: true,
+    },
+  ],
+
+  // Mental impact areas follow-ups
+  "Yes": [
+    {
+      subKey: "mentalImpactAreas",
+      subTitle: "How does it affect you?",
+      subType: "multiselect",
+      options: [
+        { id: "causesStress", label: "Causes stress / anxiety" },
+        { id: "lowersMood", label: "Lowers mood / depressive feelings" },
+        { id: "affectsSleep", label: "Affects sleep" },
+        { id: "affectsEnergy", label: "Affects energy / motivation" },
+        { id: "affectsRelationships", label: "Affects social relationships" },
+        { id: "otherImpact", label: "Other (please specify)" },
+      ],
+      required: true,
+    },
+  ],
+  "Sometimes": [
+    {
+      subKey: "mentalImpactAreasSometimes",
+      subTitle: "Which aspects are sometimes affected?",
+      subType: "multiselect",
+      options: [
+        { id: "causesStressSometimes", label: "Causes stress / anxiety" },
+        { id: "lowersMoodSometimes", label: "Lowers mood / depressive feelings" },
+        { id: "affectsSleepSometimes", label: "Affects sleep" },
+        { id: "affectsEnergySometimes", label: "Affects energy / motivation" },
+        { id: "affectsRelationshipsSometimes", label: "Affects social relationships" },
+        { id: "otherImpactSometimes", label: "Other (please specify)" },
+      ],
+      required: true,
+    },
+  ],
+
+  // Other impact details
+  "otherImpact": [
+    {
+      subKey: "otherImpactDetails",
+      subTitle: "Please specify other ways it affects you:",
+      subType: "text",
+      placeholder: "Describe other impacts on your mental health",
+      required: true,
+    },
+  ],
+  "otherImpactSometimes": [
+    {
+      subKey: "otherImpactDetailsSometimes",
+      subTitle: "Please specify other ways it sometimes affects you:",
+      subType: "text",
+      placeholder: "Describe other impacts on your mental health",
+      required: true,
+    },
+  ],
+
+  // Step 3: Lifestyle Follow-ups
+  "poorSleep": [
+    {
+      subKey: "sleepDisruption",
+      subTitle: "What usually disrupts your sleep?",
+      subType: "multiselect",
+      options: [
+        { id: "stressAnxiety", label: "Stress / anxiety" },
+        { id: "screenTime", label: "Screen time / late-night phone use" },
+        { id: "familyResponsibilities", label: "Family responsibilities" },
+        { id: "healthIssuesSleep", label: "Health issues" },
+      ],
+      required: true,
+    },
+  ],
+  "sedentary": [
+    {
+      subKey: "movementBarriers",
+      subTitle: "What prevents you from moving more?",
+      subType: "multiselect",
+      options: [
+        { id: "lackTime", label: "Lack of time" },
+        { id: "lackMotivation", label: "Lack of motivation" },
+        { id: "physicalLimitations", label: "Physical limitations" },
+        { id: "dontKnowWhatToDo", label: "Don't know what to do" },
+      ],
+      required: true,
+    },
+  ],
+  "irregularMeals": [
+    {
+      subKey: "mealPatterns",
+      subTitle: "Which meals are usually skipped or unhealthy?",
+      subType: "multiselect",
+      options: [
+        { id: "breakfast", label: "Breakfast" },
+        { id: "lunch", label: "Lunch" },
+        { id: "dinner", label: "Dinner" },
+        { id: "snacks", label: "Snacks / sugary drinks" },
+        { id: "fastFood", label: "Mostly fast food / processed meals" },
+      ],
+      required: true,
+    },
+  ],
+
+  // Step 4: Mental & Emotional State Follow-ups
+  "Often -- stress or low mood is frequent": [
+    {
+      subKey: "stressSymptoms",
+      subTitle: "When you feel stressed or low, what do you notice first?",
+      subType: "multiselect",
+      options: [
+        { id: "lackMotivation", label: "Lack of motivation" },
+        { id: "racingThoughts", label: "Racing thoughts / worry" },
+        { id: "fatigue", label: "Fatigue / low energy" },
+        { id: "irritability", label: "Irritability / mood swings" },
+        { id: "tension", label: "Tension / headaches" },
+        { id: "sleepProblems", label: "Sleep problems" },
+        { id: "otherSymptoms", label: "Other (please specify)" },
+      ],
+      required: true,
+    },
+  ],
+  "Almost always -- I feel overwhelmed nearly every day": [
+    {
+      subKey: "stressSymptomsOverwhelmed",
+      subTitle: "When you feel stressed or low, what do you notice first?",
+      subType: "multiselect",
+      options: [
+        { id: "lackMotivationOverwhelmed", label: "Lack of motivation" },
+        { id: "racingThoughtsOverwhelmed", label: "Racing thoughts / worry" },
+        { id: "fatigueOverwhelmed", label: "Fatigue / low energy" },
+        { id: "irritabilityOverwhelmed", label: "Irritability / mood swings" },
+        { id: "tensionOverwhelmed", label: "Tension / headaches" },
+        { id: "sleepProblemsOverwhelmed", label: "Sleep problems" },
+        { id: "otherSymptomsOverwhelmed", label: "Other (please specify)" },
+      ],
+      required: true,
+    },
+  ],
+
+  // Recent Feelings Follow-ups
+  "hopeless": [
+    {
+      subKey: "hopelessFrequency",
+      subTitle: "How often do you feel hopeless?",
+      subType: "radio",
+      options: ["Rarely (a few days in the month)", "Sometimes (a few days each week)", "Often (most days)", "Almost always"],
+      required: true,
+    },
+    {
+      subKey: "hopelessMotivation",
+      subTitle: "Does this affect your motivation to do daily tasks?",
+      subType: "radio",
+      options: ["Yes, a lot", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "concentration": [
+    {
+      subKey: "concentrationAreas",
+      subTitle: "In which areas do you notice poor concentration most?",
+      subType: "multiselect",
+      options: [
+        { id: "studiesWork", label: "Studies/work" },
+        { id: "dailyChores", label: "Daily chores/household" },
+        { id: "conversations", label: "Conversations/social life" },
+        { id: "otherConcentration", label: "Other" },
+      ],
+      required: true,
+    },
+    {
+      subKey: "concentrationPerformance",
+      subTitle: "Has this caused problems with performance (work, studies, daily tasks)?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "lossInterest": [
+    {
+      subKey: "interestAreas",
+      subTitle: "Which activities have you lost interest in?",
+      subType: "multiselect",
+      options: [
+        { id: "hobbies", label: "Hobbies/leisure" },
+        { id: "socialActivities", label: "Spending time with friends/family" },
+        { id: "workStudies", label: "Work/studies" },
+        { id: "selfCare", label: "Self-care/personal goals" },
+        { id: "otherInterest", label: "Other" },
+      ],
+      required: true,
+    },
+    {
+      subKey: "interestImpact",
+      subTitle: "How much does this affect your daily life?",
+      subType: "radio",
+      options: ["A lot -- I avoid most activities", "Somewhat -- I still do things but without interest", "Little to none"],
+      required: true,
+    },
+  ],
+  "nervousness": [
+    {
+      subKey: "anxietySymptoms",
+      subTitle: "When you feel anxious, what happens most?",
+      subType: "multiselect",
+      options: [
+        { id: "racingThoughtsAnxiety", label: "Racing thoughts" },
+        { id: "restlessness", label: "Restlessness / can't relax" },
+        { id: "physicalSymptoms", label: "Fast heartbeat / body tension" },
+        { id: "avoidance", label: "Avoiding situations" },
+      ],
+      required: true,
+    },
+    {
+      subKey: "worryImpact",
+      subTitle: "How often does worry stop you from doing things you want/need to do?",
+      subType: "radio",
+      options: ["Very often", "Sometimes", "Rarely", "Never"],
+      required: true,
+    },
+  ],
+  "sleepIssues": [
+    {
+      subKey: "sleepProblemsType",
+      subTitle: "Which of these best describes your sleep issue?",
+      subType: "multiselect",
+      options: [
+        { id: "troubleFallingAsleep", label: "Trouble falling asleep" },
+        { id: "wakeUpOften", label: "Wake up often at night" },
+        { id: "wakeUpEarly", label: "Wake up too early" },
+        { id: "sleepingTooMuch", label: "Sleeping too much" },
+      ],
+      required: true,
+    },
+    {
+      subKey: "sleepRestfulness",
+      subTitle: "Do you feel rested after sleep?",
+      subType: "radio",
+      options: ["Rarely / Never", "Sometimes", "Yes, most of the time"],
+      required: true,
+    },
+  ],
+  "sadness": [
+    {
+      subKey: "sadnessFrequency",
+      subTitle: "How many days in the past month did you feel this way?",
+      subType: "radio",
+      options: ["Less than 5 days", "5-10 days", "More than 10 days", "Almost every day"],
+      required: true,
+    },
+    {
+      subKey: "sadnessImpact",
+      subTitle: "Did this sadness affect your daily routine (work, studies, relationships, self-care)?",
+      subType: "radio",
+      options: ["Yes, significantly", "Yes, somewhat", "No"],
+      required: true,
+    },
+  ],
+
+  // Step 5: Root Causes Follow-ups
+  "workStudies": [
+    {
+      subKey: "workStudiesImpact",
+      subTitle: "Does this affect your sleep, energy, or relationships?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "family": [
+    {
+      subKey: "familyImpact",
+      subTitle: "Does this limit your personal time or self-care?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "financial": [
+    {
+      subKey: "financialImpact",
+      subTitle: "Do financial concerns impact your mood or motivation?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "healthLifestyle": [
+    {
+      subKey: "healthLifestyleImpact",
+      subTitle: "Do you feel tired or low energy due to lifestyle habits?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+  "social": [
+    {
+      subKey: "socialImpact",
+      subTitle: "Do you feel isolated or unsupported?",
+      subType: "radio",
+      options: ["Yes", "Sometimes", "No"],
+      required: true,
+    },
+  ],
+
+  // --- END MENTAL HEALTH FOLLOW-UPS ---
+
   // --- PHYSICAL ACTIVITY FOLLOW-UPS
   // Q1: Baseline Activity Level Follow-ups
   "Mostly sitting (little or no exercise)": [
@@ -1105,10 +1595,7 @@ const conditionalFollowUps = {
       options: [
         { id: "lackTime", label: "Lack of time" },
         { id: "lackMotivation", label: "Lack of motivation" },
-        {
-          id: "physicalLimitations",
-          label: "Physical limitations / health issues",
-        },
+        { id: "physicalLimitations", label: "Physical limitations / health issues" },
         { id: "dontKnow", label: "Don't know what to do" },
         { id: "nothing", label: "Nothing" },
       ],
@@ -1124,10 +1611,7 @@ const conditionalFollowUps = {
       options: [
         { id: "lackTime", label: "Lack of time" },
         { id: "lackMotivation", label: "Lack of motivation" },
-        {
-          id: "physicalLimitations",
-          label: "Physical limitations / health issues",
-        },
+        { id: "physicalLimitations", label: "Physical limitations / health issues" },
         { id: "dontKnow", label: "Don't know what to do" },
         { id: "nothing", label: "Nothing" },
       ],
@@ -1277,10 +1761,7 @@ const conditionalFollowUps = {
       options: [
         { id: "heartDisease", label: "Heart disease / High blood pressure" },
         { id: "diabetes", label: "Diabetes / Blood sugar issues" },
-        {
-          id: "jointIssues",
-          label: "Joint or mobility issues (knees, hips, back)",
-        },
+        { id: "jointIssues", label: "Joint or mobility issues (knees, hips, back)" },
         { id: "respiratory", label: "Respiratory issues (asthma, COPD)" },
         { id: "surgery", label: "Recent surgery or injury" },
         { id: "tobacco", label: "Tobacco use" },
@@ -1578,140 +2059,7 @@ const conditionalFollowUps = {
   ],
   // --- END PA FOLLOW-UPS ---
 
-  // Tobacco follow-ups
-  "I used in the past, but quit": [
-    {
-      subKey: "quitDuration",
-      subTitle: "How long ago did you quit?",
-      subType: "radio",
-      options: [
-        "Less than 1 month ago",
-        "1-6 months ago",
-        "6-12 months ago",
-        "More than 1 year ago",
-      ],
-      required: true,
-    },
-  ],
-  cigarettes: [
-    {
-      subKey: "cigarettesQuantity",
-      subTitle:
-        "For cigarettes, how many do you smoke per day (for daily) or per week (for weekly/occasional)?",
-      subType: "text",
-      placeholder: "e.g., 10 per day, 20 per week",
-      required: false,
-    },
-  ],
-  beedi: [
-    {
-      subKey: "beediQuantity",
-      subTitle:
-        "For beedi, how many do you smoke per day (for daily) or per week (for weekly/occasional)?",
-      subType: "text",
-      placeholder: "e.g., 5 per day, 15 per week",
-      required: false,
-    },
-  ],
-  chewingTobacco: [
-    {
-      subKey: "chewingQuantity",
-      subTitle:
-        "For chewing tobacco/betel leaves, how many leaves/grams per day (or per week)?",
-      subType: "text",
-      placeholder: "e.g., 3 leaves per day, 10 grams per week",
-      required: false,
-    },
-  ],
-  otherDrugs: [
-    {
-      subKey: "otherDrugsFrequency",
-      subTitle: "For other drugs, what is the frequency per week/day?",
-      subType: "text",
-      placeholder: "e.g., 2 times per week, daily",
-      required: false,
-    },
-  ],
-  Never: [
-    {
-      subKey: "secondHandExposure",
-      subTitle:
-        "Do you feel exposed to second-hand smoke at home, work, or in public?",
-      subType: "radio",
-      options: ["Yes", "Sometimes", "Rarely", "No"],
-      required: true,
-    },
-    {
-      subKey: "stayTobaccoFree",
-      subTitle:
-        "Would you like to learn strategies to continue staying tobacco-free?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Used in the past, but quit": [
-    {
-      subKey: "quittingHelp",
-      subTitle: "What helped you the most in quitting tobacco?",
-      subType: "radio",
-      options: ["Willpower", "Family support", "Medical advice", "Other"],
-      required: true,
-    },
-    {
-      subKey: "avoidRelapseTobacco",
-      subTitle: "Would you like tips to avoid relapse in the future?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Occasionally (less than daily)": [
-    {
-      subKey: "tobaccoSituations",
-      subTitle: "In what situations do you usually use tobacco?",
-      subType: "multiselect",
-      options: [
-        { id: "social", label: "Social gatherings" },
-        { id: "stress", label: "Stress" },
-        { id: "meals", label: "After meals" },
-        { id: "other", label: "Other" },
-      ],
-      required: false,
-    },
-    {
-      subKey: "cutDownTobacco",
-      subTitle: "Would you like suggestions to cut down or quit completely?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-  "Daily / Regular use": [
-    {
-      subKey: "quittingChallenge",
-      subTitle:
-        "What do you feel is the biggest challenge in quitting tobacco?",
-      subType: "radio",
-      options: [
-        "Cravings",
-        "Stress relief",
-        "Social circle",
-        "Don't feel ready",
-      ],
-      required: true,
-    },
-    {
-      subKey: "quitPlanTobacco",
-      subTitle:
-        "Would you like us to guide you with a personalized quit plan or professional resources?",
-      subType: "radio",
-      options: ["Yes", "Maybe", "No"],
-      required: true,
-    },
-  ],
-
-  // ========== ALCOHOL FOLLOW-UPS - COMPLETELY UPDATED TO MATCH DOCUMENT ==========
+  // ========== ALCOHOL FOLLOW-UPS ==========
   
   // Step 1: Frequency & Quantity Follow-ups (Q2)
   "Sometimes (1–2 times a week)": [
@@ -1958,6 +2306,61 @@ const conditionalFollowUps = {
       subType: "text",
       placeholder: "e.g., Mental health, skin conditions, etc.",
       required: true,
+    },
+  ],
+
+  // ========== TOBACCO FOLLOW-UPS ==========
+  "I used in the past, but quit": [
+    {
+      subKey: "quitDuration",
+      subTitle: "How long ago did you quit?",
+      subType: "radio",
+      options: [
+        "Less than 1 month ago",
+        "1-6 months ago",
+        "6-12 months ago",
+        "More than 1 year ago",
+      ],
+      required: true,
+    },
+  ],
+  cigarettes: [
+    {
+      subKey: "cigarettesQuantity",
+      subTitle:
+        "For cigarettes, how many do you smoke per day (for daily) or per week (for weekly/occasional)?",
+      subType: "text",
+      placeholder: "e.g., 10 per day, 20 per week",
+      required: false,
+    },
+  ],
+  beedi: [
+    {
+      subKey: "beediQuantity",
+      subTitle:
+        "For beedi, how many do you smoke per day (for daily) or per week (for weekly/occasional)?",
+      subType: "text",
+      placeholder: "e.g., 5 per day, 15 per week",
+      required: false,
+    },
+  ],
+  chewingTobacco: [
+    {
+      subKey: "chewingQuantity",
+      subTitle:
+        "For chewing tobacco/betel leaves, how many leaves/grams per day (or per week)?",
+      subType: "text",
+      placeholder: "e.g., 3 leaves per day, 10 grams per week",
+      required: false,
+    },
+  ],
+  otherDrugs: [
+    {
+      subKey: "otherDrugsFrequency",
+      subTitle: "For other drugs, what is the frequency per week/day?",
+      subType: "text",
+      placeholder: "e.g., 2 times per week, daily",
+      required: false,
     },
   ],
 
