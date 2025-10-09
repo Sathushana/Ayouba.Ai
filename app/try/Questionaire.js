@@ -16,16 +16,16 @@ const BRANCHING_KEYS = {
   dietType: "Nutrition",
   healthConditions: "Nutrition",
   substanceUse: "Nutrition",
-  activityLevel: "Physical Activity", // ADDED
+  activityLevel: "Physical Activity", 
   hasMedicalConditions: "Physical Activity",
   medicalConditions: "Physical Activity",
   exerciseLocation: "Physical Activity",
   fitnessGoal: "Physical Activity",
   drinkingEffects: "Alcohol",
   tobaccoUse: "Tobacco",
-  currentSituation: "Mental health",
-  mentalHealthConditions: "Mental health",
-  dailyRoutine: "Mental health",
+  //currentSituation: "Mental health",
+  //mentalHealthConditions: "Mental health",
+  //dailyRoutine: "Mental health",
   stressFrequency: "Mental health",
   recentFeelings: "Mental health",
   sleepChallenge: "Sleep",
@@ -232,12 +232,24 @@ export default function Questionnaire() {
         if (
           (baseConditionalAnswer === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
            baseConditionalAnswer === "Very active (exercise most days / vigorous workouts/sports)") &&
-          !followUpAnswers.satisfaction
+          followUpAnswers.satisfaction
         ) {
           if (conditionalFollowUps[followUpAnswers.satisfaction]) {
             physicalActivityFollowUps.push(
               ...conditionalFollowUps[followUpAnswers.satisfaction]
             );
+          }
+
+          // Handle maintenance direction for satisfied users
+          if (
+            followUpAnswers.satisfaction === "Yes, I'm happy" &&
+            followUpAnswers.maintenanceDirection
+          ) {
+            if (conditionalFollowUps[followUpAnswers.maintenanceDirection]) {
+              physicalActivityFollowUps.push(
+                ...conditionalFollowUps[followUpAnswers.maintenanceDirection]
+              );
+            }
           }
         }
       }
@@ -871,7 +883,7 @@ export default function Questionnaire() {
     }
   };
 
-  // UPDATED HANDLE NEXT FUNCTION
+  // UPDATED HANDLE NEXT FUNCTION WITH NEW PHYSICAL ACTIVITY FLOW
   const handleNext = () => {
     console.log("HandleNext called:", {
       currentStep,
@@ -941,23 +953,23 @@ export default function Questionnaire() {
           }
         }
 
-        // SPECIAL LOGIC FOR PHYSICAL ACTIVITY - UPDATED
+        // UPDATED PHYSICAL ACTIVITY LOGIC - NEW FLOW
         if (currentStepData.key === "activityLevel") {
           const activityLevel = answers.activityLevel;
           
-          // Mostly sitting goes directly to barriers (Q1b)
+          // 1. Mostly sitting goes directly to barriers (Q1b) ONLY
           if (activityLevel === "Mostly sitting (little or no exercise)") {
-            setSubStep(1);
+            setSubStep(1); // Go directly to barriers follow-ups
             return;
           }
-          // Light movement goes to Q1a questions first, then barriers
+          // 2. Light movement goes to Q1a questions first, then barriers
           else if (activityLevel === "Light movement (walks, chores, light activity)") {
             // Continue to Q1a questions (they are the next main steps)
             setCurrentStep(currentStep + 1);
             setSubStep(0);
             return;
           }
-          // Moderate/Very active goes to Q1a questions first, then satisfaction
+          // 3. Moderate/Very active goes to Q1a questions first, then satisfaction (Q1c)
           else if (
             activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
             activityLevel === "Very active (exercise most days / vigorous workouts/sports)"
@@ -969,22 +981,21 @@ export default function Questionnaire() {
           }
         }
 
-        // Special logic for barriers after Q1a questions (exerciseIntensity is the last Q1a question)
+        // Special logic for when we reach the end of Q1a questions (exerciseIntensity is the last Q1a question)
         if (currentStepData.key === "exerciseIntensity") {
           const activityLevel = answers.activityLevel;
-          const barriers = answers.followUps?.barriers || {};
           
-          // Light movement goes to barriers after Q1a
+          // Light movement goes to barriers (Q1b) after Q1a
           if (activityLevel === "Light movement (walks, chores, light activity)") {
-            setSubStep(1);
+            setSubStep(1); // Show barriers follow-ups
             return;
           }
-          // Moderate/Very active goes to satisfaction after Q1a  
+          // Moderate/Very active goes to satisfaction (Q1c) after Q1a  
           else if (
             activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
             activityLevel === "Very active (exercise most days / vigorous workouts/sports)"
           ) {
-            setSubStep(1);
+            setSubStep(1); // Show satisfaction follow-ups
             return;
           }
         }
@@ -1061,17 +1072,15 @@ export default function Questionnaire() {
           const activityLevel = answers.activityLevel;
           const barriers = answers.followUps?.barriers || {};
           
-          const isSittingOrLight = activityLevel === "Mostly sitting (little or no exercise)" || 
-                                  activityLevel === "Light movement (walks, chores, light activity)";
+          // Check if we're in barriers (Q1b) and user selects 'nothing'
+          const isMostlySitting = activityLevel === "Mostly sitting (little or no exercise)";
+          const isLightMovement = activityLevel === "Light movement (walks, chores, light activity)";
           
-          // If the user was shown barriers (Q1b) and selects 'nothing', skip to next main step (Q2)
-          if (isSittingOrLight) {
-            const anyBarrierSelected = isAnyBarrierSelected(barriers);
-            if (!anyBarrierSelected) {
-              setCurrentStep(currentStep + 1);
-              setSubStep(0);
-              return;
-            }
+          if ((isMostlySitting || isLightMovement) && barriers.nothing) {
+            // Skip to next main step (Q2 - Health & Safety Check)
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
           }
         }
         

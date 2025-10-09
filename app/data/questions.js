@@ -58,7 +58,8 @@ const baseQuestions = [
     id: 5,
     type: "radio",
     title: "What is your main health goal right now?",
-    description: "Everyone's health journey starts with one clear goal. Pick the area you'd most like to focus on — we'll personalize your plan around it.",
+    description:
+      "Everyone's health journey starts with one clear goal. Pick the area you'd most like to focus on — we'll personalize your plan around it.",
     key: "primaryGoal",
     options: [
       "🥗 Eat better & get enough nutrients (Nutrition)",
@@ -75,9 +76,9 @@ const baseQuestions = [
 
 // Goal-specific questions
 const goalSpecificQuestions = {
-  // Physical Activity Questions - UPDATED TO MATCH DOCUMENT
+  // Physical Activity Questions - UPDATED TO MATCH NEW FLOW
   "Physical Activity": [
-    // Q1: Baseline Activity Level
+    // Q1: Baseline Activity Level (BRANCHING STEP)
     {
       id: 6,
       type: "radio",
@@ -92,7 +93,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    
+
     // Q1a: Frequency & Duration (Asked if activity > Mostly Sitting)
     {
       id: 7,
@@ -107,43 +108,58 @@ const goalSpecificQuestions = {
       id: 8,
       type: "radio",
       title: "Session Duration",
-      description: "On days you exercise, how long do you usually spend being active?",
+      description:
+        "On days you exercise, how long do you usually spend being active?",
       key: "sessionDuration",
       options: ["<15 min", "15–30 min", "30–60 min", "60+ min"],
       required: true,
     },
-    
-    // NEW: Weekly Minutes of Activity
+
+    // Q2: Weekly Minutes of Activity
     {
       id: 9,
       type: "radio",
       title: "Weekly Activity Minutes",
-      description: "In a typical week, how much time do you spend doing moderate or vigorous physical activity?",
+      description:
+        "In a typical week, how much time do you spend doing moderate or vigorous physical activity?",
       key: "weeklyMinutes",
       options: [
         "Less than 30 minutes (< 0.5 hours)",
         "30–149 minutes (0.5–2.5 hours)",
         "150–300 minutes (2.5–5 hours)",
-        "More than 300 minutes (5+ hours)"
+        "More than 300 minutes (5+ hours)",
       ],
       required: true,
     },
-    
-    // NEW: Type of Physical Activity
+
+    // Q3: Type of Physical Activity
     {
       id: 10,
       type: "multiselect",
       title: "Activity Types",
-      description: "Which of these best describes your usual physical activities? (choose all that apply)",
+      description:
+        "Which of these best describes your usual physical activities? (choose all that apply)",
       key: "activityTypes",
       options: [
-        { id: "light", label: "Light (e.g., walking slowly, light household work, playing cards)" },
-        { id: "moderate", label: "Moderate (e.g., brisk walking, cycling at light effort, recreational badminton, doubles tennis)" },
-        { id: "vigorous", label: "Vigorous (e.g., jogging, competitive sports, singles tennis, basketball, swimming, running)" }
+        {
+          id: "light",
+          label:
+            "Light (e.g., walking slowly, light household work, playing cards)",
+        },
+        {
+          id: "moderate",
+          label:
+            "Moderate (e.g., brisk walking, cycling at light effort, recreational badminton, doubles tennis)",
+        },
+        {
+          id: "vigorous",
+          label:
+            "Vigorous (e.g., jogging, competitive sports, singles tennis, basketball, swimming, running)",
+        },
       ],
       required: true,
     },
-    
+
     {
       id: 11,
       type: "radio",
@@ -154,12 +170,13 @@ const goalSpecificQuestions = {
       required: true,
     },
 
-    // Q2: Health & Safety Check
+    // Q2: Health & Safety Check (Next main step after Q1 series)
     {
       id: 12,
       type: "radio",
       title: "Health & Safety Check",
-      description: "Do you have any medical conditions or injuries that affect your ability to exercise?",
+      description:
+        "Do you have any medical conditions or injuries that affect your ability to exercise?",
       key: "hasMedicalConditions",
       options: ["Yes", "No"],
       required: true,
@@ -170,7 +187,8 @@ const goalSpecificQuestions = {
       id: 13,
       type: "radio",
       title: "Exercise Location",
-      description: "Where do you usually prefer to exercise or would like to exercise?",
+      description:
+        "Where do you usually prefer to exercise or would like to exercise?",
       key: "exerciseLocation",
       options: [
         "At home",
@@ -186,7 +204,8 @@ const goalSpecificQuestions = {
       id: 14,
       type: "multiselect",
       title: "Activity Preferences",
-      description: "Which types of activities do you enjoy most or would like to try?",
+      description:
+        "Which types of activities do you enjoy most or would like to try?",
       key: "activityPreferences",
       options: [
         { id: "walking", label: "Walking / Hiking" },
@@ -206,7 +225,8 @@ const goalSpecificQuestions = {
       id: 15,
       type: "radio",
       title: "Time Availability",
-      description: "How much time can you usually dedicate to exercise per day?",
+      description:
+        "How much time can you usually dedicate to exercise per day?",
       key: "timeAvailability",
       options: ["<10 minutes", "10–20 minutes", "20–40 minutes", "40+ minutes"],
       required: true,
@@ -217,7 +237,8 @@ const goalSpecificQuestions = {
       id: 16,
       type: "radio",
       title: "Main Fitness Goal",
-      description: "What is your primary goal for your physical activity or fitness?",
+      description:
+        "What is your primary goal for your physical activity or fitness?",
       key: "fitnessGoal",
       options: [
         "Lose weight / Fat reduction",
@@ -236,7 +257,8 @@ const goalSpecificQuestions = {
       id: 17,
       type: "radio",
       title: "Readiness Level",
-      description: "How ready are you to make changes and follow a physical activity plan?",
+      description:
+        "How ready are you to make changes and follow a physical activity plan?",
       key: "readinessLevel",
       options: [
         "Very ready → I'm ready to start now",
@@ -580,6 +602,7 @@ const goalSpecificQuestions = {
         { id: "health", label: "Health concerns" },
         { id: "family", label: "Family / social reasons" },
         { id: "financial", label: "Financial reasons" },
+        { id: "personal", label: "Personal/Other reasons" },
       ],
       required: true,
     },
@@ -600,29 +623,29 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Alcohol Questions
+  // Alcohol Questions (UPDATED)
   Alcohol: [
-    // Step 1: Frequency & Quantity (Q1)
+    // Step 1: Frequency (Q1) - BRANCHING STEP
     {
       id: 6,
       type: "radio",
-      title: "Alcohol Use Frequency",
-      description: "How often do you usually drink alcohol?",
+      title: "How often do you usually drink alcohol?",
+      description: "Your answer helps us assess your health risk.",
       key: "alcoholFrequency",
       options: [
         "Rarely (special occasions only)",
-        "Sometimes (1-2 times a week)",
-        "Often (3-5 times a week)",
+        "Sometimes (1–2 times a week)",
+        "Often (3–5 times a week)",
         "Daily or almost daily",
       ],
       required: true,
     },
-    // Step 2: Motivation Behind Drinking (Q3)
+    // Step 2: Motivation Behind Drinking (Q2)
     {
       id: 7,
       type: "radio",
-      title: "Drinking Motivation",
-      description: "When you drink, what's the main reason?",
+      title: "When you drink, what's the main reason?",
+      description: "Understanding your motivation is key to a successful plan.",
       key: "drinkingMotivation",
       options: [
         "To relax or deal with stress (Stress-Relief Drinker)",
@@ -633,13 +656,13 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 3: Context & Triggers (Q4a)
+    // Step 3: Context & Triggers (Q3) - BRANCHING STEP
     {
       id: 8,
       type: "multiselect",
-      title: "Drinking Context",
+      title: "In what situations do you usually drink?",
       description:
-        "In what situations do you usually drink? (Select all that apply)",
+        "Select all that apply. This helps us understand your triggers.",
       key: "drinkingContext",
       options: [
         { id: "homeAlone", label: "At home alone" },
@@ -654,12 +677,12 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 4: Consequences & Self-Reflection (Q5)
+    // Step 4: Consequences & Self-Reflection (Q4) - BRANCHING STEP
     {
       id: 9,
       type: "multiselect",
-      title: "Drinking Effects",
-      description: "Have you noticed any of these effects from your drinking?",
+      title: "Have you noticed any of these effects from your drinking?",
+      description: "Be honest—it's just between you and us.",
       key: "drinkingEffects",
       options: [
         { id: "sleepEnergy", label: "Trouble with sleep or energy" },
@@ -673,12 +696,12 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step 5: Goal & Readiness (Q8)
+    // Step 5: Goal & Readiness (Q5)
     {
       id: 10,
       type: "radio",
-      title: "Alcohol Goal",
-      description: "What's your goal with alcohol use?",
+      title: "What's your goal with alcohol use?",
+      description: "Your commitment level guides our recommendations.",
       key: "alcoholGoal",
       options: [
         "I want to quit completely",
@@ -690,270 +713,297 @@ const goalSpecificQuestions = {
     },
   ],
 
- // Sleep Questions
-Sleep: [
-  // Q1: Daily Life & Responsibilities
-  {
-    id: 6,
-    type: "radio",
-    title: "Daily Life & Responsibilities",
-    description: "Which of these best describes your daily life and primary responsibilities?",
-    key: "sleepDailyLife",
-    options: [
-      "Student (University, School, other education)",
-      "Working Professional (Employed/Self-Employed)",
-      "Homemaker / Caregiver / Parent",
-      "Retired / Currently Not Working",
-      "Other / Multiple roles"
-    ],
-    required: true,
-  },
-  // Q2: Sleep Schedule
-  {
-    id: 7,
-    type: "sleepSchedule",
-    title: "Sleep Schedule",
-    description: "What time are you trying to sleep and what time do you usually wake up?",
-    key: "sleepSchedule",
-    inputs: [
-      { key: "bedtime", type: "time", placeholder: "HH:MM", required: true },
-      { key: "waketime", type: "time", placeholder: "HH:MM", required: true }
-    ],
-    required: true,
-  },
-  // Q3: Sleep Disorder Diagnosis - THIS SHOULD BE A BRANCHING STEP
-  {
-    id: 8,
-    type: "radio",
-    title: "Sleep Disorder Diagnosis",
-    description: "Have you been diagnosed with insomnia or another sleep disorder?",
-    key: "sleepDisorderDiagnosis",
-    options: ["Yes", "No"],
-    required: true,
-  },
-  // Q4: Biggest Sleep Challenge - THIS SHOULD BE A BRANCHING STEP
-  {
-    id: 9,
-    type: "radio",
-    title: "Biggest Sleep Challenge",
-    description: "What is your biggest challenge when it comes to sleep?",
-    key: "sleepChallenge",
-    options: [
-      "Difficulty falling asleep",
-      "Waking up frequently during the night",
-      "Waking up too early and can't go back to sleep",
-      "Feeling unrefreshed/tired even after a full night's sleep",
-      "My schedule is irregular (e.g., shift work)"
-    ],
-    required: true,
-  },
-  // Q5: Last Meal Timing
-  {
-    id: 10,
-    type: "radio",
-    title: "Last Meal Timing",
-    description: "How much time is there usually between your last main meal (dinner/supper) and when you go to bed?",
-    key: "lastMealTiming",
-    options: [
-      "Less than 30 minutes",
-      "30 min - 1 hour",
-      "1-2 hours",
-      "More than 2 hours",
-      "No fixed pattern"
-    ],
-    required: true,
-  }
-],
+  // Sleep Questions
+  Sleep: [
+    // Q1: Daily Life & Responsibilities
+    {
+      id: 6,
+      type: "radio",
+      title: "Daily Life & Responsibilities",
+      description:
+        "Which of these best describes your daily life and primary responsibilities?",
+      key: "sleepDailyLife",
+      options: [
+        "Student (University, School, other education)",
+        "Working Professional (Employed/Self-Employed)",
+        "Homemaker / Caregiver / Parent",
+        "Retired / Currently Not Working",
+        "Other / Multiple roles",
+      ],
+      required: true,
+    },
+    // Q2: Sleep Schedule
+    {
+      id: 7,
+      type: "sleepSchedule",
+      title: "Sleep Schedule",
+      description:
+        "What time are you trying to sleep and what time do you usually wake up?",
+      key: "sleepSchedule",
+      inputs: [
+        { key: "bedtime", type: "time", placeholder: "HH:MM", required: true },
+        { key: "waketime", type: "time", placeholder: "HH:MM", required: true },
+      ],
+      required: true,
+    },
+    // Q3: Sleep Disorder Diagnosis - THIS SHOULD BE A BRANCHING STEP
+    {
+      id: 8,
+      type: "radio",
+      title: "Sleep Disorder Diagnosis",
+      description:
+        "Have you been diagnosed with insomnia or another sleep disorder?",
+      key: "sleepDisorderDiagnosis",
+      options: ["Yes", "No"],
+      required: true,
+    },
+    // Q4: Biggest Sleep Challenge - THIS SHOULD BE A BRANCHING STEP
+    {
+      id: 9,
+      type: "radio",
+      title: "Biggest Sleep Challenge",
+      description: "What is your biggest challenge when it comes to sleep?",
+      key: "sleepChallenge",
+      options: [
+        "Difficulty falling asleep",
+        "Waking up frequently during the night",
+        "Waking up too early and can't go back to sleep",
+        "Feeling unrefreshed/tired even after a full night's sleep",
+        "My schedule is irregular (e.g., shift work)",
+      ],
+      required: true,
+    },
+    // Q5: Last Meal Timing
+    {
+      id: 10,
+      type: "radio",
+      title: "Last Meal Timing",
+      description:
+        "How much time is there usually between your last main meal (dinner/supper) and when you go to bed?",
+      key: "lastMealTiming",
+      options: [
+        "Less than 30 minutes",
+        "30 min - 1 hour",
+        "1-2 hours",
+        "More than 2 hours",
+        "No fixed pattern",
+      ],
+      required: true,
+    },
+  ],
 
   // Mental Health Questions
-"Mental health": [
-  // Step 1: Baseline & Life Situation
-  {
-    id: 6,
-    type: "radio",
-    title: "Current Situation",
-    description: "Which of these best describes your current situation?",
-    key: "currentSituation",
-    options: [
-      "Student (school, college, university)",
-      "Employed (full-time or part-time, private or government sector)",
-      "Self-employed / small business owner",
-      "Unemployed / looking for work",
-      "Homemaker / caregiver",
-      "Retired",
-      "Other"
-    ],
-    required: true,
-  },
-  {
-    id: 7,
-    type: "radio",
-    title: "Living Situation",
-    description: "Who do you currently live with?",
-    key: "livingSituation",
-    options: [
-      "With parents/family",
-      "With spouse/children",
-      "Alone",
-      "Hostel/boarding/friends"
-    ],
-    required: true,
-  },
-  {
-    id: 8,
-    type: "radio",
-    title: "Financial Situation",
-    description: "How would you describe your financial situation?",
-    key: "financialSituation",
-    options: [
-      "Comfortable -- basic needs met without worry",
-      "Manageable -- some challenges, but okay",
-      "Struggling -- financial stress is frequent",
-      "Severe -- unable to meet basic needs"
-    ],
-    required: true,
-  },
+  "Mental health": [
+    // Step 1: Baseline & Life Situation
+    {
+      id: 6,
+      type: "radio",
+      title: "Current Situation",
+      description: "Which of these best describes your current situation?",
+      key: "currentSituation",
+      options: [
+        "Student (school, college, university)",
+        "Employed (full-time or part-time, private or government sector)",
+        "Self-employed / small business owner",
+        "Unemployed / looking for work",
+        "Homemaker / caregiver",
+        "Retired",
+        "Other",
+      ],
+      required: true,
+    },
+    {
+      id: 7,
+      type: "radio",
+      title: "Living Situation",
+      description: "Who do you currently live with?",
+      key: "livingSituation",
+      options: [
+        "With parents/family",
+        "With spouse/children",
+        "Alone",
+        "Hostel/boarding/friends",
+      ],
+      required: true,
+    },
+    {
+      id: 8,
+      type: "radio",
+      title: "Financial Situation",
+      description: "How would you describe your financial situation?",
+      key: "financialSituation",
+      options: [
+        "Comfortable -- basic needs met without worry",
+        "Manageable -- some challenges, but okay",
+        "Struggling -- financial stress is frequent",
+        "Severe -- unable to meet basic needs",
+      ],
+      required: true,
+    },
 
-  // Step 2: Medical & Mental Health History
-  {
-    id: 9,
-    type: "multiselect",
-    title: "Health Conditions",
-    description: "Do you already have any of these diseases or health conditions? (Select all that apply)",
-    key: "mentalHealthConditions",
-    options: [
-      { id: "heartDiseaseMH", label: "Heart disease / Hypertension" },
-    { id: "diabetesMH", label: "Diabetes" },
-    { id: "respiratoryDiseaseMH", label: "Respiratory disease (e.g., asthma, COPD)" },
-    { id: "cancerMH", label: "Cancer (any type)" },
-    { id: "oralHealthMH", label: "Oral health problems (e.g., gum disease, mouth ulcers)" },
-    { id: "mentalHealthCondition", label: "Mental health conditions (e.g., anxiety, depression)" },
-    { id: "otherConditionMH", label: "Other" },
-    { id: "noneMH", label: "None of the above" }
-    ],
-    required: true,
-  },
+    // Step 2: Medical & Mental Health History
+    {
+      id: 9,
+      type: "multiselect",
+      title: "Health Conditions",
+      description:
+        "Do you already have any of these diseases or health conditions? (Select all that apply)",
+      key: "mentalHealthConditions",
+      options: [
+        { id: "heartDiseaseMH", label: "Heart disease / Hypertension" },
+        { id: "diabetesMH", label: "Diabetes" },
+        {
+          id: "respiratoryDiseaseMH",
+          label: "Respiratory disease (e.g., asthma, COPD)",
+        },
+        { id: "cancerMH", label: "Cancer (any type)" },
+        {
+          id: "oralHealthMH",
+          label: "Oral health problems (e.g., gum disease, mouth ulcers)",
+        },
+        {
+          id: "mentalHealthCondition",
+          label: "Mental health conditions (e.g., anxiety, depression)",
+        },
+        { id: "otherConditionMH", label: "Other" },
+        { id: "noneMH", label: "None of the above" },
+      ],
+      required: true,
+    },
 
-  // Step 3: Lifestyle & Daily Routine
-  {
-    id: 10,
-    type: "multiselect",
-    title: "Daily Routine",
-    description: "How would you describe your daily routine?",
-    key: "dailyRoutine",
-    options: [
-      { id: "sedentary", label: "Mostly sedentary / desk work / studying" },
-      { id: "active", label: "Physically active (walking, sports, exercise)" },
-      { id: "irregularMeals", label: "Irregular meals / poor diet" },
-      { id: "goodSleep", label: "Sleep 6-8 hours / good sleep hygiene" },
-      { id: "poorSleep", label: "Sleep <6 hours / poor sleep quality" },
-      { id: "heavyScreen", label: "Heavy screen time / social media" },
-      { id: "socialActive", label: "Socially active / regular friends or family interaction" },
-      { id: "socialIsolated", label: "Socially isolated / limited contact" }
-    ],
-    required: true,
-  },
-  {
-    id: 11,
-    type: "multiselect",
-    title: "Coping Mechanisms",
-    description: "When you feel stressed, how do you usually cope?",
-    key: "copingMechanisms",
-    options: [
-      { id: "talkToOthers", label: "Talk to friends/family" },
-      { id: "keepToMyself", label: "Keep it to myself" },
-      { id: "distract", label: "Distract with phone/social media/TV" },
-      { id: "sleep", label: "Sleep it off" },
-      { id: "eat", label: "Eat/snack" },
-      { id: "substances", label: "Use alcohol/smoking" },
-      { id: "otherCoping", label: "Other" }
-    ],
-    required: true,
-  },
+    // Step 3: Lifestyle & Daily Routine
+    {
+      id: 10,
+      type: "multiselect",
+      title: "Daily Routine",
+      description: "How would you describe your daily routine?",
+      key: "dailyRoutine",
+      options: [
+        { id: "sedentary", label: "Mostly sedentary / desk work / studying" },
+        {
+          id: "active",
+          label: "Physically active (walking, sports, exercise)",
+        },
+        { id: "irregularMeals", label: "Irregular meals / poor diet" },
+        { id: "goodSleep", label: "Sleep 6-8 hours / good sleep hygiene" },
+        { id: "poorSleep", label: "Sleep <6 hours / poor sleep quality" },
+        { id: "heavyScreen", label: "Heavy screen time / social media" },
+        {
+          id: "socialActive",
+          label: "Socially active / regular friends or family interaction",
+        },
+        { id: "socialIsolated", label: "Socially isolated / limited contact" },
+      ],
+      required: true,
+    },
+    {
+      id: 11,
+      type: "multiselect",
+      title: "Coping Mechanisms",
+      description: "When you feel stressed, how do you usually cope?",
+      key: "copingMechanisms",
+      options: [
+        { id: "talkToOthers", label: "Talk to friends/family" },
+        { id: "keepToMyself", label: "Keep it to myself" },
+        { id: "distract", label: "Distract with phone/social media/TV" },
+        { id: "sleep", label: "Sleep it off" },
+        { id: "eat", label: "Eat/snack" },
+        { id: "substances", label: "Use alcohol/smoking" },
+        { id: "otherCoping", label: "Other" },
+      ],
+      required: true,
+    },
 
-  // Step 4: Mental & Emotional State
-  {
-    id: 12,
-    type: "radio",
-    title: "Stress Frequency",
-    description: "How often do you feel stressed, anxious, or low in mood?",
-    key: "stressFrequency",
-    options: [
-      "Rarely -- I feel calm most of the time",
-      "Sometimes -- stress a few times a week",
-      "Often -- stress or low mood is frequent",
-      "Almost always -- I feel overwhelmed nearly every day"
-    ],
-    required: true,
-  },
-  {
-    id: 13,
-    type: "radio",
-    title: "Social Connection",
-    description: "How connected and supported do you feel socially?",
-    key: "socialConnection",
-    options: [
-      "Very connected -- I have friends/family to talk to",
-      "Moderately connected -- sometimes I feel supported",
-      "Rarely connected -- I often feel alone",
-      "Not connected -- I feel isolated"
-    ],
-    required: true,
-  },
-  {
-    id: 14,
-    type: "multiselect",
-    title: "Recent Feelings",
-    description: "In the past month, have you felt any of the following?",
-    key: "recentFeelings",
-    options: [
-      { id: "hopeless", label: "Hopeless about the future" },
-      { id: "concentration", label: "Difficulty concentrating" },
-      { id: "lossInterest", label: "Loss of interest in activities" },
-      { id: "nervousness", label: "Nervousness or excessive worry" },
-      { id: "sleepIssues", label: "Trouble sleeping or oversleeping" },
-      { id: "sadness", label: "Feeling down or sad most of the day" },
-      { id: "noneFeelings", label: "None of the above" }
-    ],
-    required: true,
-  },
+    // Step 4: Mental & Emotional State
+    {
+      id: 12,
+      type: "radio",
+      title: "Stress Frequency",
+      description: "How often do you feel stressed, anxious, or low in mood?",
+      key: "stressFrequency",
+      options: [
+        "Rarely -- I feel calm most of the time",
+        "Sometimes -- stress a few times a week",
+        "Often -- stress or low mood is frequent",
+        "Almost always -- I feel overwhelmed nearly every day",
+      ],
+      required: true,
+    },
+    {
+      id: 13,
+      type: "radio",
+      title: "Social Connection",
+      description: "How connected and supported do you feel socially?",
+      key: "socialConnection",
+      options: [
+        "Very connected -- I have friends/family to talk to",
+        "Moderately connected -- sometimes I feel supported",
+        "Rarely connected -- I often feel alone",
+        "Not connected -- I feel isolated",
+      ],
+      required: true,
+    },
+    {
+      id: 14,
+      type: "multiselect",
+      title: "Recent Feelings",
+      description: "In the past month, have you felt any of the following?",
+      key: "recentFeelings",
+      options: [
+        { id: "hopeless", label: "Hopeless about the future" },
+        { id: "concentration", label: "Difficulty concentrating" },
+        { id: "lossInterest", label: "Loss of interest in activities" },
+        { id: "nervousness", label: "Nervousness or excessive worry" },
+        { id: "sleepIssues", label: "Trouble sleeping or oversleeping" },
+        { id: "sadness", label: "Feeling down or sad most of the day" },
+        { id: "noneFeelings", label: "None of the above" },
+      ],
+      required: true,
+    },
 
-  // Step 5: Identify Root Causes / Triggers
-  {
-    id: 15,
-    type: "multiselect",
-    title: "Root Causes",
-    description: "Which areas do you think are most affecting your mood or stress?",
-    key: "rootCauses",
-    options: [
-      { id: "workStudies", label: "Work / studies / routine pressure" },
-      { id: "family", label: "Family / household responsibilities" },
-      { id: "financial", label: "Financial stress" },
-      { id: "healthLifestyle", label: "Physical health / exercise / diet / sleep" },
-      { id: "social", label: "Social / relationships" },
-      { id: "otherRoot", label: "Other" }
-    ],
-    required: true,
-  },
+    // Step 5: Identify Root Causes / Triggers
+    {
+      id: 15,
+      type: "multiselect",
+      title: "Root Causes",
+      description:
+        "Which areas do you think are most affecting your mood or stress?",
+      key: "rootCauses",
+      options: [
+        { id: "workStudies", label: "Work / studies / routine pressure" },
+        { id: "family", label: "Family / household responsibilities" },
+        { id: "financial", label: "Financial stress" },
+        {
+          id: "healthLifestyle",
+          label: "Physical health / exercise / diet / sleep",
+        },
+        { id: "social", label: "Social / relationships" },
+        { id: "otherRoot", label: "Other" },
+      ],
+      required: true,
+    },
 
-  // Step 6: Goals & Readiness
-  {
-    id: 16,
-    type: "multiselect",
-    title: "Mental Health Goals",
-    description: "What would you like to achieve?",
-    key: "mentalHealthGoals",
-    options: [
-      { id: "reduceStress", label: "Reduce stress / improve mood" },
-      { id: "improveSleep", label: "Improve sleep / energy" },
-      { id: "improveHealth", label: "Improve health / lifestyle habits" },
-      { id: "improveSocial", label: "Improve social connections / relationships" },
-      { id: "otherGoals", label: "Other" }
-    ],
-    required: true,
-  }
-],
- 
+    // Step 6: Goals & Readiness
+    {
+      id: 16,
+      type: "multiselect",
+      title: "Mental Health Goals",
+      description: "What would you like to achieve?",
+      key: "mentalHealthGoals",
+      options: [
+        { id: "reduceStress", label: "Reduce stress / improve mood" },
+        { id: "improveSleep", label: "Improve sleep / energy" },
+        { id: "improveHealth", label: "Improve health / lifestyle habits" },
+        {
+          id: "improveSocial",
+          label: "Improve social connections / relationships",
+        },
+        { id: "otherGoals", label: "Other" },
+      ],
+      required: true,
+    },
+  ],
+
   // Prevent diseases Questions
   "Prevent diseases": [
     {
@@ -979,7 +1029,10 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
     return baseQuestions;
   }
   console.log("Activity selected:", currentAnswers.activityLevel);
-  console.log("Next questions:", goalSpecificQuestions[currentAnswers.activityLevel]);
+  console.log(
+    "Next questions:",
+    goalSpecificQuestions[currentAnswers.activityLevel]
+  );
   // Extract goal key
   const goalKey = (() => {
     // Try to extract text inside parentheses, e.g. (Nutrition), (Physical Activity)
@@ -1019,7 +1072,7 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
   return allQuestions;
 };
 
-// --- CONDITIONAL FOLLOW-UP DATA 
+// --- CONDITIONAL FOLLOW-UP DATA
 const conditionalFollowUps = {
   // --- NUTRITION FOLLOW-UPS ---
   "Mostly vegetables and no meat (Vegetarian)": [
@@ -1054,7 +1107,7 @@ const conditionalFollowUps = {
   ],
   // --- END NUTRITION FOLLOW-UPS ---
 
-  // --- PHYSICAL ACTIVITY FOLLOW-UPS 
+  // --- PHYSICAL ACTIVITY FOLLOW-UPS
   // Q1: Baseline Activity Level Follow-ups
   "Mostly sitting (little or no exercise)": [
     {
@@ -1064,14 +1117,17 @@ const conditionalFollowUps = {
       options: [
         { id: "lackTime", label: "Lack of time" },
         { id: "lackMotivation", label: "Lack of motivation" },
-        { id: "physicalLimitations", label: "Physical limitations / health issues" },
+        {
+          id: "physicalLimitations",
+          label: "Physical limitations / health issues",
+        },
         { id: "dontKnow", label: "Don't know what to do" },
         { id: "nothing", label: "Nothing" },
       ],
       required: true,
     },
   ],
-  
+
   "Light movement (walks, chores, light activity)": [
     {
       subKey: "barriers",
@@ -1080,7 +1136,10 @@ const conditionalFollowUps = {
       options: [
         { id: "lackTime", label: "Lack of time" },
         { id: "lackMotivation", label: "Lack of motivation" },
-        { id: "physicalLimitations", label: "Physical limitations / health issues" },
+        {
+          id: "physicalLimitations",
+          label: "Physical limitations / health issues",
+        },
         { id: "dontKnow", label: "Don't know what to do" },
         { id: "nothing", label: "Nothing" },
       ],
@@ -1088,24 +1147,27 @@ const conditionalFollowUps = {
     },
   ],
 
-  "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)": [
-    {
-      subKey: "satisfaction",
-      subTitle: "Do you feel your current routine gives you the results you want?",
-      subType: "radio",
-      options: [
-        "Yes, I'm happy",
-        "No, I feel stuck / not improving",
-        "Not sure",
-      ],
-      required: true,
-    },
-  ],
-  
+  "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)":
+    [
+      {
+        subKey: "satisfaction",
+        subTitle:
+          "Do you feel your current routine gives you the results you want?",
+        subType: "radio",
+        options: [
+          "Yes, I'm happy",
+          "No, I feel stuck / not improving",
+          "Not sure",
+        ],
+        required: true,
+      },
+    ],
+
   "Very active (exercise most days / vigorous workouts/sports)": [
     {
       subKey: "satisfaction",
-      subTitle: "Do you feel your current routine gives you the results you want?",
+      subTitle:
+        "Do you feel your current routine gives you the results you want?",
       subType: "radio",
       options: [
         "Yes, I'm happy",
@@ -1120,37 +1182,41 @@ const conditionalFollowUps = {
   lackTime: [
     {
       subKey: "shortWorkouts",
-      subTitle: "Would short 5–10 min workouts at home be easier for you to try?",
+      subTitle:
+        "Would short 5–10 min workouts at home be easier for you to try?",
       subType: "radio",
       options: ["Yes", "No", "Maybe"],
       required: true,
     },
   ],
-  
+
   lackMotivation: [
     {
       subKey: "motivationSupport",
-      subTitle: "Would you like us to set small daily challenges or reminders to help you stay consistent?",
+      subTitle:
+        "Would you like us to set small daily challenges or reminders to help you stay consistent?",
       subType: "radio",
       options: ["Yes", "No", "Maybe"],
       required: true,
     },
   ],
-  
+
   physicalLimitations: [
     {
       subKey: "lowImpactPlan",
-      subTitle: "Would you like a safe low-impact plan (walking, stretching, mobility)?",
+      subTitle:
+        "Would you like a safe low-impact plan (walking, stretching, mobility)?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
     },
   ],
-  
+
   dontKnow: [
     {
       subKey: "beginnerRoutines",
-      subTitle: "Would you like us to suggest simple beginner routines you can follow?",
+      subTitle:
+        "Would you like us to suggest simple beginner routines you can follow?",
       subType: "radio",
       options: ["Yes", "No", "Maybe"],
       required: true,
@@ -1167,21 +1233,23 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  
+
   "No, I feel stuck / not improving": [
     {
       subKey: "improvementFocus",
-      subTitle: "Would you like to focus more on strength, stamina, or flexibility?",
+      subTitle:
+        "Would you like to focus more on strength, stamina, or flexibility?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
     },
   ],
-  
+
   "Not sure": [
     {
       subKey: "varietySuggestions",
-      subTitle: "Would you like us to suggest a variety to keep it interesting?",
+      subTitle:
+        "Would you like us to suggest a variety to keep it interesting?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -1189,20 +1257,22 @@ const conditionalFollowUps = {
   ],
 
   // Maintenance direction follow-ups
-  "Maintain": [
+  Maintain: [
     {
       subKey: "advancedGuidance",
-      subTitle: "Would you like advanced guidance on recovery, stretching, or nutrition?",
+      subTitle:
+        "Would you like advanced guidance on recovery, stretching, or nutrition?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
     },
   ],
-  
+
   "Push further": [
     {
       subKey: "structuredTraining",
-      subTitle: "Would you like structured training (advanced strength, endurance, or sports-specific programs)?",
+      subTitle:
+        "Would you like structured training (advanced strength, endurance, or sports-specific programs)?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -1210,15 +1280,19 @@ const conditionalFollowUps = {
   ],
 
   // Health conditions (Q2)
-  "Yes": [
+  Yes: [
     {
       subKey: "medicalConditions",
-      subTitle: "Please select any conditions or injuries you have that may affect your exercise.",
+      subTitle:
+        "Please select any conditions or injuries you have that may affect your exercise.",
       subType: "multiselect",
       options: [
         { id: "heartDisease", label: "Heart disease / High blood pressure" },
         { id: "diabetes", label: "Diabetes / Blood sugar issues" },
-        { id: "jointIssues", label: "Joint or mobility issues (knees, hips, back)" },
+        {
+          id: "jointIssues",
+          label: "Joint or mobility issues (knees, hips, back)",
+        },
         { id: "respiratory", label: "Respiratory issues (asthma, COPD)" },
         { id: "surgery", label: "Recent surgery or injury" },
         { id: "tobacco", label: "Tobacco use" },
@@ -1516,9 +1590,7 @@ const conditionalFollowUps = {
   ],
   // --- END PA FOLLOW-UPS ---
 
-  // ... rest of the conditional follow-ups (Tobacco, Sleep, Mental Health, Alcohol) remain unchanged
-  // (keeping the existing code for other goal types)
-  
+  // Tobacco follow-ups
   "I used in the past, but quit": [
     {
       subKey: "quitDuration",
@@ -1652,32 +1724,34 @@ const conditionalFollowUps = {
   ],
 
   // Sleep follow-ups
-  "Yes": [
+  Yes: [
     {
       subKey: "sleepTreatments",
-      subTitle: "Are you currently using any treatments, medications, or supplements for sleep?",
+      subTitle:
+        "Are you currently using any treatments, medications, or supplements for sleep?",
       subType: "multiselect",
       options: [
         { id: "prescription", label: "Prescription medication" },
         { id: "overTheCounter", label: "Over-the-counter sleep aids" },
         { id: "herbal", label: "Herbal / natural remedies" },
-        { id: "noneTreatment", label: "None" }
+        { id: "noneTreatment", label: "None" },
       ],
       required: true,
-    }
+    },
   ],
   "Difficulty falling asleep": [
     {
       subKey: "fallingAsleepReason",
-      subTitle: "When you're trying to fall asleep, what is the primary thing keeping you awake?",
+      subTitle:
+        "When you're trying to fall asleep, what is the primary thing keeping you awake?",
       subType: "radio",
       options: [
         "Racing thoughts / Stress / Anxiety",
         "Physical discomfort (pain, heat, noise, hunger)",
-        "Not feeling tired (too much energy, late activity)"
+        "Not feeling tired (too much energy, late activity)",
       ],
       required: true,
-    }
+    },
   ],
   "Waking up frequently during the night": [
     {
@@ -1688,53 +1762,52 @@ const conditionalFollowUps = {
         "Need to use the bathroom",
         "Temperature (too hot or too cold)",
         "Noise or a partner's movement",
-        "I just woke up and can't go back to sleep (no clear reason)"
+        "I just woke up and can't go back to sleep (no clear reason)",
       ],
       required: true,
-    }
+    },
   ],
   "Waking up too early and can't go back to sleep": [
     {
       subKey: "earlyWakingReason",
-      subTitle: "When you wake up too early, what is your first thought or feeling?",
+      subTitle:
+        "When you wake up too early, what is your first thought or feeling?",
       subType: "radio",
       options: [
         "Worrying about things I can't control (family, work, future)",
         "Hunger or a desire for a morning beverage",
-        "It's just my internal clock; I feel done sleeping"
+        "It's just my internal clock; I feel done sleeping",
       ],
       required: true,
-    }
+    },
   ],
   "Feeling unrefreshed/tired even after a full night's sleep": [
     {
       subKey: "unrefreshedFeeling",
       subTitle: "How do you feel after waking up?",
       subType: "radio",
-      options: [
-        "Crash mid-day",
-        "Groggy, need caffeine",
-        "Rarely feel rested"
-      ],
+      options: ["Crash mid-day", "Groggy, need caffeine", "Rarely feel rested"],
       required: true,
-    }
+    },
   ],
   "My schedule is irregular (e.g., shift work)": [
     {
       subKey: "irregularScheduleReason",
-      subTitle: "What is the main reason your bedtime and wake time change so much?",
+      subTitle:
+        "What is the main reason your bedtime and wake time change so much?",
       subType: "radio",
       options: [
         "Necessary late work/studying or early duties",
         "Social activities, chats or calls with friends or partner, late-night movies, or gaming",
-        "I have no fixed schedule/routine"
+        "I have no fixed schedule/routine",
       ],
       required: true,
-    }
+    },
   ],
 
-  // Alcohol follow-ups
-  "Sometimes (1-2 times a week)": [
+  // Alcohol follow-ups (UPDATED)
+  // Q1 Frequency Follow-ups (New Q2: Quantity)
+  "Sometimes (1–2 times a week)": [
     {
       subKey: "alcoholQuantity",
       subTitle: "When you drink, how much do you usually have?",
@@ -1743,7 +1816,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "Often (3-5 times a week)": [
+  "Often (3–5 times a week)": [
     {
       subKey: "alcoholQuantity",
       subTitle: "When you drink, how much do you usually have?",
@@ -1761,7 +1834,10 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "At home alone": [
+
+  // Q3 Context & Triggers Follow-ups (The new Q4b questions) - VERIFIED/ALREADY EXIST
+  homeAlone: [
+    // Q4b1
     {
       subKey: "homeAloneReason",
       subTitle:
@@ -1771,7 +1847,8 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "At social gatherings / with friends": [
+  socialGatherings: [
+    // Q4b2
     {
       subKey: "socialPressure",
       subTitle:
@@ -1781,7 +1858,8 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "After work or stressful days": [
+  afterWork: [
+    // Q4b3
     {
       subKey: "stressCoping",
       subTitle: "Do you usually drink as your main way to cope with stress?",
@@ -1790,7 +1868,8 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "During meals": [
+  duringMeals: [
+    // Q4b4
     {
       subKey: "mealDrinkingReason",
       subTitle:
@@ -1800,7 +1879,8 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "Weekends only": [
+  weekendsOnly: [
+    // Q4b5
     {
       subKey: "weekendDrinkingPattern",
       subTitle:
@@ -1816,6 +1896,7 @@ const conditionalFollowUps = {
     },
   ],
   otherContext: [
+    // Q4b6
     {
       subKey: "otherContextDetails",
       subTitle: "Please describe when you usually drink.",
@@ -1824,6 +1905,8 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
+
+  // Q4 Consequences & Self-Reflection (Q5) - REMAIN AS IS
   sleepEnergy: [
     {
       subKey: "sleepEnergyFrequency",
