@@ -29,6 +29,7 @@ const BRANCHING_KEYS = {
   stressFrequency: "Mental health",
   recentFeelings: "Mental health",
   sleepChallenge: "Sleep",
+  sleepDisorderDiagnosis: "Sleep",
 };
 
 const APP_NAME = "Ayubo";
@@ -564,7 +565,7 @@ export default function Questionnaire() {
     isBranchingStep,
   ]);
 
-  // Handle sleep branching logic
+  // Handle sleep branching logic - UPDATED TO MATCH DOCUMENT STRUCTURE
   useEffect(() => {
     if (currentStepData && isBranchingStep && subStep === 1) {
       const followUpAnswers = answers.followUps || {};
@@ -611,15 +612,16 @@ export default function Questionnaire() {
       if (baseConditionalKey === "sleepChallenge" && baseConditionalAnswer) {
         console.log("Processing sleep challenge:", baseConditionalAnswer);
 
+        // Add the main challenge follow-up question
         if (conditionalFollowUps[baseConditionalAnswer]) {
           sleepFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
           console.log("Added sleep challenge follow-up");
         }
 
-        // Handle nested sleep challenge reasons
+        // Handle nested sleep challenge reasons with their follow-ups
         const challengeReasonKeys = [
           "fallingAsleepReason",
-          "wakingUpReason",
+          "wakingUpReason", 
           "earlyWakingReason",
           "unrefreshedFeeling",
           "irregularScheduleReason",
@@ -633,36 +635,50 @@ export default function Questionnaire() {
           }
         });
 
-        // Handle specific condition follow-ups
+        // Handle deeply nested follow-ups for racing thoughts
         if (followUpAnswers.mentalHealthDiagnosisSleep === "Yes") {
-          sleepFollowUps.push({
-            subKey: "sleepMedication",
-            subTitle:
-              "Are you on any sleep-related medication (sleeping pills, anti-anxiety, antidepressants)?",
-            subType: "radio",
-            options: ["Yes", "No"],
-            required: true,
-          });
-
+          sleepFollowUps.push(...conditionalFollowUps["mentalHealthDiagnosisSleep_Yes"]);
+          
           if (followUpAnswers.sleepMedication === "Yes") {
-            sleepFollowUps.push({
-              subKey: "sleepMedicationDetails",
-              subTitle:
-                "Please provide details for your sleep-related medication:",
-              subType: "medications",
-              required: true,
-              defaultData: [
-                { id: 1, name: "", routine: "Night", dose: "", duration: "" },
-              ],
-              routineOptions: [
-                "Morning",
-                "Noon",
-                "Evening",
-                "Night",
-                "As Needed",
-              ],
-            });
+            sleepFollowUps.push(...conditionalFollowUps["sleepMedication_Yes"]);
           }
+        }
+
+        // Handle physical discomfort type follow-ups
+        if (followUpAnswers.physicalDiscomfortType) {
+          if (conditionalFollowUps[followUpAnswers.physicalDiscomfortType]) {
+            sleepFollowUps.push(...conditionalFollowUps[followUpAnswers.physicalDiscomfortType]);
+          }
+        }
+
+        // Handle bathroom conditions follow-up
+        if (followUpAnswers.bathroomConditions === "Yes") {
+          sleepFollowUps.push(...conditionalFollowUps["bathroomConditions_Yes"]);
+        }
+
+        // Handle partner noise follow-up
+        if (followUpAnswers.noiseSource === "Inside/partner noise") {
+          sleepFollowUps.push(...conditionalFollowUps["Inside/partner noise"]);
+        }
+
+        // Handle nap frequency follow-up
+        if (followUpAnswers.napFrequency === "Yes") {
+          sleepFollowUps.push(...conditionalFollowUps["napFrequency_Yes"]);
+        }
+
+        // Handle morning routine follow-up
+        if (followUpAnswers.morningPhoneUse === "No") {
+          sleepFollowUps.push(...conditionalFollowUps["morningPhoneUse_No"]);
+        }
+
+        // Handle sleep hours follow-up
+        if (followUpAnswers.averageSleepHours === "6-7.5") {
+          sleepFollowUps.push(...conditionalFollowUps["averageSleepHours_6-7.5"]);
+        }
+
+        // Handle evening alcohol follow-up
+        if (followUpAnswers.eveningAlcohol === "Yes") {
+          sleepFollowUps.push(...conditionalFollowUps["eveningAlcohol_Yes"]);
         }
       }
 
@@ -1033,6 +1049,14 @@ export default function Questionnaire() {
             setSubStep(1);
             return;
           }
+        }
+
+        // Special logic for sleepChallenge
+        if (currentStepData.key === "sleepChallenge") {
+          console.log("Sleep challenge answered:", baseConditionalAnswer);
+          // Always show follow-ups for sleep challenge
+          setSubStep(1);
+          return;
         }
 
         // Skip Q2 medical conditions if user answered "No" to hasMedicalConditions
@@ -1837,14 +1861,14 @@ export default function Questionnaire() {
                 type="text"
                 value={med.duration || ""}
                 onChange={(e) =>
-                  handleInputChange(
-                    "duration",
-                    e.target.value,
-                    subKey,
-                    "medications",
-                    index
-                  )
-                }
+                    handleInputChange(
+                      "duration",
+                      e.target.value,
+                      subKey,
+                      "medications",
+                      index
+                    )
+                  }
                 placeholder="Duration (e.g., 6 months, ongoing)"
                 className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
               />
@@ -1854,14 +1878,14 @@ export default function Questionnaire() {
                 type="text"
                 value={med.sideEffects || ""}
                 onChange={(e) =>
-                  handleInputChange(
-                    "sideEffects",
-                    e.target.value,
-                    subKey,
-                    "medications",
-                    index
-                  )
-                }
+                    handleInputChange(
+                      "sideEffects",
+                      e.target.value,
+                      subKey,
+                      "medications",
+                      index
+                    )
+                  }
                 placeholder="Side effects (if any)"
                 className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
               />

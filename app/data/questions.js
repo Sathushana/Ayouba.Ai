@@ -713,7 +713,7 @@ const goalSpecificQuestions = {
     },
   ],
 
-  // Sleep Questions
+  // Sleep Questions - UPDATED TO MATCH DOCUMENT STRUCTURE
   Sleep: [
     // Q1: Daily Life & Responsibilities
     {
@@ -746,7 +746,7 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Q3: Sleep Disorder Diagnosis - THIS SHOULD BE A BRANCHING STEP
+    // Q3: Sleep Disorder Diagnosis - BRANCHING STEP
     {
       id: 8,
       type: "radio",
@@ -757,7 +757,7 @@ const goalSpecificQuestions = {
       options: ["Yes", "No"],
       required: true,
     },
-    // Q4: Biggest Sleep Challenge - THIS SHOULD BE A BRANCHING STEP
+    // Q4: Biggest Sleep Challenge - BRANCHING STEP
     {
       id: 9,
       type: "radio",
@@ -1723,7 +1723,9 @@ const conditionalFollowUps = {
     },
   ],
 
-  // Sleep follow-ups
+  // ========== SLEEP FOLLOW-UPS ==========
+  
+  // Q3: Sleep Disorder Diagnosis Follow-ups
   Yes: [
     {
       subKey: "sleepTreatments",
@@ -1739,6 +1741,42 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
+
+  // Sleep treatment type follow-ups
+  prescription: [
+    {
+      subKey: "prescriptionDetails",
+      subTitle: "Please provide details for your prescription medication:",
+      subType: "medications",
+      required: true,
+      defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+      routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+    },
+  ],
+
+  overTheCounter: [
+    {
+      subKey: "otcDetails",
+      subTitle: "Please provide details for over-the-counter sleep aids:",
+      subType: "medications",
+      required: true,
+      defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+      routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+    },
+  ],
+
+  herbal: [
+    {
+      subKey: "herbalDetails",
+      subTitle: "Please provide details for herbal/natural remedies:",
+      subType: "medications",
+      required: true,
+      defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+      routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+    },
+  ],
+
+  // Q4: Sleep Challenge Follow-ups
   "Difficulty falling asleep": [
     {
       subKey: "fallingAsleepReason",
@@ -1753,6 +1791,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
+
   "Waking up frequently during the night": [
     {
       subKey: "wakingUpReason",
@@ -1767,6 +1806,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
+
   "Waking up too early and can't go back to sleep": [
     {
       subKey: "earlyWakingReason",
@@ -1781,6 +1821,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
+
   "Feeling unrefreshed/tired even after a full night's sleep": [
     {
       subKey: "unrefreshedFeeling",
@@ -1790,6 +1831,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
+
   "My schedule is irregular (e.g., shift work)": [
     {
       subKey: "irregularScheduleReason",
@@ -1801,6 +1843,342 @@ const conditionalFollowUps = {
         "Social activities, chats or calls with friends or partner, late-night movies, or gaming",
         "I have no fixed schedule/routine",
       ],
+      required: true,
+    },
+  ],
+
+  // ========== DIFFICULTY FALLING ASLEEP BRANCHES ==========
+  
+  // Racing thoughts branch
+  "Racing thoughts / Stress / Anxiety": [
+    {
+      subKey: "racingThoughtsContext",
+      subTitle: "What is usually on your mind when trying to sleep?",
+      subType: "multiselect",
+      options: [
+        { id: "academic", label: "Upcoming exams, assignments, or project deadlines" },
+        { id: "professional", label: "Work emails or planning next day's meetings/tasks" },
+        { id: "homeFamily", label: "Family logistics, chores, or well-being of others" },
+        { id: "general", label: "General worries, anxious or restless feelings" },
+      ],
+      required: true,
+    },
+    {
+      subKey: "mentalHealthDiagnosisSleep",
+      subTitle: "Do you have any diagnosed mental health condition (anxiety, depression, stress disorder)?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // Physical discomfort branch
+  "Physical discomfort (pain, heat, noise, hunger)": [
+    {
+      subKey: "physicalDiscomfortType",
+      subTitle: "Which discomfort is most common?",
+      subType: "radio",
+      options: ["Pain", "Noise", "Heat", "Hunger", "Other"],
+      required: true,
+    },
+    {
+      subKey: "physicalDiscomfortDiagnosis",
+      subTitle: "Do you have a medical diagnosis related to this?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // Not feeling tired branch
+  "Not feeling tired (too much energy, late activity)": [
+    {
+      subKey: "caffeineBeforeBed",
+      subTitle: "Do you drink tea/coffee/energy drinks within 4 hrs of bedtime?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+    {
+      subKey: "lateActivity",
+      subTitle: "Do you exercise or use screens late at night?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // ========== WAKING UP FREQUENTLY BRANCHES ==========
+  
+  "Need to use the bathroom": [
+    {
+      subKey: "bathroomFrequency",
+      subTitle: "How many times do you wake to urinate?",
+      subType: "radio",
+      options: ["1", "2", "3+"],
+      required: true,
+    },
+    {
+      subKey: "bathroomConditions",
+      subTitle: "Do you have diabetes, prostate issues, or kidney/liver problems?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  "Temperature (too hot or too cold)": [
+    {
+      subKey: "temperatureSymptoms",
+      subTitle: "Do you often wake sweating/throwing blankets?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+    {
+      subKey: "temperatureManagement",
+      subTitle: "Do you use a fan/AC or open windows?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  "Noise or a partner's movement": [
+    {
+      subKey: "noiseSource",
+      subTitle: "Is it outside noise (traffic, dogs, neighbors) or inside (partner snoring, movement)?",
+      subType: "radio",
+      options: ["Outside noise", "Inside/partner noise"],
+      required: true,
+    },
+  ],
+
+  "I just woke up and can't go back to sleep (no clear reason)": [
+    {
+      subKey: "physicalSymptoms",
+      subTitle: "Do you feel your heart racing or gasping for breath?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // ========== EARLY WAKING BRANCHES ==========
+  
+  "Worrying about things I can't control (family, work, future)": [
+    {
+      subKey: "worryDuration",
+      subTitle: "How long do you stay awake?",
+      subType: "radio",
+      options: ["<30 mins", "30-60 mins", ">1 hr"],
+      required: true,
+    },
+    {
+      subKey: "mentalHealthDiagnosisEarly",
+      subTitle: "Any mental health diagnosis?",
+      subType: "radio",
+      options: ["Depression", "Anxiety", "None", "Other"],
+      required: true,
+    },
+  ],
+
+  "Hunger or a desire for a morning beverage": [
+    {
+      subKey: "lateEating",
+      subTitle: "Do you eat heavy meals or drink tea/coffee close to bedtime?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  "It's just my internal clock; I feel done sleeping": [
+    {
+      subKey: "sleepDurationEarly",
+      subTitle: "Average sleep duration when this happens?",
+      subType: "radio",
+      options: ["<6 hrs", "6-7 hrs", ">7 hrs"],
+      required: true,
+    },
+  ],
+
+  // ========== UNREFRESHED FEELING BRANCHES ==========
+  
+  "Crash mid-day": [
+    {
+      subKey: "napFrequency",
+      subTitle: "Do you nap during the day?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  "Groggy, need caffeine": [
+    {
+      subKey: "morningPhoneUse",
+      subTitle: "Do you check your phone immediately after waking?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  "Rarely feel rested": [
+    {
+      subKey: "averageSleepHours",
+      subTitle: "Average hours of sleep?",
+      subType: "radio",
+      options: ["<6", "6-7.5", ">7.5"],
+      required: true,
+    },
+  ],
+
+  // ========== IRREGULAR SCHEDULE BRANCHES ==========
+  
+  "Necessary late work/studying or early duties": [
+    {
+      subKey: "lateCaffeine",
+      subTitle: "On a late study/work night, are you usually consuming caffeinated drinks within 4 hours of sleep?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+    {
+      subKey: "shiftWork",
+      subTitle: "Does your work require you to be awake at different hours more than twice a week?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  "Social activities, chats or calls with friends or partner, late-night movies, or gaming": [
+    {
+      subKey: "eveningAlcohol",
+      subTitle: "Do you drink alcohol at night?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+    {
+      subKey: "eveningScreenUse",
+      subTitle: "Do you use your phone/TV/games until bedtime?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  "I have no fixed schedule/routine": [
+    {
+      subKey: "lateBedtimeFrequency",
+      subTitle: "Do you go to sleep later than midnight at least 3 times per week?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // ========== NESTED FOLLOW-UPS ==========
+  
+  // Mental health diagnosis follow-up for racing thoughts
+  "mentalHealthDiagnosisSleep_Yes": [
+    {
+      subKey: "sleepMedication",
+      subTitle: "Are you on any sleep-related medication (sleeping pills, anti-anxiety, antidepressants)?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // Sleep medication follow-up
+  "sleepMedication_Yes": [
+    {
+      subKey: "sleepMedicationDetails",
+      subTitle: "Please provide details for your sleep-related medication:",
+      subType: "medications",
+      required: true,
+      defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+      routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+    },
+  ],
+
+  // Physical discomfort type follow-ups
+  "Pain": [
+    {
+      subKey: "painType",
+      subTitle: "What type of pain?",
+      subType: "radio",
+      options: ["Arthritis", "Back pain", "Other"],
+      required: true,
+    },
+  ],
+
+  // Bathroom conditions follow-up
+  "bathroomConditions_Yes": [
+    {
+      subKey: "diureticMedication",
+      subTitle: "Do you take diuretic tablets?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // Partner snoring follow-up
+  "Inside/partner noise": [
+    {
+      subKey: "partnerBreathing",
+      subTitle: "Partner snoring: Have you noticed pauses in their breathing?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // Nap duration follow-up
+  "napFrequency_Yes": [
+    {
+      subKey: "napDuration",
+      subTitle: "Nap duration?",
+      subType: "radio",
+      options: ["<30 mins", ">30 mins"],
+      required: true,
+    },
+  ],
+
+  // Morning routine follow-up
+  "morningPhoneUse_No": [
+    {
+      subKey: "morningSunlight",
+      subTitle: "Do you get sunlight within 1 hr of waking?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // Sleep hours follow-up
+  "averageSleepHours_6-7.5": [
+    {
+      subKey: "alarmUse",
+      subTitle: "Do you use an alarm regularly?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+
+  // Alcohol quantity follow-up
+  "eveningAlcohol_Yes": [
+    {
+      subKey: "alcoholQuantity",
+      subTitle: "How many drinks?",
+      subType: "text",
+      placeholder: "e.g., 2 glasses of wine, 3 beers",
       required: true,
     },
   ],
