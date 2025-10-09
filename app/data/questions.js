@@ -6,11 +6,12 @@ const baseQuestions = [
   {
     id: 1,
     type: "text",
-    title: "What's your full name?",
-    description:
-      "We use your name to personalize your health recommendations and create a better experience for you.",
+    // title: "What's your full name?",
+    title:"What is your preferred first name?",
+    // description:
+    //   "We use your name to personalize your health recommendations and create a better experience for you.",
     key: "fullName",
-    placeholder: "Enter your full name",
+    placeholder: "Enter your Preferred first name",
     required: true,
   },
   // Step 2: Age
@@ -60,7 +61,8 @@ const baseQuestions = [
     id: 5,
     type: "radio",
     title: "What is your main health goal right now?",
-    description: "Select your primary health goal (choose one):",
+    // description: "Select your primary health goal (choose one):",
+    description:"Everyone’s health journey starts with one clear goal. Pick the area you’d most like to focus on — we’ll personalize your plan around it.",
     key: "primaryGoal",
     options: [
       "🥗 Eat better & get enough nutrients (Nutrition)",
@@ -87,7 +89,7 @@ const goalSpecificQuestions = {
       description: "In a normal week, how active are you?",
       key: "activityLevel",
       options: [
-        "Mostly sitting (little or no exercise)",
+        "Mostly inactive (sit most of the day)",
         "Light movement (walks, chores, light activity)",
         "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)",
         "Very active (exercise most days / vigorous workouts/sports)",
@@ -922,7 +924,8 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
   if (!primaryGoal) {
     return baseQuestions;
   }
-
+  console.log("Activity selected:", currentAnswers.activityLevel);
+  console.log("Next questions:", goalSpecificQuestions[currentAnswers.activityLevel]);
   // Extract goal key
   const goalKey = (() => {
     // Try to extract text inside parentheses, e.g. (Nutrition), (Physical Activity)
@@ -998,7 +1001,8 @@ const conditionalFollowUps = {
   // --- END NUTRITION FOLLOW-UPS ---
 
   // --- PHYSICAL ACTIVITY FOLLOW-UPS ---
-  "Mostly sitting (little or no exercise)": [
+  "Mostly inactive (sit most of the day)":
+  [
     {
       subKey: "barriers",
       subTitle: "What usually makes it hard for you to be more active?",
@@ -2844,3 +2848,4 @@ export {
   otherConditionFollowUp,
 };
 export default getQuestions;
+
