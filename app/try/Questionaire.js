@@ -25,11 +25,12 @@ const BRANCHING_KEYS = {
   drinkingContext: "Alcohol",
   drinkingEffects: "Alcohol",
   tobaccoUse: "Tobacco",
-  //currentSituation: "Mental health",
-  //mentalHealthConditions: "Mental health",
-  //dailyRoutine: "Mental health",
+  currentSituation: "Mental health",
+  healthConditionsMH: "Mental health",
+  dailyRoutine: "Mental health",
   stressFrequency: "Mental health",
   recentFeelings: "Mental health",
+  rootCauses: "Mental health",
   sleepChallenge: "Sleep",
   sleepDisorderDiagnosis: "Sleep",
 };
@@ -118,10 +119,10 @@ export default function Questionnaire() {
     );
   };
 
-  // Helper to check if any mental health condition (excluding 'noneMH') is selected
+  // Helper to check if any mental health condition (excluding 'none') is selected
   const isAnyMentalHealthConditionSelected = (mentalHealthConditions) => {
     return Object.entries(mentalHealthConditions || {}).some(
-      ([key, isSelected]) => isSelected && key !== "noneMH"
+      ([key, isSelected]) => isSelected && key !== "none"
     );
   };
 
@@ -129,6 +130,13 @@ export default function Questionnaire() {
   const isAnyFeelingSelected = (recentFeelings) => {
     return Object.entries(recentFeelings || {}).some(
       ([key, isSelected]) => isSelected && key !== "noneFeelings"
+    );
+  };
+
+  // Helper to check if any root cause (excluding 'otherRoot') is selected
+  const isAnyRootCauseSelected = (rootCauses) => {
+    return Object.entries(rootCauses || {}).some(
+      ([key, isSelected]) => isSelected && key !== "otherRoot"
     );
   };
 
@@ -197,6 +205,155 @@ export default function Questionnaire() {
     }
   }, [answers.substanceUse, currentStepData, subStep]);
 
+  // Handle mental health branching logic - COMPLETELY UPDATED
+  useEffect(() => {
+    if (currentStepData && isBranchingStep && subStep === 1) {
+      const followUpAnswers = answers.followUps || {};
+      let mentalHealthFollowUps = [];
+
+      console.log("Mental health branching triggered:", {
+        baseConditionalKey,
+        baseConditionalAnswer,
+        currentStep: currentStepData.key,
+      });
+
+      // Handle current situation follow-ups (Step 1)
+      if (baseConditionalKey === "currentSituation" && baseConditionalAnswer) {
+        console.log("Processing current situation:", baseConditionalAnswer);
+        if (conditionalFollowUps[baseConditionalAnswer]) {
+          mentalHealthFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+        }
+      }
+
+      // Handle health conditions follow-ups (Step 2)
+      if (baseConditionalKey === "healthConditionsMH" && baseConditionalAnswer) {
+        console.log("Processing health conditions:", baseConditionalAnswer);
+        const selectedConditions = baseConditionalAnswer || {};
+
+        Object.keys(selectedConditions).forEach((conditionId) => {
+          if (selectedConditions[conditionId] && conditionalFollowUps[conditionId]) {
+            mentalHealthFollowUps.push(...conditionalFollowUps[conditionId]);
+          }
+        });
+
+        // Handle mental health diagnosis and treatment follow-ups
+        if (followUpAnswers.mentalHealthDiagnosis) {
+          Object.keys(followUpAnswers.mentalHealthDiagnosis).forEach((diagnosisId) => {
+            if (
+              followUpAnswers.mentalHealthDiagnosis[diagnosisId] &&
+              conditionalFollowUps[diagnosisId]
+            ) {
+              mentalHealthFollowUps.push(...conditionalFollowUps[diagnosisId]);
+            }
+          });
+        }
+
+        // Handle treatment follow-ups
+        if (followUpAnswers.mentalHealthTreatment) {
+          Object.keys(followUpAnswers.mentalHealthTreatment).forEach((treatmentId) => {
+            if (
+              followUpAnswers.mentalHealthTreatment[treatmentId] &&
+              conditionalFollowUps[treatmentId] &&
+              treatmentId !== "noneTreatment"
+            ) {
+              mentalHealthFollowUps.push(...conditionalFollowUps[treatmentId]);
+            }
+          });
+        }
+
+        // Handle physical condition mental impact
+        const physicalConditionKeys = [
+          "heartDiseaseMentalImpact",
+          "diabetesMentalImpact", 
+          "respiratoryMentalImpact",
+          "cancerMentalImpact",
+          "oralHealthMentalImpact",
+          "otherConditionMentalImpact",
+        ];
+
+        physicalConditionKeys.forEach((impactKey) => {
+          const impactAnswer = followUpAnswers[impactKey];
+          if (impactAnswer && (impactAnswer === "Yes" || impactAnswer === "Sometimes")) {
+            if (conditionalFollowUps[impactAnswer]) {
+              mentalHealthFollowUps.push(...conditionalFollowUps[impactAnswer]);
+            }
+          }
+        });
+
+        // Handle "Other" impact details
+        if (followUpAnswers.mentalImpactAreas?.otherImpact) {
+          mentalHealthFollowUps.push(...conditionalFollowUps.otherImpact);
+        }
+        if (followUpAnswers.mentalImpactAreasSometimes?.otherImpactSometimes) {
+          mentalHealthFollowUps.push(...conditionalFollowUps.otherImpactSometimes);
+        }
+      }
+
+      // Handle daily routine follow-ups (Step 3)
+      if (baseConditionalKey === "dailyRoutine" && baseConditionalAnswer) {
+        console.log("Processing daily routine:", baseConditionalAnswer);
+        const selectedRoutines = baseConditionalAnswer || {};
+
+        Object.keys(selectedRoutines).forEach((routineId) => {
+          if (selectedRoutines[routineId] && conditionalFollowUps[routineId]) {
+            mentalHealthFollowUps.push(...conditionalFollowUps[routineId]);
+          }
+        });
+      }
+
+      // Handle stress frequency follow-ups (Step 4)
+      if (baseConditionalKey === "stressFrequency" && baseConditionalAnswer) {
+        console.log("Processing stress frequency:", baseConditionalAnswer);
+        if (conditionalFollowUps[baseConditionalAnswer]) {
+          mentalHealthFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+        }
+      }
+
+      // Handle recent feelings follow-ups (Step 4)
+      if (baseConditionalKey === "recentFeelings" && baseConditionalAnswer) {
+        console.log("Processing recent feelings:", baseConditionalAnswer);
+        const selectedFeelings = baseConditionalAnswer || {};
+
+        Object.keys(selectedFeelings).forEach((feelingId) => {
+          if (selectedFeelings[feelingId] && conditionalFollowUps[feelingId]) {
+            mentalHealthFollowUps.push(...conditionalFollowUps[feelingId]);
+          }
+        });
+
+        // Handle "Other" follow-ups for concentration and interest
+        if (followUpAnswers.concentrationAreas?.otherConcentration) {
+          mentalHealthFollowUps.push(...conditionalFollowUps.otherConcentration);
+        }
+        if (followUpAnswers.interestAreas?.otherInterest) {
+          mentalHealthFollowUps.push(...conditionalFollowUps.otherInterest);
+        }
+      }
+
+      // Handle root causes follow-ups (Step 5)
+      if (baseConditionalKey === "rootCauses" && baseConditionalAnswer) {
+        console.log("Processing root causes:", baseConditionalAnswer);
+        const selectedCauses = baseConditionalAnswer || {};
+
+        Object.keys(selectedCauses).forEach((causeId) => {
+          if (selectedCauses[causeId] && conditionalFollowUps[causeId]) {
+            mentalHealthFollowUps.push(...conditionalFollowUps[causeId]);
+          }
+        });
+      }
+
+      console.log("Final mental health follow-ups:", mentalHealthFollowUps);
+      setMentalHealthQuestions(mentalHealthFollowUps);
+    }
+  }, [
+    baseConditionalKey,
+    baseConditionalAnswer,
+    answers.followUps,
+    currentStepData,
+    subStep,
+    isBranchingStep,
+  ]);
+
+  // [Rest of your existing useEffect hooks for other goals remain exactly the same...]
   // Handle physical activity branching logic - UPDATED
   useEffect(() => {
     if (currentStepData && isBranchingStep && subStep === 1) {
@@ -411,169 +568,6 @@ export default function Questionnaire() {
 
       console.log("Final alcohol follow-ups:", alcoholFollowUps);
       setAlcoholQuestions(alcoholFollowUps);
-    }
-  }, [
-    baseConditionalKey,
-    baseConditionalAnswer,
-    answers.followUps,
-    currentStepData,
-    subStep,
-    isBranchingStep,
-  ]);
-
-  // Handle mental health branching logic
-  useEffect(() => {
-    if (currentStepData && isBranchingStep && subStep === 1) {
-      const followUpAnswers = answers.followUps || {};
-      let mentalHealthFollowUps = [];
-
-      // Handle current situation follow-ups
-      if (baseConditionalKey === "currentSituation" && baseConditionalAnswer) {
-        if (conditionalFollowUps[baseConditionalAnswer]) {
-          mentalHealthFollowUps.push(
-            ...conditionalFollowUps[baseConditionalAnswer]
-          );
-        }
-      }
-
-      // Handle mental health conditions follow-ups
-      if (
-        baseConditionalKey === "mentalHealthConditions" &&
-        baseConditionalAnswer
-      ) {
-        const selectedConditions = baseConditionalAnswer || {};
-
-        Object.keys(selectedConditions).forEach((conditionId) => {
-          if (
-            selectedConditions[conditionId] &&
-            conditionalFollowUps[conditionId]
-          ) {
-            mentalHealthFollowUps.push(...conditionalFollowUps[conditionId]);
-          }
-        });
-
-        // Handle mental health diagnosis and treatment follow-ups
-        // Handle diagnosis follow-ups
-        if (followUpAnswers.mentalHealthDiagnosis) {
-          Object.keys(followUpAnswers.mentalHealthDiagnosis).forEach(
-            (diagnosisId) => {
-              if (
-                followUpAnswers.mentalHealthDiagnosis[diagnosisId] &&
-                conditionalFollowUps[diagnosisId]
-              ) {
-                mentalHealthFollowUps.push(
-                  ...conditionalFollowUps[diagnosisId]
-                );
-              }
-            }
-          );
-        }
-
-        // Handle treatment follow-ups
-        if (followUpAnswers.mentalHealthTreatment) {
-          Object.keys(followUpAnswers.mentalHealthTreatment).forEach(
-            (treatmentId) => {
-              if (
-                followUpAnswers.mentalHealthTreatment[treatmentId] &&
-                conditionalFollowUps[treatmentId]
-              ) {
-                mentalHealthFollowUps.push(
-                  ...conditionalFollowUps[treatmentId]
-                );
-              }
-            }
-          );
-        }
-
-        // Handle physical condition mental impact (only for physical health conditions)
-        const physicalConditionImpactKeys = [
-          "heartDiseaseMentalImpact",
-          "diabetesMentalImpact",
-          "respiratoryMentalImpact",
-          "cancerMentalImpact",
-          "oralHealthMentalImpact",
-          "otherConditionMentalImpact",
-        ];
-
-        physicalConditionImpactKeys.forEach((impactKey) => {
-          const impactAnswer = followUpAnswers[impactKey];
-          if (
-            impactAnswer &&
-            (impactAnswer === "Yes" || impactAnswer === "Sometimes")
-          ) {
-            if (conditionalFollowUps[impactAnswer]) {
-              mentalHealthFollowUps.push(...conditionalFollowUps[impactAnswer]);
-            }
-          }
-        });
-
-        // Handle "Other" impact details for physical conditions only
-        if (
-          followUpAnswers.mentalImpactAreas?.otherImpact &&
-          conditionalFollowUps.otherImpact
-        ) {
-          mentalHealthFollowUps.push(...conditionalFollowUps.otherImpact);
-        }
-        if (
-          followUpAnswers.mentalImpactAreasSometimes?.otherImpactSometimes &&
-          conditionalFollowUps.otherImpactSometimes
-        ) {
-          mentalHealthFollowUps.push(
-            ...conditionalFollowUps.otherImpactSometimes
-          );
-        }
-      }
-
-      // Handle daily routine follow-ups
-      if (baseConditionalKey === "dailyRoutine" && baseConditionalAnswer) {
-        const selectedRoutines = baseConditionalAnswer || {};
-
-        Object.keys(selectedRoutines).forEach((routineId) => {
-          if (selectedRoutines[routineId] && conditionalFollowUps[routineId]) {
-            mentalHealthFollowUps.push(...conditionalFollowUps[routineId]);
-          }
-        });
-      }
-
-      // Handle stress frequency follow-ups
-      if (baseConditionalKey === "stressFrequency" && baseConditionalAnswer) {
-        if (conditionalFollowUps[baseConditionalAnswer]) {
-          mentalHealthFollowUps.push(
-            ...conditionalFollowUps[baseConditionalAnswer]
-          );
-        }
-      }
-
-      // Handle recent feelings follow-ups
-      if (baseConditionalKey === "recentFeelings" && baseConditionalAnswer) {
-        const selectedFeelings = baseConditionalAnswer || {};
-
-        // Add follow-ups for specific feelings
-        Object.keys(selectedFeelings).forEach((feelingId) => {
-          if (selectedFeelings[feelingId] && conditionalFollowUps[feelingId]) {
-            mentalHealthFollowUps.push(...conditionalFollowUps[feelingId]);
-          }
-        });
-
-        // Handle "Other" follow-ups for concentration and interest
-        if (
-          followUpAnswers.concentrationAreas?.otherConcentration &&
-          conditionalFollowUps.otherConcentration
-        ) {
-          mentalHealthFollowUps.push(
-            ...conditionalFollowUps.otherConcentration
-          );
-        }
-
-        if (
-          followUpAnswers.interestAreas?.otherInterest &&
-          conditionalFollowUps.otherInterest
-        ) {
-          mentalHealthFollowUps.push(...conditionalFollowUps.otherInterest);
-        }
-      }
-
-      setMentalHealthQuestions(mentalHealthFollowUps);
     }
   }, [
     baseConditionalKey,
@@ -918,7 +912,7 @@ export default function Questionnaire() {
     }
   };
 
-  // UPDATED HANDLE NEXT FUNCTION WITH ALCOHOL HEALTH IMPACT FIX
+  // UPDATED HANDLE NEXT FUNCTION WITH MENTAL HEALTH BRANCHING
   const handleNext = () => {
     console.log("HandleNext called:", {
       currentStep,
@@ -934,39 +928,10 @@ export default function Questionnaire() {
       if (isStepValid()) {
         console.log("Branching step valid, moving to follow-ups");
 
-        // Special logic for healthConditions
-        if (currentStepData.key === "healthConditions") {
-          const selectedConditions = answers.healthConditions || {};
-          const anyConditionSelected =
-            isAnyConditionSelected(selectedConditions);
-
-          // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
-          if (!anyConditionSelected) {
-            setCurrentStep(currentStep + 1);
-            setSubStep(0);
-            return;
-          }
-        }
-
-        // Special logic for substanceUse
-        if (currentStepData.key === "substanceUse") {
-          const selectedSubstances = answers.substanceUse || {};
-          const anySubstanceSelected =
-            isAnySubstanceSelected(selectedSubstances);
-
-          // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
-          if (!anySubstanceSelected) {
-            setCurrentStep(currentStep + 1);
-            setSubStep(0);
-            return;
-          }
-        }
-
-        // Special logic for mentalHealthConditions
-        if (currentStepData.key === "mentalHealthConditions") {
-          const selectedConditions = answers.mentalHealthConditions || {};
-          const anyConditionSelected =
-            isAnyMentalHealthConditionSelected(selectedConditions);
+        // Special logic for healthConditionsMH (Mental Health)
+        if (currentStepData.key === "healthConditionsMH") {
+          const selectedConditions = answers.healthConditionsMH || {};
+          const anyConditionSelected = isAnyMentalHealthConditionSelected(selectedConditions);
 
           // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
           if (!anyConditionSelected) {
@@ -983,6 +948,45 @@ export default function Questionnaire() {
 
           // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
           if (!anyFeelingSelected) {
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
+        }
+
+        // Special logic for rootCauses
+        if (currentStepData.key === "rootCauses") {
+          const selectedCauses = answers.rootCauses || {};
+          const anyCauseSelected = isAnyRootCauseSelected(selectedCauses);
+
+          // If the user selects ONLY 'Other' or nothing at all, skip all follow-ups
+          if (!anyCauseSelected) {
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
+        }
+
+        // Special logic for healthConditions (Nutrition)
+        if (currentStepData.key === "healthConditions") {
+          const selectedConditions = answers.healthConditions || {};
+          const anyConditionSelected = isAnyConditionSelected(selectedConditions);
+
+          // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
+          if (!anyConditionSelected) {
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
+        }
+
+        // Special logic for substanceUse
+        if (currentStepData.key === "substanceUse") {
+          const selectedSubstances = answers.substanceUse || {};
+          const anySubstanceSelected = isAnySubstanceSelected(selectedSubstances);
+
+          // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
+          if (!anySubstanceSelected) {
             setCurrentStep(currentStep + 1);
             setSubStep(0);
             return;
@@ -1276,6 +1280,20 @@ export default function Questionnaire() {
             },
           };
         }
+        // Special Case: If mental health treatment is changed to 'none', clear treatment details
+        else if (
+          subKey === "mentalHealthTreatment" &&
+          followUpAnswers.mentalHealthTreatment?.noneTreatment
+        ) {
+          const { medicationDetails, counselingDetails, otherTherapyDetails, ...restFollowUps } = prevAnswers.followUps;
+          return {
+            ...prevAnswers,
+            followUps: {
+              ...restFollowUps,
+              [subKey]: newSubAnswer,
+            },
+          };
+        }
 
         return {
           ...prevAnswers,
@@ -1349,7 +1367,8 @@ export default function Questionnaire() {
           if (selectedKeys.length === 0) {
             if (
               currentStepData.key === "healthConditions" ||
-              currentStepData.key === "substanceUse"
+              currentStepData.key === "substanceUse" ||
+              currentStepData.key === "healthConditionsMH"
             ) {
               newSelections.none = true;
             } else if (currentStepData.key === "barriers") {
@@ -1364,7 +1383,8 @@ export default function Questionnaire() {
           } else {
             if (
               currentStepData.key === "healthConditions" ||
-              currentStepData.key === "substanceUse"
+              currentStepData.key === "substanceUse" ||
+              currentStepData.key === "healthConditionsMH"
             ) {
               newSelections.none = false;
             } else if (currentStepData.key === "barriers") {
@@ -1394,6 +1414,7 @@ export default function Questionnaire() {
     }
   };
 
+  // [Rest of your file remains exactly the same...]
   // Handlers for the dynamic medication list (used directly in the renderer)
   const handleAddMedication = () => {
     const meds = answers.followUps?.medicineDetails || [];
