@@ -16,7 +16,7 @@ const BRANCHING_KEYS = {
   dietType: "Nutrition",
   healthConditions: "Nutrition",
   substanceUse: "Nutrition",
-  activityLevel: "Physical Activity",
+  activityLevel: "Physical Activity", // ADDED
   hasMedicalConditions: "Physical Activity",
   medicalConditions: "Physical Activity",
   exerciseLocation: "Physical Activity",
@@ -28,7 +28,6 @@ const BRANCHING_KEYS = {
   dailyRoutine: "Mental health",
   stressFrequency: "Mental health",
   recentFeelings: "Mental health",
-  //sleepDisorderDiagnosis: "Sleep",
   sleepChallenge: "Sleep",
 };
 
@@ -42,13 +41,12 @@ export default function Questionnaire() {
   const [branchingSteps, setBranchingSteps] = useState([]);
   const [healthConditionQuestions, setHealthConditionQuestions] = useState([]);
   const [substanceUseQuestions, setSubstanceUseQuestions] = useState([]);
-  const [physicalActivityQuestions, setPhysicalActivityQuestions] = useState(
-    []
-  );
+  const [physicalActivityQuestions, setPhysicalActivityQuestions] = useState([]);
   const [alcoholQuestions, setAlcoholQuestions] = useState([]);
   const [mentalHealthQuestions, setMentalHealthQuestions] = useState([]);
   const [sleepQuestions, setSleepQuestions] = useState([]);
   const router = useRouter();
+
   // Utility function to extract the clean goal key from the option string
   const extractGoalKey = (optionString) => {
     if (!optionString) return null;
@@ -196,7 +194,7 @@ export default function Questionnaire() {
     }
   }, [answers.substanceUse, currentStepData, subStep]);
 
-  // Handle physical activity branching logic
+  // Handle physical activity branching logic - UPDATED
   useEffect(() => {
     if (currentStepData && isBranchingStep && subStep === 1) {
       const followUpAnswers = answers.followUps || {};
@@ -211,12 +209,10 @@ export default function Questionnaire() {
           );
         }
 
-        // Handle barrier-specific follow-ups for light activity and sedentary
+        // Handle barrier-specific follow-ups for sitting and light activity
         if (
-          (baseConditionalAnswer ===
-            "Light movement (walks, chores, light activity)" ||
-            baseConditionalAnswer ===
-              "Mostly sitting (little or no exercise)") &&
+          (baseConditionalAnswer === "Mostly sitting (little or no exercise)" ||
+           baseConditionalAnswer === "Light movement (walks, chores, light activity)") &&
           followUpAnswers.barriers
         ) {
           Object.keys(followUpAnswers.barriers).forEach((barrierId) => {
@@ -234,11 +230,9 @@ export default function Questionnaire() {
 
         // Handle satisfaction follow-ups for moderate and very active
         if (
-          (baseConditionalAnswer ===
-            "Moderate activity (exercise 3-4 days/week, brisk walking, cycling, sports)" ||
-            baseConditionalAnswer ===
-              "Very active (exercise most days / vigorous workouts/sports)") &&
-          followUpAnswers.satisfaction
+          (baseConditionalAnswer === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
+           baseConditionalAnswer === "Very active (exercise most days / vigorous workouts/sports)") &&
+          !followUpAnswers.satisfaction
         ) {
           if (conditionalFollowUps[followUpAnswers.satisfaction]) {
             physicalActivityFollowUps.push(
@@ -260,8 +254,7 @@ export default function Questionnaire() {
         }
 
         // Handle condition-specific follow-ups
-        const selectedMedicalConditions =
-          followUpAnswers.medicalConditions || {};
+        const selectedMedicalConditions = followUpAnswers.medicalConditions || {};
         Object.keys(selectedMedicalConditions).forEach((conditionId) => {
           if (
             selectedMedicalConditions[conditionId] &&
@@ -559,7 +552,7 @@ export default function Questionnaire() {
     isBranchingStep,
   ]);
 
-  // Handle sleep branching logic - FIXED VERSION
+  // Handle sleep branching logic
   useEffect(() => {
     if (currentStepData && isBranchingStep && subStep === 1) {
       const followUpAnswers = answers.followUps || {};
@@ -878,6 +871,7 @@ export default function Questionnaire() {
     }
   };
 
+  // UPDATED HANDLE NEXT FUNCTION
   const handleNext = () => {
     console.log("HandleNext called:", {
       currentStep,
@@ -947,24 +941,50 @@ export default function Questionnaire() {
           }
         }
 
-        // Special logic for barriers in physical activity
-        if (
-          currentStepData.key === "activityLevel" &&
-          (baseConditionalAnswer ===
-            "Light movement (walks, chores, light activity)" ||
-            baseConditionalAnswer === "Mostly sitting (little or no exercise)")
-        ) {
-          const barriers = answers.followUps?.barriers || {};
-          const anyBarrierSelected = isAnyBarrierSelected(barriers);
-
-          // If no barriers selected, skip barrier-specific follow-ups
-          if (
-            baseConditionalAnswer ===
-              "Mostly sitting (little or no exercise)" &&
-            !anyBarrierSelected
-          ) {
+        // SPECIAL LOGIC FOR PHYSICAL ACTIVITY - UPDATED
+        if (currentStepData.key === "activityLevel") {
+          const activityLevel = answers.activityLevel;
+          
+          // Mostly sitting goes directly to barriers (Q1b)
+          if (activityLevel === "Mostly sitting (little or no exercise)") {
+            setSubStep(1);
+            return;
+          }
+          // Light movement goes to Q1a questions first, then barriers
+          else if (activityLevel === "Light movement (walks, chores, light activity)") {
+            // Continue to Q1a questions (they are the next main steps)
             setCurrentStep(currentStep + 1);
             setSubStep(0);
+            return;
+          }
+          // Moderate/Very active goes to Q1a questions first, then satisfaction
+          else if (
+            activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
+            activityLevel === "Very active (exercise most days / vigorous workouts/sports)"
+          ) {
+            // Continue to Q1a questions (they are the next main steps)
+            setCurrentStep(currentStep + 1);
+            setSubStep(0);
+            return;
+          }
+        }
+
+        // Special logic for barriers after Q1a questions (exerciseIntensity is the last Q1a question)
+        if (currentStepData.key === "exerciseIntensity") {
+          const activityLevel = answers.activityLevel;
+          const barriers = answers.followUps?.barriers || {};
+          
+          // Light movement goes to barriers after Q1a
+          if (activityLevel === "Light movement (walks, chores, light activity)") {
+            setSubStep(1);
+            return;
+          }
+          // Moderate/Very active goes to satisfaction after Q1a  
+          else if (
+            activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
+            activityLevel === "Very active (exercise most days / vigorous workouts/sports)"
+          ) {
+            setSubStep(1);
             return;
           }
         }
@@ -1024,23 +1044,47 @@ export default function Questionnaire() {
         ) {
           setCurrentStep(currentStep + 1);
           setSubStep(0);
-        } else {
-          setSubStep(1); // Move to follow-up questions
+          return;
         }
+
+        // DEFAULT: Move to follow-up questions for all other branching steps
+        setSubStep(1);
       }
     }
-    // B. If on the FINAL STEP
+    // B. If on a Branching Step's Follow-ups (subStep 1)
+    else if (isBranchingStep && subStep === 1) {
+      if (isStepValid()) {
+        console.log("Branching step follow-ups valid, moving to next main step");
+        
+        // Special logic for barriers - if user selects 'nothing', skip to next main step
+        if (currentStepData.key === "activityLevel" || currentStepData.key === "exerciseIntensity") {
+          const activityLevel = answers.activityLevel;
+          const barriers = answers.followUps?.barriers || {};
+          
+          const isSittingOrLight = activityLevel === "Mostly sitting (little or no exercise)" || 
+                                  activityLevel === "Light movement (walks, chores, light activity)";
+          
+          // If the user was shown barriers (Q1b) and selects 'nothing', skip to next main step (Q2)
+          if (isSittingOrLight) {
+            const anyBarrierSelected = isAnyBarrierSelected(barriers);
+            if (!anyBarrierSelected) {
+              setCurrentStep(currentStep + 1);
+              setSubStep(0);
+              return;
+            }
+          }
+        }
+        
+        // For all other branching steps with follow-ups, move to next main step
+        setCurrentStep(currentStep + 1);
+        setSubStep(0);
+      }
+    }
+    // C. If on the FINAL STEP
     else if (currentStep === totalSteps) {
       if (isStepValid()) {
         console.log("Questionnaire Complete! Final Answers:", answers);
         alert("Questionnaire Complete! Check console for final answers.");
-      }
-    }
-    // C. If on a Branching Step's follow-ups (subStep 1) AND NOT the final step
-    else if (isBranchingStep && subStep === 1 && currentStep < totalSteps) {
-      if (isStepValid()) {
-        setCurrentStep(currentStep + 1);
-        setSubStep(0); // Reset subStep for the next main step
       }
     }
     // D. If on a NON-Branching Step
@@ -1537,7 +1581,6 @@ export default function Questionnaire() {
                   handleMeasurementInput("height", e.target.value)
                 }
                 placeholder="e.g., 170"
-                // REMOVED ml-2 and adjusted to flex-1 for alignment
                 className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition ml-2 text-black"
                 min="1"
               />
@@ -1557,7 +1600,6 @@ export default function Questionnaire() {
                   handleMeasurementInput("weight", e.target.value)
                 }
                 placeholder="e.g., 65"
-                // REMOVED ml-2 and adjusted to flex-1 for alignment
                 className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition ml-2 text-black"
                 min="1"
               />
@@ -1615,7 +1657,6 @@ export default function Questionnaire() {
                   handleMeasurementInput("weight", e.target.value)
                 }
                 placeholder="e.g., 143"
-                // On mobile: Full width. On sm+: Flex-1 and ml-2 to align with metric inputs.
                 className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition sm:ml-2 text-black"
                 min="1"
               />
