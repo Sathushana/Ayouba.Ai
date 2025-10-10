@@ -76,7 +76,7 @@ const baseQuestions = [
 
 // Goal-specific questions
 const goalSpecificQuestions = {
-  // Physical Activity Questions - UPDATED TO MATCH NEW FLOW
+  // Physical Activity Questions - COMPLETELY UPDATED TO MATCH DOCUMENT FLOW
   "Physical Activity": [
     // Q1: Baseline Activity Level (BRANCHING STEP)
     {
@@ -95,6 +95,7 @@ const goalSpecificQuestions = {
     },
 
     // Q1a: Frequency & Duration (Asked if activity > Mostly Sitting)
+    // These questions will only be shown for Light movement, Moderate, and Very active
     {
       id: 7,
       type: "radio",
@@ -104,20 +105,10 @@ const goalSpecificQuestions = {
       options: ["0–1", "2–3", "4–5", "6–7"],
       required: true,
     },
-    {
-      id: 8,
-      type: "radio",
-      title: "Session Duration",
-      description:
-        "On days you exercise, how long do you usually spend being active?",
-      key: "sessionDuration",
-      options: ["<15 min", "15–30 min", "30–60 min", "60+ min"],
-      required: true,
-    },
 
     // Q2: Weekly Minutes of Activity
     {
-      id: 9,
+      id: 8,
       type: "radio",
       title: "Weekly Activity Minutes",
       description:
@@ -134,7 +125,7 @@ const goalSpecificQuestions = {
 
     // Q3: Type of Physical Activity
     {
-      id: 10,
+      id: 9,
       type: "multiselect",
       title: "Activity Types",
       description:
@@ -161,7 +152,7 @@ const goalSpecificQuestions = {
     },
 
     {
-      id: 11,
+      id: 10,
       type: "radio",
       title: "Exercise Intensity",
       description: "How challenging do you feel your exercise is?",
@@ -172,7 +163,7 @@ const goalSpecificQuestions = {
 
     // Q2: Health & Safety Check (Next main step after Q1 series)
     {
-      id: 12,
+      id: 11,
       type: "radio",
       title: "Health & Safety Check",
       description:
@@ -184,7 +175,7 @@ const goalSpecificQuestions = {
 
     // Q3: Exercise Preferences & Environment (Location)
     {
-      id: 13,
+      id: 12,
       type: "radio",
       title: "Exercise Location",
       description:
@@ -201,7 +192,7 @@ const goalSpecificQuestions = {
 
     // Q3: Activity Type Preference
     {
-      id: 14,
+      id: 13,
       type: "multiselect",
       title: "Activity Preferences",
       description:
@@ -222,7 +213,7 @@ const goalSpecificQuestions = {
 
     // Q3: Time Availability
     {
-      id: 15,
+      id: 14,
       type: "radio",
       title: "Time Availability",
       description:
@@ -234,7 +225,7 @@ const goalSpecificQuestions = {
 
     // Q4: Main Fitness Goal
     {
-      id: 16,
+      id: 15,
       type: "radio",
       title: "Main Fitness Goal",
       description:
@@ -254,7 +245,7 @@ const goalSpecificQuestions = {
 
     // Q4: Motivation & Readiness
     {
-      id: 17,
+      id: 16,
       type: "radio",
       title: "Readiness Level",
       description:
@@ -270,7 +261,7 @@ const goalSpecificQuestions = {
 
     // Q4: Motivation Style
     {
-      id: 18,
+      id: 17,
       type: "multiselect",
       title: "Motivation Style",
       description: "What motivates you most to stay consistent?",
@@ -982,11 +973,7 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
   if (!primaryGoal) {
     return baseQuestions;
   }
-  console.log("Activity selected:", currentAnswers.activityLevel);
-  console.log(
-    "Next questions:",
-    goalSpecificQuestions[currentAnswers.activityLevel]
-  );
+
   // Extract goal key
   const goalKey = (() => {
     // Try to extract text inside parentheses, e.g. (Nutrition), (Physical Activity)
@@ -1014,9 +1001,24 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
   // Load goal-specific questions
   const goalQuestions = goalSpecificQuestions[goalKey] || [];
 
+  // SPECIAL LOGIC FOR PHYSICAL ACTIVITY: Filter Q1a questions based on activity level
+  let filteredGoalQuestions = [...goalQuestions];
+  
+  if (goalKey === "Physical Activity" && currentAnswers.activityLevel) {
+    const activityLevel = currentAnswers.activityLevel;
+    
+    // If user selected "Mostly sitting", skip Q1a questions (Frequency & Duration)
+    if (activityLevel === "Mostly sitting (little or no exercise)") {
+      // Remove Q1a questions (exerciseFrequency, sessionDuration, weeklyMinutes, activityTypes, exerciseIntensity)
+      filteredGoalQuestions = goalQuestions.filter(question => 
+        !['exerciseFrequency', 'sessionDuration', 'weeklyMinutes', 'activityTypes', 'exerciseIntensity'].includes(question.key)
+      );
+    }
+  }
+
   // Merge base + goal-specific questions
   const allQuestions = [...baseQuestions];
-  goalQuestions.forEach((question, index) => {
+  filteredGoalQuestions.forEach((question, index) => {
     allQuestions.push({
       ...question,
       id: baseQuestions.length + index + 1,
@@ -1159,67 +1161,7 @@ const conditionalFollowUps = {
     },
   ],
 
-  // Step 2: Health Conditions Follow-ups
-  "mentalHealthCondition": [
-    {
-      subKey: "mentalHealthDiagnosis",
-      subTitle: "Which condition(s) have you been diagnosed with?",
-      subType: "multiselect",
-      options: [
-        { id: "depression", label: "Depression" },
-        { id: "anxiety", label: "Anxiety" },
-        { id: "bipolar", label: "Bipolar disorder" },
-        { id: "adhd", label: "ADHD" },
-        { id: "ptsd", label: "PTSD" },
-        { id: "otherDiagnosis", label: "Other (please specify)" },
-      ],
-      required: true,
-    },
-    {
-      subKey: "mentalHealthTreatment",
-      subTitle: "Are you currently receiving any treatment or support?",
-      subType: "multiselect",
-      options: [
-        { id: "medication", label: "Medication prescribed by a doctor" },
-        { id: "counseling", label: "Counseling / psychotherapy" },
-        { id: "otherTherapies", label: "Other therapies (e.g., group therapy, support groups)" },
-        { id: "noneTreatment", label: "None" },
-      ],
-      required: true,
-    },
-  ],
-
-  // Treatment type follow-ups
-  "medication": [
-    {
-      subKey: "medicationDetails",
-      subTitle: "Please provide details about your medication:",
-      subType: "medications",
-      required: true,
-      defaultData: [{ id: 1, name: "", routine: "Morning", dose: "", duration: "", sideEffects: "" }],
-      routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
-    },
-  ],
-  "counseling": [
-    {
-      subKey: "counselingDetails",
-      subTitle: "Please provide details about your counseling/therapy:",
-      subType: "text",
-      placeholder: "Type and frequency (e.g., CBT weekly)",
-      required: true,
-    },
-  ],
-  "otherTherapies": [
-    {
-      subKey: "otherTherapyDetails",
-      subTitle: "Please provide details about your other therapies:",
-      subType: "text",
-      placeholder: "Type and frequency (e.g., group therapy bi-weekly)",
-      required: true,
-    },
-  ],
-
-  // Physical health condition mental impact follow-ups
+  // Step 2: Health Conditions Follow-ups (using mh_ prefix for non-mental health conditions)
   "mh_heartDisease": [
     {
       subKey: "heartDiseaseMentalImpact",
@@ -1281,8 +1223,66 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
+  "mentalHealthCondition": [
+    {
+      subKey: "mentalHealthDiagnosis",
+      subTitle: "Which condition(s) have you been diagnosed with?",
+      subType: "multiselect",
+      options: [
+        { id: "depression", label: "Depression" },
+        { id: "anxiety", label: "Anxiety" },
+        { id: "bipolar", label: "Bipolar disorder" },
+        { id: "adhd", label: "ADHD" },
+        { id: "ptsd", label: "PTSD" },
+        { id: "otherDiagnosis", label: "Other (please specify)" },
+      ],
+      required: true,
+    },
+    {
+      subKey: "mentalHealthTreatment",
+      subTitle: "Are you currently receiving any treatment or support?",
+      subType: "multiselect",
+      options: [
+        { id: "medication", label: "Medication prescribed by a doctor" },
+        { id: "counseling", label: "Counseling / psychotherapy" },
+        { id: "otherTherapies", label: "Other therapies (e.g., group therapy, support groups)" },
+        { id: "noneTreatment", label: "None" },
+      ],
+      required: true,
+    },
+  ],
 
-  // Mental impact areas follow-ups
+  // Treatment type follow-ups
+  "medication": [
+    {
+      subKey: "medicationDetails",
+      subTitle: "Please provide details about your medication:",
+      subType: "medications",
+      required: true,
+      defaultData: [{ id: 1, name: "", routine: "Morning", dose: "", duration: "", sideEffects: "" }],
+      routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
+    },
+  ],
+  "counseling": [
+    {
+      subKey: "counselingDetails",
+      subTitle: "Please provide details about your counseling/therapy:",
+      subType: "text",
+      placeholder: "Type and frequency (e.g., CBT weekly)",
+      required: true,
+    },
+  ],
+  "otherTherapies": [
+    {
+      subKey: "otherTherapyDetails",
+      subTitle: "Please provide details about your other therapies:",
+      subType: "text",
+      placeholder: "Type and frequency (e.g., group therapy bi-weekly)",
+      required: true,
+    },
+  ],
+
+  // Mental impact answers follow-ups
   "Yes": [
     {
       subKey: "mentalImpactAreas",
@@ -1610,7 +1610,7 @@ const conditionalFollowUps = {
 
   // --- END MENTAL HEALTH FOLLOW-UPS ---
 
-  // --- PHYSICAL ACTIVITY FOLLOW-UPS
+  // --- PHYSICAL ACTIVITY FOLLOW-UPS ---
   // Q1: Baseline Activity Level Follow-ups
   "Mostly sitting (little or no exercise)": [
     {
