@@ -1382,6 +1382,31 @@ const conditionalFollowUps = {
   ],
 
   // Step 4: Mental & Emotional State Follow-ups
+  "Rarely -- I feel calm most of the time": [
+    {
+      subKey: "stressRarelyFollowUp",
+      subTitle: "That's great! Would you like tips on maintaining your calm mood?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+],
+
+"Sometimes -- stress a few times a week": [
+    {
+      subKey: "stressSometimesFollowUp",
+      subTitle: "When you feel stressed a few times a week, what is the main trigger?",
+      subType: "multiselect",
+      options: [
+        { id: "work", label: "Work/Studies" },
+        { id: "family", label: "Family/Relationships" },
+        { id: "financial", label: "Financial Concerns" },
+        { id: "other", label: "Other" },
+      ],
+      required: true,
+    },
+],
+
   "Often -- stress or low mood is frequent": [
     {
       subKey: "stressSymptoms",
@@ -2225,6 +2250,8 @@ const conditionalFollowUps = {
         { id: "heartBP", label: "Heart/Blood pressure" },
         { id: "digestion", label: "Digestion" },
         { id: "weight", label: "Weight" },
+        { id: "brainMental", label: "Brain & mental health" },
+        { id: "cancer", label: "Cancer" },
         { id: "none", label: "None of above" },
         { id: "otherHealth", label: "Other" },
       ],
@@ -2241,7 +2268,7 @@ const conditionalFollowUps = {
     },
   ],
 
-  // Specific Health Areas Affected Follow-ups (Q6a)
+  // Specific Health Areas Affected Follow-ups (Q6a) - FIXED KEYS
   liver: [
     {
       subKey: "liverDiagnosis",
@@ -2296,6 +2323,38 @@ const conditionalFollowUps = {
       subTitle: "Are you concerned about alcohol contributing to weight gain?",
       subType: "radio",
       options: ["Yes", "Somewhat", "No"],
+      required: true,
+    },
+  ],
+  brainMental: [
+    {
+      subKey: "brainMentalImpact",
+      subTitle: "Has alcohol been linked to your mental health or cognitive function?",
+      subType: "radio",
+      options: ["Yes, diagnosed condition", "Suspected / borderline", "No"],
+      required: true,
+    },
+    {
+      subKey: "mentalHealthClearance",
+      subTitle: "Have you been advised to reduce or stop drinking for mental health reasons?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+  ],
+  cancer: [
+    {
+      subKey: "cancerAlcoholLink",
+      subTitle: "Has your doctor advised limiting alcohol due to cancer risk or history?",
+      subType: "radio",
+      options: ["Yes", "No"],
+      required: true,
+    },
+    {
+      subKey: "cancerAlcoholGuidance",
+      subTitle: "Have you received specific guidance on alcohol consumption?",
+      subType: "radio",
+      options: ["Yes, avoid completely", "Yes, limit to occasional", "No specific guidance"],
       required: true,
     },
   ],

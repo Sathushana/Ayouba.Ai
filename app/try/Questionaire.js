@@ -16,7 +16,7 @@ const BRANCHING_KEYS = {
   dietType: "Nutrition",
   healthConditions: "Nutrition",
   substanceUse: "Nutrition",
-  activityLevel: "Physical Activity", 
+  activityLevel: "Physical Activity",
   hasMedicalConditions: "Physical Activity",
   medicalConditions: "Physical Activity",
   exerciseLocation: "Physical Activity",
@@ -45,7 +45,9 @@ export default function Questionnaire() {
   const [branchingSteps, setBranchingSteps] = useState([]);
   const [healthConditionQuestions, setHealthConditionQuestions] = useState([]);
   const [substanceUseQuestions, setSubstanceUseQuestions] = useState([]);
-  const [physicalActivityQuestions, setPhysicalActivityQuestions] = useState([]);
+  const [physicalActivityQuestions, setPhysicalActivityQuestions] = useState(
+    []
+  );
   const [alcoholQuestions, setAlcoholQuestions] = useState([]);
   const [mentalHealthQuestions, setMentalHealthQuestions] = useState([]);
   const [sleepQuestions, setSleepQuestions] = useState([]);
@@ -221,53 +223,69 @@ export default function Questionnaire() {
       if (baseConditionalKey === "currentSituation" && baseConditionalAnswer) {
         console.log("Processing current situation:", baseConditionalAnswer);
         if (conditionalFollowUps[baseConditionalAnswer]) {
-          mentalHealthFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+          mentalHealthFollowUps.push(
+            ...conditionalFollowUps[baseConditionalAnswer]
+          );
         }
       }
 
       // Handle health conditions follow-ups (Step 2)
-      if (baseConditionalKey === "healthConditionsMH" && baseConditionalAnswer) {
+      if (
+        baseConditionalKey === "healthConditionsMH" &&
+        baseConditionalAnswer
+      ) {
         console.log("Processing health conditions:", baseConditionalAnswer);
         const selectedConditions = baseConditionalAnswer || {};
 
-         Object.keys(selectedConditions).forEach((conditionId) => {
-        // *** FIX APPLIED HERE: Prepend 'mh_' to the conditionId when looking up follow-ups ***
-        const lookupKey = `mh_${conditionId}`; 
-        
-        if (selectedConditions[conditionId] && conditionalFollowUps[lookupKey]) {
+        Object.keys(selectedConditions).forEach((conditionId) => {
+          // *** FIX APPLIED HERE: Prepend 'mh_' to the conditionId when looking up follow-ups ***
+          const lookupKey = `mh_${conditionId}`;
+
+          if (
+            selectedConditions[conditionId] &&
+            conditionalFollowUps[lookupKey]
+          ) {
             mentalHealthFollowUps.push(...conditionalFollowUps[lookupKey]);
-        }
-    });
+          }
+        });
 
         // Handle mental health diagnosis and treatment follow-ups
         if (followUpAnswers.mentalHealthDiagnosis) {
-          Object.keys(followUpAnswers.mentalHealthDiagnosis).forEach((diagnosisId) => {
-            if (
-              followUpAnswers.mentalHealthDiagnosis[diagnosisId] &&
-              conditionalFollowUps[diagnosisId]
-            ) {
-              mentalHealthFollowUps.push(...conditionalFollowUps[diagnosisId]);
+          Object.keys(followUpAnswers.mentalHealthDiagnosis).forEach(
+            (diagnosisId) => {
+              if (
+                followUpAnswers.mentalHealthDiagnosis[diagnosisId] &&
+                conditionalFollowUps[diagnosisId]
+              ) {
+                mentalHealthFollowUps.push(
+                  ...conditionalFollowUps[diagnosisId]
+                );
+              }
             }
-          });
+          );
         }
 
         // Handle treatment follow-ups
         if (followUpAnswers.mentalHealthTreatment) {
-          Object.keys(followUpAnswers.mentalHealthTreatment).forEach((treatmentId) => {
-            if (
-              followUpAnswers.mentalHealthTreatment[treatmentId] &&
-              conditionalFollowUps[treatmentId] &&
-              treatmentId !== "noneTreatment"
-            ) {
-              mentalHealthFollowUps.push(...conditionalFollowUps[treatmentId]);
+          Object.keys(followUpAnswers.mentalHealthTreatment).forEach(
+            (treatmentId) => {
+              if (
+                followUpAnswers.mentalHealthTreatment[treatmentId] &&
+                conditionalFollowUps[treatmentId] &&
+                treatmentId !== "noneTreatment"
+              ) {
+                mentalHealthFollowUps.push(
+                  ...conditionalFollowUps[treatmentId]
+                );
+              }
             }
-          });
+          );
         }
 
         // Handle physical condition mental impact
         const physicalConditionKeys = [
           "heartDiseaseMentalImpact",
-          "diabetesMentalImpact", 
+          "diabetesMentalImpact",
           "respiratoryMentalImpact",
           "cancerMentalImpact",
           "oralHealthMentalImpact",
@@ -276,7 +294,10 @@ export default function Questionnaire() {
 
         physicalConditionKeys.forEach((impactKey) => {
           const impactAnswer = followUpAnswers[impactKey];
-          if (impactAnswer && (impactAnswer === "Yes" || impactAnswer === "Sometimes")) {
+          if (
+            impactAnswer &&
+            (impactAnswer === "Yes" || impactAnswer === "Sometimes")
+          ) {
             if (conditionalFollowUps[impactAnswer]) {
               mentalHealthFollowUps.push(...conditionalFollowUps[impactAnswer]);
             }
@@ -288,7 +309,9 @@ export default function Questionnaire() {
           mentalHealthFollowUps.push(...conditionalFollowUps.otherImpact);
         }
         if (followUpAnswers.mentalImpactAreasSometimes?.otherImpactSometimes) {
-          mentalHealthFollowUps.push(...conditionalFollowUps.otherImpactSometimes);
+          mentalHealthFollowUps.push(
+            ...conditionalFollowUps.otherImpactSometimes
+          );
         }
       }
 
@@ -308,7 +331,9 @@ export default function Questionnaire() {
       if (baseConditionalKey === "stressFrequency" && baseConditionalAnswer) {
         console.log("Processing stress frequency:", baseConditionalAnswer);
         if (conditionalFollowUps[baseConditionalAnswer]) {
-          mentalHealthFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+          mentalHealthFollowUps.push(
+            ...conditionalFollowUps[baseConditionalAnswer]
+          );
         }
       }
 
@@ -325,7 +350,9 @@ export default function Questionnaire() {
 
         // Handle "Other" follow-ups for concentration and interest
         if (followUpAnswers.concentrationAreas?.otherConcentration) {
-          mentalHealthFollowUps.push(...conditionalFollowUps.otherConcentration);
+          mentalHealthFollowUps.push(
+            ...conditionalFollowUps.otherConcentration
+          );
         }
         if (followUpAnswers.interestAreas?.otherInterest) {
           mentalHealthFollowUps.push(...conditionalFollowUps.otherInterest);
@@ -375,7 +402,8 @@ export default function Questionnaire() {
         // Handle barrier-specific follow-ups for sitting and light activity
         if (
           (baseConditionalAnswer === "Mostly sitting (little or no exercise)" ||
-           baseConditionalAnswer === "Light movement (walks, chores, light activity)") &&
+            baseConditionalAnswer ===
+              "Light movement (walks, chores, light activity)") &&
           followUpAnswers.barriers
         ) {
           Object.keys(followUpAnswers.barriers).forEach((barrierId) => {
@@ -393,8 +421,10 @@ export default function Questionnaire() {
 
         // Handle satisfaction follow-ups for moderate and very active
         if (
-          (baseConditionalAnswer === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
-           baseConditionalAnswer === "Very active (exercise most days / vigorous workouts/sports)") &&
+          (baseConditionalAnswer ===
+            "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
+            baseConditionalAnswer ===
+              "Very active (exercise most days / vigorous workouts/sports)") &&
           followUpAnswers.satisfaction
         ) {
           if (conditionalFollowUps[followUpAnswers.satisfaction]) {
@@ -429,7 +459,8 @@ export default function Questionnaire() {
         }
 
         // Handle condition-specific follow-ups
-        const selectedMedicalConditions = followUpAnswers.medicalConditions || {};
+        const selectedMedicalConditions =
+          followUpAnswers.medicalConditions || {};
         Object.keys(selectedMedicalConditions).forEach((conditionId) => {
           if (
             selectedMedicalConditions[conditionId] &&
@@ -482,7 +513,6 @@ export default function Questionnaire() {
     subStep,
     isBranchingStep,
   ]);
-
   // Handle alcohol branching logic - COMPLETELY UPDATED WITH HEALTH IMPACT FIX
   useEffect(() => {
     if (currentStepData && isBranchingStep && subStep === 1) {
@@ -493,17 +523,19 @@ export default function Questionnaire() {
         baseConditionalKey,
         baseConditionalAnswer,
         currentStep: currentStepData.key,
-        followUpAnswers
+        followUpAnswers,
       });
 
       // Handle alcohol frequency follow-ups (Step 1: Q2 Quantity)
       if (baseConditionalKey === "alcoholFrequency" && baseConditionalAnswer) {
         console.log("Processing alcohol frequency:", baseConditionalAnswer);
-        
+
         // Only show quantity question for Sometimes, Often, Daily (not Rarely)
         if (baseConditionalAnswer !== "Rarely (special occasions only)") {
           if (conditionalFollowUps[baseConditionalAnswer]) {
-            alcoholFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
+            alcoholFollowUps.push(
+              ...conditionalFollowUps[baseConditionalAnswer]
+            );
             console.log("Added alcohol quantity follow-up");
           }
         }
@@ -536,8 +568,11 @@ export default function Questionnaire() {
 
         // Special case: Health impact doctor advice follow-up (Q6)
         if (selectedEffects.healthImpact) {
-          console.log("Health impact selected, checking doctor advice:", followUpAnswers.doctorAdvice);
-          
+          console.log(
+            "Health impact selected, checking doctor advice:",
+            followUpAnswers.doctorAdvice
+          );
+
           if (followUpAnswers.doctorAdvice === "Yes") {
             if (conditionalFollowUps["doctorAdviceYes"]) {
               alcoholFollowUps.push(...conditionalFollowUps["doctorAdviceYes"]);
@@ -546,13 +581,17 @@ export default function Questionnaire() {
 
             // Handle specific health areas affected (Q6a multi-select follow-up)
             if (followUpAnswers.healthAreasAffected) {
-              console.log("Health areas affected:", followUpAnswers.healthAreasAffected);
-              
+              console.log(
+                "Health areas affected:",
+                followUpAnswers.healthAreasAffected
+              );
+
               Object.keys(followUpAnswers.healthAreasAffected).forEach(
                 (healthArea) => {
                   if (
                     followUpAnswers.healthAreasAffected[healthArea] &&
-                    conditionalFollowUps[healthArea]
+                    conditionalFollowUps[healthArea] &&
+                    healthArea !== "none" // Skip "none" option
                   ) {
                     alcoholFollowUps.push(...conditionalFollowUps[healthArea]);
                     console.log("Added health area follow-up for:", healthArea);
@@ -565,6 +604,14 @@ export default function Questionnaire() {
               alcoholFollowUps.push(...conditionalFollowUps["doctorAdviceNo"]);
               console.log("Added doctor advice No follow-up");
             }
+          }
+        }
+
+        // Special case: No issues follow-up
+        if (selectedEffects.noIssues) {
+          if (conditionalFollowUps["noIssues"]) {
+            alcoholFollowUps.push(...conditionalFollowUps["noIssues"]);
+            console.log("Added no issues follow-up");
           }
         }
       }
@@ -637,7 +684,7 @@ export default function Questionnaire() {
         // Handle nested sleep challenge reasons with their follow-ups
         const challengeReasonKeys = [
           "fallingAsleepReason",
-          "wakingUpReason", 
+          "wakingUpReason",
           "earlyWakingReason",
           "unrefreshedFeeling",
           "irregularScheduleReason",
@@ -653,8 +700,10 @@ export default function Questionnaire() {
 
         // Handle deeply nested follow-ups for racing thoughts
         if (followUpAnswers.mentalHealthDiagnosisSleep === "Yes") {
-          sleepFollowUps.push(...conditionalFollowUps["mentalHealthDiagnosisSleep_Yes"]);
-          
+          sleepFollowUps.push(
+            ...conditionalFollowUps["mentalHealthDiagnosisSleep_Yes"]
+          );
+
           if (followUpAnswers.sleepMedication === "Yes") {
             sleepFollowUps.push(...conditionalFollowUps["sleepMedication_Yes"]);
           }
@@ -663,13 +712,17 @@ export default function Questionnaire() {
         // Handle physical discomfort type follow-ups
         if (followUpAnswers.physicalDiscomfortType) {
           if (conditionalFollowUps[followUpAnswers.physicalDiscomfortType]) {
-            sleepFollowUps.push(...conditionalFollowUps[followUpAnswers.physicalDiscomfortType]);
+            sleepFollowUps.push(
+              ...conditionalFollowUps[followUpAnswers.physicalDiscomfortType]
+            );
           }
         }
 
         // Handle bathroom conditions follow-up
         if (followUpAnswers.bathroomConditions === "Yes") {
-          sleepFollowUps.push(...conditionalFollowUps["bathroomConditions_Yes"]);
+          sleepFollowUps.push(
+            ...conditionalFollowUps["bathroomConditions_Yes"]
+          );
         }
 
         // Handle partner noise follow-up
@@ -689,7 +742,9 @@ export default function Questionnaire() {
 
         // Handle sleep hours follow-up
         if (followUpAnswers.averageSleepHours === "6-7.5") {
-          sleepFollowUps.push(...conditionalFollowUps["averageSleepHours_6-7.5"]);
+          sleepFollowUps.push(
+            ...conditionalFollowUps["averageSleepHours_6-7.5"]
+          );
         }
 
         // Handle evening alcohol follow-up
@@ -923,7 +978,7 @@ export default function Questionnaire() {
       isBranchingStep,
       currentStepData: currentStepData?.key,
       baseConditionalAnswer,
-      answers: answers.followUps // Log follow-up answers for debugging
+      answers: answers.followUps, // Log follow-up answers for debugging
     });
 
     // A. If on a Branching Step's Base Question (subStep 0)
@@ -934,7 +989,8 @@ export default function Questionnaire() {
         // Special logic for healthConditionsMH (Mental Health)
         if (currentStepData.key === "healthConditionsMH") {
           const selectedConditions = answers.healthConditionsMH || {};
-          const anyConditionSelected = isAnyMentalHealthConditionSelected(selectedConditions);
+          const anyConditionSelected =
+            isAnyMentalHealthConditionSelected(selectedConditions);
 
           // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
           if (!anyConditionSelected) {
@@ -973,7 +1029,8 @@ export default function Questionnaire() {
         // Special logic for healthConditions (Nutrition)
         if (currentStepData.key === "healthConditions") {
           const selectedConditions = answers.healthConditions || {};
-          const anyConditionSelected = isAnyConditionSelected(selectedConditions);
+          const anyConditionSelected =
+            isAnyConditionSelected(selectedConditions);
 
           // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
           if (!anyConditionSelected) {
@@ -986,7 +1043,8 @@ export default function Questionnaire() {
         // Special logic for substanceUse
         if (currentStepData.key === "substanceUse") {
           const selectedSubstances = answers.substanceUse || {};
-          const anySubstanceSelected = isAnySubstanceSelected(selectedSubstances);
+          const anySubstanceSelected =
+            isAnySubstanceSelected(selectedSubstances);
 
           // If the user selects ONLY 'None' or nothing at all, skip all follow-ups
           if (!anySubstanceSelected) {
@@ -999,14 +1057,16 @@ export default function Questionnaire() {
         // UPDATED PHYSICAL ACTIVITY LOGIC - NEW FLOW
         if (currentStepData.key === "activityLevel") {
           const activityLevel = answers.activityLevel;
-          
+
           // 1. Mostly sitting goes directly to barriers (Q1b) ONLY
           if (activityLevel === "Mostly sitting (little or no exercise)") {
             setSubStep(1); // Go directly to barriers follow-ups
             return;
           }
           // 2. Light movement goes to Q1a questions first, then barriers
-          else if (activityLevel === "Light movement (walks, chores, light activity)") {
+          else if (
+            activityLevel === "Light movement (walks, chores, light activity)"
+          ) {
             // Continue to Q1a questions (they are the next main steps)
             setCurrentStep(currentStep + 1);
             setSubStep(0);
@@ -1014,8 +1074,10 @@ export default function Questionnaire() {
           }
           // 3. Moderate/Very active goes to Q1a questions first, then satisfaction (Q1c)
           else if (
-            activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
-            activityLevel === "Very active (exercise most days / vigorous workouts/sports)"
+            activityLevel ===
+              "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
+            activityLevel ===
+              "Very active (exercise most days / vigorous workouts/sports)"
           ) {
             // Continue to Q1a questions (they are the next main steps)
             setCurrentStep(currentStep + 1);
@@ -1027,16 +1089,20 @@ export default function Questionnaire() {
         // Special logic for when we reach the end of Q1a questions (exerciseIntensity is the last Q1a question)
         if (currentStepData.key === "exerciseIntensity") {
           const activityLevel = answers.activityLevel;
-          
+
           // Light movement goes to barriers (Q1b) after Q1a
-          if (activityLevel === "Light movement (walks, chores, light activity)") {
+          if (
+            activityLevel === "Light movement (walks, chores, light activity)"
+          ) {
             setSubStep(1); // Show barriers follow-ups
             return;
           }
-          // Moderate/Very active goes to satisfaction (Q1c) after Q1a  
+          // Moderate/Very active goes to satisfaction (Q1c) after Q1a
           else if (
-            activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
-            activityLevel === "Very active (exercise most days / vigorous workouts/sports)"
+            activityLevel ===
+              "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
+            activityLevel ===
+              "Very active (exercise most days / vigorous workouts/sports)"
           ) {
             setSubStep(1); // Show satisfaction follow-ups
             return;
@@ -1047,7 +1113,9 @@ export default function Questionnaire() {
         // Skip alcohol quantity follow-up if user answers "Rarely" to frequency
         if (currentStepData.key === "alcoholFrequency") {
           if (baseConditionalAnswer === "Rarely (special occasions only)") {
-            console.log("Skipping alcohol quantity follow-ups (answered Rarely)");
+            console.log(
+              "Skipping alcohol quantity follow-ups (answered Rarely)"
+            );
             setCurrentStep(currentStep + 1);
             setSubStep(0);
             return;
@@ -1067,14 +1135,19 @@ export default function Questionnaire() {
 
           // If the user selects ONLY 'No noticeable issues' or nothing at all, skip all follow-ups
           if (!anyEffectSelected) {
-            console.log("Skipping drinking effects follow-ups (no effects selected)");
+            console.log(
+              "Skipping drinking effects follow-ups (no effects selected)"
+            );
             setCurrentStep(currentStep + 1);
             setSubStep(0);
             return;
           }
-          
+
           // SPECIAL FIX: Always show follow-ups for drinking effects when any effect is selected
-          console.log("Showing drinking effects follow-ups (effects selected):", selectedEffects);
+          console.log(
+            "Showing drinking effects follow-ups (effects selected):",
+            selectedEffects
+          );
           setSubStep(1);
           return;
         }
@@ -1139,17 +1212,24 @@ export default function Questionnaire() {
     // B. If on a Branching Step's Follow-ups (subStep 1)
     else if (isBranchingStep && subStep === 1) {
       if (isStepValid()) {
-        console.log("Branching step follow-ups valid, moving to next main step");
-        
+        console.log(
+          "Branching step follow-ups valid, moving to next main step"
+        );
+
         // Special logic for barriers - if user selects 'nothing', skip to next main step
-        if (currentStepData.key === "activityLevel" || currentStepData.key === "exerciseIntensity") {
+        if (
+          currentStepData.key === "activityLevel" ||
+          currentStepData.key === "exerciseIntensity"
+        ) {
           const activityLevel = answers.activityLevel;
           const barriers = answers.followUps?.barriers || {};
-          
+
           // Check if we're in barriers (Q1b) and user selects 'nothing'
-          const isMostlySitting = activityLevel === "Mostly sitting (little or no exercise)";
-          const isLightMovement = activityLevel === "Light movement (walks, chores, light activity)";
-          
+          const isMostlySitting =
+            activityLevel === "Mostly sitting (little or no exercise)";
+          const isLightMovement =
+            activityLevel === "Light movement (walks, chores, light activity)";
+
           if ((isMostlySitting || isLightMovement) && barriers.nothing) {
             // Skip to next main step (Q2 - Health & Safety Check)
             setCurrentStep(currentStep + 1);
@@ -1157,7 +1237,7 @@ export default function Questionnaire() {
             return;
           }
         }
-        
+
         // For all other branching steps with follow-ups, move to next main step
         setCurrentStep(currentStep + 1);
         setSubStep(0);
@@ -1288,7 +1368,12 @@ export default function Questionnaire() {
           subKey === "mentalHealthTreatment" &&
           followUpAnswers.mentalHealthTreatment?.noneTreatment
         ) {
-          const { medicationDetails, counselingDetails, otherTherapyDetails, ...restFollowUps } = prevAnswers.followUps;
+          const {
+            medicationDetails,
+            counselingDetails,
+            otherTherapyDetails,
+            ...restFollowUps
+          } = prevAnswers.followUps;
           return {
             ...prevAnswers,
             followUps: {
@@ -1928,14 +2013,14 @@ export default function Questionnaire() {
                 type="text"
                 value={med.duration || ""}
                 onChange={(e) =>
-                    handleInputChange(
-                      "duration",
-                      e.target.value,
-                      subKey,
-                      "medications",
-                      index
-                    )
-                  }
+                  handleInputChange(
+                    "duration",
+                    e.target.value,
+                    subKey,
+                    "medications",
+                    index
+                  )
+                }
                 placeholder="Duration (e.g., 6 months, ongoing)"
                 className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
               />
@@ -1945,14 +2030,14 @@ export default function Questionnaire() {
                 type="text"
                 value={med.sideEffects || ""}
                 onChange={(e) =>
-                    handleInputChange(
-                      "sideEffects",
-                      e.target.value,
-                      subKey,
-                      "medications",
-                      index
-                    )
-                  }
+                  handleInputChange(
+                    "sideEffects",
+                    e.target.value,
+                    subKey,
+                    "medications",
+                    index
+                  )
+                }
                 placeholder="Side effects (if any)"
                 className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
               />
