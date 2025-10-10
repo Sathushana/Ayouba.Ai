@@ -941,7 +941,7 @@ const goalSpecificQuestions = {
       required: true,
     },
 
-    // Step 6: Goals & Readiness
+    // Step 7: Goals & Readiness
     {
       id: 16,
       type: "multiselect",
@@ -1222,7 +1222,7 @@ const conditionalFollowUps = {
   // Physical health condition mental impact follow-ups
   "heartDisease": [
     {
-      subKey: "heartDiseaseMentalImpact",
+      subKey: "heartDiseaseMentalImpact2",
       subTitle: "Does this condition affect your mental health or daily functioning?",
       subType: "radio",
       options: ["Yes", "Sometimes", "No"],
