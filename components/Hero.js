@@ -5,7 +5,7 @@ import React from "react";
 export default function Hero() {
   return (
     <>
-      <section id="hero" className="w-full bg-white pt-20 md:pt-0">
+      <section id="hero" className="w-full bg-white pt-20">
         <div className="flex flex-col md:flex-row max-w-7xl mx-auto relative px-4 md:px-0">
           {/* Left Images (Original Code Reverted as requested) */}
           <div

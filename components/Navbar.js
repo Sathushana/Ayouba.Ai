@@ -31,10 +31,10 @@ export default function Header() {
   return (
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled 
-          ? "bg-white/80 backdrop-blur shadow-md translate-y-0" 
-          : "bg-transparent md:-translate-y-full"
-      }`}
+    scrolled 
+      ? "bg-white/80 backdrop-blur shadow-md translate-y-0" 
+      : "bg-transparent"
+  }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         <Link
