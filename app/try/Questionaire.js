@@ -230,11 +230,14 @@ export default function Questionnaire() {
         console.log("Processing health conditions:", baseConditionalAnswer);
         const selectedConditions = baseConditionalAnswer || {};
 
-        Object.keys(selectedConditions).forEach((conditionId) => {
-          if (selectedConditions[conditionId] && conditionalFollowUps[conditionId]) {
-            mentalHealthFollowUps.push(...conditionalFollowUps[conditionId]);
-          }
-        });
+         Object.keys(selectedConditions).forEach((conditionId) => {
+        // *** FIX APPLIED HERE: Prepend 'mh_' to the conditionId when looking up follow-ups ***
+        const lookupKey = `mh_${conditionId}`; 
+        
+        if (selectedConditions[conditionId] && conditionalFollowUps[lookupKey]) {
+            mentalHealthFollowUps.push(...conditionalFollowUps[lookupKey]);
+        }
+    });
 
         // Handle mental health diagnosis and treatment follow-ups
         if (followUpAnswers.mentalHealthDiagnosis) {

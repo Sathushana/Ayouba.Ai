@@ -1220,16 +1220,16 @@ const conditionalFollowUps = {
   ],
 
   // Physical health condition mental impact follow-ups
-  "heartDisease": [
+  "mh_heartDisease": [
     {
-      subKey: "heartDiseaseMentalImpact2",
+      subKey: "heartDiseaseMentalImpact",
       subTitle: "Does this condition affect your mental health or daily functioning?",
       subType: "radio",
       options: ["Yes", "Sometimes", "No"],
       required: true,
     },
   ],
-  "diabetes": [
+  "mh_diabetes": [
     {
       subKey: "diabetesMentalImpact",
       subTitle: "Does this condition affect your mental health or daily functioning?",
@@ -1238,7 +1238,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "respiratoryDisease": [
+  "mh_respiratoryDisease": [
     {
       subKey: "respiratoryMentalImpact",
       subTitle: "Does this condition affect your mental health or daily functioning?",
@@ -1247,7 +1247,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "cancer": [
+  "mh_cancer": [
     {
       subKey: "cancerMentalImpact",
       subTitle: "Does this condition affect your mental health or daily functioning?",
@@ -1256,7 +1256,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "oralHealth": [
+  "mh_oralHealth": [
     {
       subKey: "oralHealthMentalImpact",
       subTitle: "Does this condition affect your mental health or daily functioning?",
@@ -1265,7 +1265,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "otherCondition": [
+  "mh_otherCondition": [
     {
       subKey: "otherConditionMentalImpact",
       subTitle: "Does this condition affect your mental health or daily functioning?",
