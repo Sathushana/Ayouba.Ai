@@ -653,7 +653,10 @@ const goalSpecificQuestions = {
       key: "drinkingContext",
       options: [
         { id: "homeAlone", label: "At home alone" },
-        { id: "socialGatherings", label: "At social gatherings / with friends" },
+        {
+          id: "socialGatherings",
+          label: "At social gatherings / with friends",
+        },
         { id: "afterWork", label: "After work or stressful days" },
         { id: "duringMeals", label: "During meals" },
         { id: "weekendsOnly", label: "Weekends only" },
@@ -671,7 +674,10 @@ const goalSpecificQuestions = {
         { id: "sleepEnergy", label: "Trouble with sleep or energy" },
         { id: "focusProductivity", label: "Affects focus or productivity" },
         { id: "familyTension", label: "Causes tension with family / friends" },
-        { id: "healthImpact", label: "Impacts health (weight, blood pressure, digestion, etc.)" },
+        {
+          id: "healthImpact",
+          label: "Impacts health (weight, blood pressure, digestion, etc.)",
+        },
         { id: "noIssues", label: "No noticeable issues" },
       ],
       required: true,
@@ -821,15 +827,25 @@ const goalSpecificQuestions = {
     {
       id: 9,
       type: "multiselect",
-      title: "Do you already have any of these diseases or health conditions? (Select all that apply)",
+      title:
+        "Do you already have any of these diseases or health conditions? (Select all that apply)",
       key: "healthConditionsMH",
       options: [
         { id: "heartDisease", label: "Heart disease / Hypertension" },
         { id: "diabetes", label: "Diabetes" },
-        { id: "respiratoryDisease", label: "Respiratory disease (e.g., asthma, COPD)" },
+        {
+          id: "respiratoryDisease",
+          label: "Respiratory disease (e.g., asthma, COPD)",
+        },
         { id: "cancer", label: "Cancer (any type)" },
-        { id: "oralHealth", label: "Oral health problems (e.g., gum disease, mouth ulcers)" },
-        { id: "mentalHealthCondition", label: "Mental health conditions (e.g., anxiety, depression)" },
+        {
+          id: "oralHealth",
+          label: "Oral health problems (e.g., gum disease, mouth ulcers)",
+        },
+        {
+          id: "mentalHealthCondition",
+          label: "Mental health conditions (e.g., anxiety, depression)",
+        },
         { id: "otherCondition", label: "Other (please specify)" },
         { id: "none", label: "None of the above" },
       ],
@@ -844,12 +860,18 @@ const goalSpecificQuestions = {
       key: "dailyRoutine",
       options: [
         { id: "sedentary", label: "Mostly sedentary / desk work / studying" },
-        { id: "active", label: "Physically active (walking, sports, exercise)" },
+        {
+          id: "active",
+          label: "Physically active (walking, sports, exercise)",
+        },
         { id: "irregularMeals", label: "Irregular meals / poor diet" },
         { id: "goodSleep", label: "Sleep 6-8 hours / good sleep hygiene" },
         { id: "poorSleep", label: "Sleep <6 hours / poor sleep quality" },
         { id: "heavyScreen", label: "Heavy screen time / social media" },
-        { id: "socialActive", label: "Socially active / regular friends or family interaction" },
+        {
+          id: "socialActive",
+          label: "Socially active / regular friends or family interaction",
+        },
         { id: "socialIsolated", label: "Socially isolated / limited contact" },
       ],
       required: true,
@@ -925,7 +947,10 @@ const goalSpecificQuestions = {
         { id: "workStudies", label: "Work / studies / routine pressure" },
         { id: "family", label: "Family / household responsibilities" },
         { id: "financial", label: "Financial stress" },
-        { id: "healthLifestyle", label: "Physical health / exercise / diet / sleep" },
+        {
+          id: "healthLifestyle",
+          label: "Physical health / exercise / diet / sleep",
+        },
         { id: "social", label: "Social / relationships" },
         { id: "otherRoot", label: "Other" },
       ],
@@ -942,7 +967,10 @@ const goalSpecificQuestions = {
         { id: "reduceStress", label: "Reduce stress / improve mood" },
         { id: "improveSleep", label: "Improve sleep / energy" },
         { id: "improveHealth", label: "Improve health / lifestyle habits" },
-        { id: "improveSocial", label: "Improve social connections / relationships" },
+        {
+          id: "improveSocial",
+          label: "Improve social connections / relationships",
+        },
         { id: "otherGoals", label: "Other (please specify)" },
       ],
       required: true,
@@ -1003,15 +1031,22 @@ const getQuestions = (primaryGoal = null, currentAnswers = {}) => {
 
   // SPECIAL LOGIC FOR PHYSICAL ACTIVITY: Filter Q1a questions based on activity level
   let filteredGoalQuestions = [...goalQuestions];
-  
+
   if (goalKey === "Physical Activity" && currentAnswers.activityLevel) {
     const activityLevel = currentAnswers.activityLevel;
-    
+
     // If user selected "Mostly sitting", skip Q1a questions (Frequency & Duration)
     if (activityLevel === "Mostly sitting (little or no exercise)") {
       // Remove Q1a questions (exerciseFrequency, sessionDuration, weeklyMinutes, activityTypes, exerciseIntensity)
-      filteredGoalQuestions = goalQuestions.filter(question => 
-        !['exerciseFrequency', 'sessionDuration', 'weeklyMinutes', 'activityTypes', 'exerciseIntensity'].includes(question.key)
+      filteredGoalQuestions = goalQuestions.filter(
+        (question) =>
+          ![
+            "exerciseFrequency",
+            "sessionDuration",
+            "weeklyMinutes",
+            "activityTypes",
+            "exerciseIntensity",
+          ].includes(question.key)
       );
     }
   }
@@ -1064,19 +1099,29 @@ const conditionalFollowUps = {
   // --- END NUTRITION FOLLOW-UPS ---
 
   // --- MENTAL HEALTH FOLLOW-UPS ---
-  
+
   // Step 1: Current Situation Follow-ups
   "Student (school, college, university)": [
     {
       subKey: "studentStress",
-      subTitle: "What usually causes you the most stress at school or university?",
+      subTitle:
+        "What usually causes you the most stress at school or university?",
       subType: "multiselect",
       options: [
-        { id: "academicPressure", label: "Academic pressure / exams / results" },
+        {
+          id: "academicPressure",
+          label: "Academic pressure / exams / results",
+        },
         { id: "tuitionPressure", label: "Tuition / extra classes pressure" },
-        { id: "timeManagement", label: "Managing time between studies and family expectations" },
+        {
+          id: "timeManagement",
+          label: "Managing time between studies and family expectations",
+        },
         { id: "peerPressure", label: "Peer pressure / social life" },
-        { id: "financialConcerns", label: "Financial concerns (fees, travel, living costs)" },
+        {
+          id: "financialConcerns",
+          label: "Financial concerns (fees, travel, living costs)",
+        },
         { id: "otherStudent", label: "Other" },
       ],
       required: true,
@@ -1090,9 +1135,16 @@ const conditionalFollowUps = {
       options: [
         { id: "workload", label: "Heavy workload / long hours" },
         { id: "jobInsecurity", label: "Job insecurity / contract uncertainty" },
-        { id: "workplaceConflict", label: "Difficult boss / workplace conflict" },
+        {
+          id: "workplaceConflict",
+          label: "Difficult boss / workplace conflict",
+        },
         { id: "lowPay", label: "Low pay or limited benefits" },
-        { id: "commuteStress", label: "Commute / travel stress (traffic is a big factor in Colombo & other cities)" },
+        {
+          id: "commuteStress",
+          label:
+            "Commute / travel stress (traffic is a big factor in Colombo & other cities)",
+        },
         { id: "otherWork", label: "Other" },
       ],
       required: true,
@@ -1104,8 +1156,14 @@ const conditionalFollowUps = {
       subTitle: "What is your biggest stress factor in running your business?",
       subType: "multiselect",
       options: [
-        { id: "financialUncertainty", label: "Financial uncertainty / cash flow" },
-        { id: "governmentRegulations", label: "Government regulations or taxes" },
+        {
+          id: "financialUncertainty",
+          label: "Financial uncertainty / cash flow",
+        },
+        {
+          id: "governmentRegulations",
+          label: "Government regulations or taxes",
+        },
         { id: "customerIssues", label: "Customer or client issues" },
         { id: "lackStability", label: "Lack of stability / market changes" },
         { id: "workLifeBalance", label: "Work-life balance" },
@@ -1120,8 +1178,14 @@ const conditionalFollowUps = {
       subTitle: "What's the biggest source of stress while not working?",
       subType: "multiselect",
       options: [
-        { id: "financialWorries", label: "Financial worries / supporting family" },
-        { id: "familyPressure", label: "Pressure from family / society to find a job" },
+        {
+          id: "financialWorries",
+          label: "Financial worries / supporting family",
+        },
+        {
+          id: "familyPressure",
+          label: "Pressure from family / society to find a job",
+        },
         { id: "lowSelfEsteem", label: "Low self-esteem / confidence" },
         { id: "difficultyFinding", label: "Difficulty finding opportunities" },
         { id: "otherUnemployed", label: "Other" },
@@ -1135,25 +1199,43 @@ const conditionalFollowUps = {
       subTitle: "What usually feels most stressful in your role?",
       subType: "multiselect",
       options: [
-        { id: "householdResponsibilities", label: "Household responsibilities" },
-        { id: "caringForOthers", label: "Caring for children / elderly / family members" },
+        {
+          id: "householdResponsibilities",
+          label: "Household responsibilities",
+        },
+        {
+          id: "caringForOthers",
+          label: "Caring for children / elderly / family members",
+        },
         { id: "lackPersonalTime", label: "Lack of personal time / self-care" },
-        { id: "feelingUnrecognized", label: "Feeling unrecognized / unsupported" },
-        { id: "financialDependency", label: "Financial dependency / constraints" },
+        {
+          id: "feelingUnrecognized",
+          label: "Feeling unrecognized / unsupported",
+        },
+        {
+          id: "financialDependency",
+          label: "Financial dependency / constraints",
+        },
         { id: "otherHomemaker", label: "Other" },
       ],
       required: true,
     },
   ],
-  "Retired": [
+  Retired: [
     {
       subKey: "retiredChallenges",
       subTitle: "What is your biggest challenge in retirement?",
       subType: "multiselect",
       options: [
         { id: "loneliness", label: "Loneliness / isolation" },
-        { id: "healthIssues", label: "Health issues / managing chronic conditions" },
-        { id: "financialConcernsRetired", label: "Financial concerns / pension limitations" },
+        {
+          id: "healthIssues",
+          label: "Health issues / managing chronic conditions",
+        },
+        {
+          id: "financialConcernsRetired",
+          label: "Financial concerns / pension limitations",
+        },
         { id: "lackRoutine", label: "Lack of routine or purpose" },
         { id: "otherRetired", label: "Other" },
       ],
@@ -1162,55 +1244,61 @@ const conditionalFollowUps = {
   ],
 
   // Step 2: Health Conditions Follow-ups (using mh_ prefix for non-mental health conditions)
-  "mh_heartDisease": [
+  mh_heartDisease: [
     {
       subKey: "heartDiseaseMentalImpact",
-      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subTitle:
+        "Does this condition affect your mental health or daily functioning?",
       subType: "radio",
       options: ["Yes", "Sometimes", "No"],
       required: true,
     },
   ],
-  "mh_diabetes": [
+  mh_diabetes: [
     {
       subKey: "diabetesMentalImpact",
-      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subTitle:
+        "Does this condition affect your mental health or daily functioning?",
       subType: "radio",
       options: ["Yes", "Sometimes", "No"],
       required: true,
     },
   ],
-  "mh_respiratoryDisease": [
+  mh_respiratoryDisease: [
     {
       subKey: "respiratoryMentalImpact",
-      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subTitle:
+        "Does this condition affect your mental health or daily functioning?",
       subType: "radio",
       options: ["Yes", "Sometimes", "No"],
       required: true,
     },
   ],
-  "mh_cancer": [
+  mh_cancer: [
     {
       subKey: "cancerMentalImpact",
-      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subTitle:
+        "Does this condition affect your mental health or daily functioning?",
       subType: "radio",
       options: ["Yes", "Sometimes", "No"],
       required: true,
     },
   ],
-  "mh_oralHealth": [
+  mh_oralHealth: [
     {
       subKey: "oralHealthMentalImpact",
-      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subTitle:
+        "Does this condition affect your mental health or daily functioning?",
       subType: "radio",
       options: ["Yes", "Sometimes", "No"],
       required: true,
     },
   ],
-  "mh_otherCondition": [
+  mh_otherCondition: [
     {
       subKey: "otherConditionMentalImpact",
-      subTitle: "Does this condition affect your mental health or daily functioning?",
+      subTitle:
+        "Does this condition affect your mental health or daily functioning?",
       subType: "radio",
       options: ["Yes", "Sometimes", "No"],
       required: true,
@@ -1223,7 +1311,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "mentalHealthCondition": [
+  mentalHealthCondition: [
     {
       subKey: "mentalHealthDiagnosis",
       subTitle: "Which condition(s) have you been diagnosed with?",
@@ -1245,7 +1333,10 @@ const conditionalFollowUps = {
       options: [
         { id: "medication", label: "Medication prescribed by a doctor" },
         { id: "counseling", label: "Counseling / psychotherapy" },
-        { id: "otherTherapies", label: "Other therapies (e.g., group therapy, support groups)" },
+        {
+          id: "otherTherapies",
+          label: "Other therapies (e.g., group therapy, support groups)",
+        },
         { id: "noneTreatment", label: "None" },
       ],
       required: true,
@@ -1253,17 +1344,26 @@ const conditionalFollowUps = {
   ],
 
   // Treatment type follow-ups
-  "medication": [
+  medication: [
     {
       subKey: "medicationDetails",
       subTitle: "Please provide details about your medication:",
       subType: "medications",
       required: true,
-      defaultData: [{ id: 1, name: "", routine: "Morning", dose: "", duration: "", sideEffects: "" }],
+      defaultData: [
+        {
+          id: 1,
+          name: "",
+          routine: "Morning",
+          dose: "",
+          duration: "",
+          sideEffects: "",
+        },
+      ],
       routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
     },
   ],
-  "counseling": [
+  counseling: [
     {
       subKey: "counselingDetails",
       subTitle: "Please provide details about your counseling/therapy:",
@@ -1272,7 +1372,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "otherTherapies": [
+  otherTherapies: [
     {
       subKey: "otherTherapyDetails",
       subTitle: "Please provide details about your other therapies:",
@@ -1283,7 +1383,7 @@ const conditionalFollowUps = {
   ],
 
   // Mental impact answers follow-ups
-  "Yes": [
+  Yes: [
     {
       subKey: "mentalImpactAreas",
       subTitle: "How does it affect you?",
@@ -1299,17 +1399,23 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "Sometimes": [
+  Sometimes: [
     {
       subKey: "mentalImpactAreasSometimes",
       subTitle: "Which aspects are sometimes affected?",
       subType: "multiselect",
       options: [
         { id: "causesStressSometimes", label: "Causes stress / anxiety" },
-        { id: "lowersMoodSometimes", label: "Lowers mood / depressive feelings" },
+        {
+          id: "lowersMoodSometimes",
+          label: "Lowers mood / depressive feelings",
+        },
         { id: "affectsSleepSometimes", label: "Affects sleep" },
         { id: "affectsEnergySometimes", label: "Affects energy / motivation" },
-        { id: "affectsRelationshipsSometimes", label: "Affects social relationships" },
+        {
+          id: "affectsRelationshipsSometimes",
+          label: "Affects social relationships",
+        },
         { id: "otherImpactSometimes", label: "Other (please specify)" },
       ],
       required: true,
@@ -1317,7 +1423,7 @@ const conditionalFollowUps = {
   ],
 
   // Other impact details
-  "otherImpact": [
+  otherImpact: [
     {
       subKey: "otherImpactDetails",
       subTitle: "Please specify other ways it affects you:",
@@ -1326,7 +1432,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "otherImpactSometimes": [
+  otherImpactSometimes: [
     {
       subKey: "otherImpactDetailsSometimes",
       subTitle: "Please specify other ways it sometimes affects you:",
@@ -1337,7 +1443,7 @@ const conditionalFollowUps = {
   ],
 
   // Step 3: Lifestyle Follow-ups
-  "poorSleep": [
+  poorSleep: [
     {
       subKey: "sleepDisruption",
       subTitle: "What usually disrupts your sleep?",
@@ -1351,7 +1457,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "sedentary": [
+  sedentary: [
     {
       subKey: "movementBarriers",
       subTitle: "What prevents you from moving more?",
@@ -1365,7 +1471,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "irregularMeals": [
+  irregularMeals: [
     {
       subKey: "mealPatterns",
       subTitle: "Which meals are usually skipped or unhealthy?",
@@ -1385,17 +1491,19 @@ const conditionalFollowUps = {
   "Rarely -- I feel calm most of the time": [
     {
       subKey: "stressRarelyFollowUp",
-      subTitle: "That's great! Would you like tips on maintaining your calm mood?",
+      subTitle:
+        "That's great! Would you like tips on maintaining your calm mood?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
     },
-],
+  ],
 
-"Sometimes -- stress a few times a week": [
+  "Sometimes -- stress a few times a week": [
     {
       subKey: "stressSometimesFollowUp",
-      subTitle: "When you feel stressed a few times a week, what is the main trigger?",
+      subTitle:
+        "When you feel stressed a few times a week, what is the main trigger?",
       subType: "multiselect",
       options: [
         { id: "work", label: "Work/Studies" },
@@ -1405,7 +1513,7 @@ const conditionalFollowUps = {
       ],
       required: true,
     },
-],
+  ],
 
   "Often -- stress or low mood is frequent": [
     {
@@ -1443,12 +1551,17 @@ const conditionalFollowUps = {
   ],
 
   // Recent Feelings Follow-ups
-  "hopeless": [
+  hopeless: [
     {
       subKey: "hopelessFrequency",
       subTitle: "How often do you feel hopeless?",
       subType: "radio",
-      options: ["Rarely (a few days in the month)", "Sometimes (a few days each week)", "Often (most days)", "Almost always"],
+      options: [
+        "Rarely (a few days in the month)",
+        "Sometimes (a few days each week)",
+        "Often (most days)",
+        "Almost always",
+      ],
       required: true,
     },
     {
@@ -1459,7 +1572,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "concentration": [
+  concentration: [
     {
       subKey: "concentrationAreas",
       subTitle: "In which areas do you notice poor concentration most?",
@@ -1474,13 +1587,14 @@ const conditionalFollowUps = {
     },
     {
       subKey: "concentrationPerformance",
-      subTitle: "Has this caused problems with performance (work, studies, daily tasks)?",
+      subTitle:
+        "Has this caused problems with performance (work, studies, daily tasks)?",
       subType: "radio",
       options: ["Yes", "Sometimes", "No"],
       required: true,
     },
   ],
-  "lossInterest": [
+  lossInterest: [
     {
       subKey: "interestAreas",
       subTitle: "Which activities have you lost interest in?",
@@ -1498,11 +1612,15 @@ const conditionalFollowUps = {
       subKey: "interestImpact",
       subTitle: "How much does this affect your daily life?",
       subType: "radio",
-      options: ["A lot -- I avoid most activities", "Somewhat -- I still do things but without interest", "Little to none"],
+      options: [
+        "A lot -- I avoid most activities",
+        "Somewhat -- I still do things but without interest",
+        "Little to none",
+      ],
       required: true,
     },
   ],
-  "nervousness": [
+  nervousness: [
     {
       subKey: "anxietySymptoms",
       subTitle: "When you feel anxious, what happens most?",
@@ -1517,13 +1635,14 @@ const conditionalFollowUps = {
     },
     {
       subKey: "worryImpact",
-      subTitle: "How often does worry stop you from doing things you want/need to do?",
+      subTitle:
+        "How often does worry stop you from doing things you want/need to do?",
       subType: "radio",
       options: ["Very often", "Sometimes", "Rarely", "Never"],
       required: true,
     },
   ],
-  "sleepIssues": [
+  sleepIssues: [
     {
       subKey: "sleepProblemsType",
       subTitle: "Which of these best describes your sleep issue?",
@@ -1544,17 +1663,23 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "sadness": [
+  sadness: [
     {
       subKey: "sadnessFrequency",
       subTitle: "How many days in the past month did you feel this way?",
       subType: "radio",
-      options: ["Less than 5 days", "5-10 days", "More than 10 days", "Almost every day"],
+      options: [
+        "Less than 5 days",
+        "5-10 days",
+        "More than 10 days",
+        "Almost every day",
+      ],
       required: true,
     },
     {
       subKey: "sadnessImpact",
-      subTitle: "Did this sadness affect your daily routine (work, studies, relationships, self-care)?",
+      subTitle:
+        "Did this sadness affect your daily routine (work, studies, relationships, self-care)?",
       subType: "radio",
       options: ["Yes, significantly", "Yes, somewhat", "No"],
       required: true,
@@ -1562,7 +1687,7 @@ const conditionalFollowUps = {
   ],
 
   // Step 5: Root Causes Follow-ups
-  "workStudies": [
+  workStudies: [
     {
       subKey: "workStudiesImpact",
       subTitle: "Does this affect your sleep, energy, or relationships?",
@@ -1571,7 +1696,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "family": [
+  family: [
     {
       subKey: "familyImpact",
       subTitle: "Does this limit your personal time or self-care?",
@@ -1580,7 +1705,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "financial": [
+  financial: [
     {
       subKey: "financialImpact",
       subTitle: "Do financial concerns impact your mood or motivation?",
@@ -1589,7 +1714,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "healthLifestyle": [
+  healthLifestyle: [
     {
       subKey: "healthLifestyleImpact",
       subTitle: "Do you feel tired or low energy due to lifestyle habits?",
@@ -1598,7 +1723,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  "social": [
+  social: [
     {
       subKey: "socialImpact",
       subTitle: "Do you feel isolated or unsupported?",
@@ -1620,7 +1745,10 @@ const conditionalFollowUps = {
       options: [
         { id: "lackTime", label: "Lack of time" },
         { id: "lackMotivation", label: "Lack of motivation" },
-        { id: "physicalLimitations", label: "Physical limitations / health issues" },
+        {
+          id: "physicalLimitations",
+          label: "Physical limitations / health issues",
+        },
         { id: "dontKnow", label: "Don't know what to do" },
         { id: "nothing", label: "Nothing" },
       ],
@@ -1636,7 +1764,10 @@ const conditionalFollowUps = {
       options: [
         { id: "lackTime", label: "Lack of time" },
         { id: "lackMotivation", label: "Lack of motivation" },
-        { id: "physicalLimitations", label: "Physical limitations / health issues" },
+        {
+          id: "physicalLimitations",
+          label: "Physical limitations / health issues",
+        },
         { id: "dontKnow", label: "Don't know what to do" },
         { id: "nothing", label: "Nothing" },
       ],
@@ -1777,7 +1908,7 @@ const conditionalFollowUps = {
   ],
 
   // Health conditions (Q2)
-  Yes: [
+  PA_hasMedicalConditions_Yes: [
     {
       subKey: "medicalConditions",
       subTitle:
@@ -1786,7 +1917,10 @@ const conditionalFollowUps = {
       options: [
         { id: "heartDisease", label: "Heart disease / High blood pressure" },
         { id: "diabetes", label: "Diabetes / Blood sugar issues" },
-        { id: "jointIssues", label: "Joint or mobility issues (knees, hips, back)" },
+        {
+          id: "jointIssues",
+          label: "Joint or mobility issues (knees, hips, back)",
+        },
         { id: "respiratory", label: "Respiratory issues (asthma, COPD)" },
         { id: "surgery", label: "Recent surgery or injury" },
         { id: "tobacco", label: "Tobacco use" },
@@ -2085,7 +2219,7 @@ const conditionalFollowUps = {
   // --- END PA FOLLOW-UPS ---
 
   // ========== ALCOHOL FOLLOW-UPS ==========
-  
+
   // Step 1: Frequency & Quantity Follow-ups (Q2)
   "Sometimes (1–2 times a week)": [
     {
@@ -2119,7 +2253,8 @@ const conditionalFollowUps = {
   homeAlone: [
     {
       subKey: "homeAloneReason",
-      subTitle: "When you drink at home, is it usually because you feel bored, lonely, or stressed?",
+      subTitle:
+        "When you drink at home, is it usually because you feel bored, lonely, or stressed?",
       subType: "radio",
       options: ["Boredom", "Loneliness", "Stress", "Habit", "Other"],
       required: true,
@@ -2128,7 +2263,8 @@ const conditionalFollowUps = {
   socialGatherings: [
     {
       subKey: "socialPressure",
-      subTitle: "Do you feel pressured to drink in social settings, or is it mostly by choice?",
+      subTitle:
+        "Do you feel pressured to drink in social settings, or is it mostly by choice?",
       subType: "radio",
       options: ["Peer pressure", "By choice", "Both"],
       required: true,
@@ -2146,7 +2282,8 @@ const conditionalFollowUps = {
   duringMeals: [
     {
       subKey: "mealDrinkingReason",
-      subTitle: "Is drinking with meals more of a routine, cultural habit, or for taste/enjoyment?",
+      subTitle:
+        "Is drinking with meals more of a routine, cultural habit, or for taste/enjoyment?",
       subType: "radio",
       options: ["Routine", "Cultural", "For taste", "Other"],
       required: true,
@@ -2155,9 +2292,15 @@ const conditionalFollowUps = {
   weekendsOnly: [
     {
       subKey: "weekendDrinkingPattern",
-      subTitle: "When you drink on weekends, is it usually moderate or heavy (more than 4–5 drinks at a time)?",
+      subTitle:
+        "When you drink on weekends, is it usually moderate or heavy (more than 4–5 drinks at a time)?",
       subType: "radio",
-      options: ["Always moderate", "Sometimes heavy", "Often heavy", "Not sure"],
+      options: [
+        "Always moderate",
+        "Sometimes heavy",
+        "Often heavy",
+        "Not sure",
+      ],
       required: true,
     },
   ],
@@ -2175,14 +2318,16 @@ const conditionalFollowUps = {
   sleepEnergy: [
     {
       subKey: "sleepEnergyFrequency",
-      subTitle: "How often do you notice these sleep or energy problems after drinking?",
+      subTitle:
+        "How often do you notice these sleep or energy problems after drinking?",
       subType: "radio",
       options: ["Every time I drink", "Sometimes", "Rarely"],
       required: true,
     },
     {
       subKey: "sleepEnergyTips",
-      subTitle: "Would you like tips on improving sleep and energy while managing alcohol?",
+      subTitle:
+        "Would you like tips on improving sleep and energy while managing alcohol?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -2198,7 +2343,8 @@ const conditionalFollowUps = {
     },
     {
       subKey: "focusStrategies",
-      subTitle: "Would you like strategies to maintain focus while reducing alcohol effects?",
+      subTitle:
+        "Would you like strategies to maintain focus while reducing alcohol effects?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -2214,7 +2360,8 @@ const conditionalFollowUps = {
     },
     {
       subKey: "conflictGuidance",
-      subTitle: "Would you like guidance on reducing social conflicts related to alcohol?",
+      subTitle:
+        "Would you like guidance on reducing social conflicts related to alcohol?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -2223,7 +2370,8 @@ const conditionalFollowUps = {
   healthImpact: [
     {
       subKey: "doctorAdvice",
-      subTitle: "Have you been told by a doctor that alcohol is affecting your health?",
+      subTitle:
+        "Have you been told by a doctor that alcohol is affecting your health?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -2232,7 +2380,8 @@ const conditionalFollowUps = {
   noIssues: [
     {
       subKey: "healthRiskAssessment",
-      subTitle: "Even if you haven't noticed effects, alcohol can still impact long-term health. Would you like a personalized health risk assessment?",
+      subTitle:
+        "Even if you haven't noticed effects, alcohol can still impact long-term health. Would you like a personalized health risk assessment?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -2261,7 +2410,8 @@ const conditionalFollowUps = {
   doctorAdviceNo: [
     {
       subKey: "healthInfo",
-      subTitle: "Would you like us to provide information on how alcohol may affect your health?",
+      subTitle:
+        "Would you like us to provide information on how alcohol may affect your health?",
       subType: "radio",
       options: ["Yes", "Maybe", "No"],
       required: true,
@@ -2272,9 +2422,14 @@ const conditionalFollowUps = {
   liver: [
     {
       subKey: "liverDiagnosis",
-      subTitle: "Has a doctor diagnosed liver damage or elevated liver enzymes?",
+      subTitle:
+        "Has a doctor diagnosed liver damage or elevated liver enzymes?",
       subType: "radio",
-      options: ["Yes, confirmed diagnosis", "Suspected / borderline results", "No"],
+      options: [
+        "Yes, confirmed diagnosis",
+        "Suspected / borderline results",
+        "No",
+      ],
       required: true,
     },
     {
@@ -2288,7 +2443,8 @@ const conditionalFollowUps = {
   heartBP: [
     {
       subKey: "heartConditionLink",
-      subTitle: "Has alcohol been linked to your blood pressure or heart condition?",
+      subTitle:
+        "Has alcohol been linked to your blood pressure or heart condition?",
       subType: "radio",
       options: ["Yes, diagnosed condition", "Suspected / borderline", "No"],
       required: true,
@@ -2306,7 +2462,12 @@ const conditionalFollowUps = {
       subKey: "digestiveIssues",
       subTitle: "Which digestive issues are affected?",
       subType: "radio",
-      options: ["Stomach irritation / gastritis", "Acid reflux / heartburn", "Pancreatitis", "Other"],
+      options: [
+        "Stomach irritation / gastritis",
+        "Acid reflux / heartburn",
+        "Pancreatitis",
+        "Other",
+      ],
       required: true,
     },
     {
@@ -2329,14 +2490,16 @@ const conditionalFollowUps = {
   brainMental: [
     {
       subKey: "brainMentalImpact",
-      subTitle: "Has alcohol been linked to your mental health or cognitive function?",
+      subTitle:
+        "Has alcohol been linked to your mental health or cognitive function?",
       subType: "radio",
       options: ["Yes, diagnosed condition", "Suspected / borderline", "No"],
       required: true,
     },
     {
       subKey: "mentalHealthClearance",
-      subTitle: "Have you been advised to reduce or stop drinking for mental health reasons?",
+      subTitle:
+        "Have you been advised to reduce or stop drinking for mental health reasons?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -2345,7 +2508,8 @@ const conditionalFollowUps = {
   cancer: [
     {
       subKey: "cancerAlcoholLink",
-      subTitle: "Has your doctor advised limiting alcohol due to cancer risk or history?",
+      subTitle:
+        "Has your doctor advised limiting alcohol due to cancer risk or history?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -2354,7 +2518,11 @@ const conditionalFollowUps = {
       subKey: "cancerAlcoholGuidance",
       subTitle: "Have you received specific guidance on alcohol consumption?",
       subType: "radio",
-      options: ["Yes, avoid completely", "Yes, limit to occasional", "No specific guidance"],
+      options: [
+        "Yes, avoid completely",
+        "Yes, limit to occasional",
+        "No specific guidance",
+      ],
       required: true,
     },
   ],
@@ -2424,9 +2592,9 @@ const conditionalFollowUps = {
   ],
 
   // ========== SLEEP FOLLOW-UPS ==========
-  
+
   // Q3: Sleep Disorder Diagnosis Follow-ups
-  Yes: [
+  Sleep_hasDiagnosis_Yes: [
     {
       subKey: "sleepTreatments",
       subTitle:
@@ -2449,7 +2617,9 @@ const conditionalFollowUps = {
       subTitle: "Please provide details for your prescription medication:",
       subType: "medications",
       required: true,
-      defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+      defaultData: [
+        { id: 1, name: "", routine: "Night", dose: "", duration: "" },
+      ],
       routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
     },
   ],
@@ -2460,7 +2630,9 @@ const conditionalFollowUps = {
       subTitle: "Please provide details for over-the-counter sleep aids:",
       subType: "medications",
       required: true,
-      defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+      defaultData: [
+        { id: 1, name: "", routine: "Night", dose: "", duration: "" },
+      ],
       routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
     },
   ],
@@ -2471,7 +2643,9 @@ const conditionalFollowUps = {
       subTitle: "Please provide details for herbal/natural remedies:",
       subType: "medications",
       required: true,
-      defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+      defaultData: [
+        { id: 1, name: "", routine: "Night", dose: "", duration: "" },
+      ],
       routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
     },
   ],
@@ -2548,7 +2722,7 @@ const conditionalFollowUps = {
   ],
 
   // ========== DIFFICULTY FALLING ASLEEP BRANCHES ==========
-  
+
   // Racing thoughts branch
   "Racing thoughts / Stress / Anxiety": [
     {
@@ -2556,16 +2730,29 @@ const conditionalFollowUps = {
       subTitle: "What is usually on your mind when trying to sleep?",
       subType: "multiselect",
       options: [
-        { id: "academic", label: "Upcoming exams, assignments, or project deadlines" },
-        { id: "professional", label: "Work emails or planning next day's meetings/tasks" },
-        { id: "homeFamily", label: "Family logistics, chores, or well-being of others" },
-        { id: "general", label: "General worries, anxious or restless feelings" },
+        {
+          id: "academic",
+          label: "Upcoming exams, assignments, or project deadlines",
+        },
+        {
+          id: "professional",
+          label: "Work emails or planning next day's meetings/tasks",
+        },
+        {
+          id: "homeFamily",
+          label: "Family logistics, chores, or well-being of others",
+        },
+        {
+          id: "general",
+          label: "General worries, anxious or restless feelings",
+        },
       ],
       required: true,
     },
     {
       subKey: "mentalHealthDiagnosisSleep",
-      subTitle: "Do you have any diagnosed mental health condition (anxiety, depression, stress disorder)?",
+      subTitle:
+        "Do you have any diagnosed mental health condition (anxiety, depression, stress disorder)?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -2594,7 +2781,8 @@ const conditionalFollowUps = {
   "Not feeling tired (too much energy, late activity)": [
     {
       subKey: "caffeineBeforeBed",
-      subTitle: "Do you drink tea/coffee/energy drinks within 4 hrs of bedtime?",
+      subTitle:
+        "Do you drink tea/coffee/energy drinks within 4 hrs of bedtime?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -2609,7 +2797,7 @@ const conditionalFollowUps = {
   ],
 
   // ========== WAKING UP FREQUENTLY BRANCHES ==========
-  
+
   "Need to use the bathroom": [
     {
       subKey: "bathroomFrequency",
@@ -2620,7 +2808,8 @@ const conditionalFollowUps = {
     },
     {
       subKey: "bathroomConditions",
-      subTitle: "Do you have diabetes, prostate issues, or kidney/liver problems?",
+      subTitle:
+        "Do you have diabetes, prostate issues, or kidney/liver problems?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -2647,7 +2836,8 @@ const conditionalFollowUps = {
   "Noise or a partner's movement": [
     {
       subKey: "noiseSource",
-      subTitle: "Is it outside noise (traffic, dogs, neighbors) or inside (partner snoring, movement)?",
+      subTitle:
+        "Is it outside noise (traffic, dogs, neighbors) or inside (partner snoring, movement)?",
       subType: "radio",
       options: ["Outside noise", "Inside/partner noise"],
       required: true,
@@ -2665,7 +2855,7 @@ const conditionalFollowUps = {
   ],
 
   // ========== EARLY WAKING BRANCHES ==========
-  
+
   "Worrying about things I can't control (family, work, future)": [
     {
       subKey: "worryDuration",
@@ -2704,7 +2894,7 @@ const conditionalFollowUps = {
   ],
 
   // ========== UNREFRESHED FEELING BRANCHES ==========
-  
+
   "Crash mid-day": [
     {
       subKey: "napFrequency",
@@ -2736,45 +2926,49 @@ const conditionalFollowUps = {
   ],
 
   // ========== IRREGULAR SCHEDULE BRANCHES ==========
-  
+
   "Necessary late work/studying or early duties": [
     {
       subKey: "lateCaffeine",
-      subTitle: "On a late study/work night, are you usually consuming caffeinated drinks within 4 hours of sleep?",
+      subTitle:
+        "On a late study/work night, are you usually consuming caffeinated drinks within 4 hours of sleep?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
     },
     {
       subKey: "shiftWork",
-      subTitle: "Does your work require you to be awake at different hours more than twice a week?",
+      subTitle:
+        "Does your work require you to be awake at different hours more than twice a week?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
     },
   ],
 
-  "Social activities, chats or calls with friends or partner, late-night movies, or gaming": [
-    {
-      subKey: "eveningAlcohol",
-      subTitle: "Do you drink alcohol at night?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    },
-    {
-      subKey: "eveningScreenUse",
-      subTitle: "Do you use your phone/TV/games until bedtime?",
-      subType: "radio",
-      options: ["Yes", "No"],
-      required: true,
-    },
-  ],
+  "Social activities, chats or calls with friends or partner, late-night movies, or gaming":
+    [
+      {
+        subKey: "eveningAlcohol",
+        subTitle: "Do you drink alcohol at night?",
+        subType: "radio",
+        options: ["Yes", "No"],
+        required: true,
+      },
+      {
+        subKey: "eveningScreenUse",
+        subTitle: "Do you use your phone/TV/games until bedtime?",
+        subType: "radio",
+        options: ["Yes", "No"],
+        required: true,
+      },
+    ],
 
   "I have no fixed schedule/routine": [
     {
       subKey: "lateBedtimeFrequency",
-      subTitle: "Do you go to sleep later than midnight at least 3 times per week?",
+      subTitle:
+        "Do you go to sleep later than midnight at least 3 times per week?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -2782,12 +2976,13 @@ const conditionalFollowUps = {
   ],
 
   // ========== NESTED FOLLOW-UPS ==========
-  
+
   // Mental health diagnosis follow-up for racing thoughts
-  "mentalHealthDiagnosisSleep_Yes": [
+  mentalHealthDiagnosisSleep_Yes: [
     {
       subKey: "sleepMedication",
-      subTitle: "Are you on any sleep-related medication (sleeping pills, anti-anxiety, antidepressants)?",
+      subTitle:
+        "Are you on any sleep-related medication (sleeping pills, anti-anxiety, antidepressants)?",
       subType: "radio",
       options: ["Yes", "No"],
       required: true,
@@ -2795,19 +2990,21 @@ const conditionalFollowUps = {
   ],
 
   // Sleep medication follow-up
-  "sleepMedication_Yes": [
+  sleepMedication_Yes: [
     {
       subKey: "sleepMedicationDetails",
       subTitle: "Please provide details for your sleep-related medication:",
       subType: "medications",
       required: true,
-      defaultData: [{ id: 1, name: "", routine: "Night", dose: "", duration: "" }],
+      defaultData: [
+        { id: 1, name: "", routine: "Night", dose: "", duration: "" },
+      ],
       routineOptions: ["Morning", "Noon", "Evening", "Night", "As Needed"],
     },
   ],
 
   // Physical discomfort type follow-ups
-  "Pain": [
+  Pain: [
     {
       subKey: "painType",
       subTitle: "What type of pain?",
@@ -2818,7 +3015,7 @@ const conditionalFollowUps = {
   ],
 
   // Bathroom conditions follow-up
-  "bathroomConditions_Yes": [
+  bathroomConditions_Yes: [
     {
       subKey: "diureticMedication",
       subTitle: "Do you take diuretic tablets?",
@@ -2840,7 +3037,7 @@ const conditionalFollowUps = {
   ],
 
   // Nap duration follow-up
-  "napFrequency_Yes": [
+  napFrequency_Yes: [
     {
       subKey: "napDuration",
       subTitle: "Nap duration?",
@@ -2851,7 +3048,7 @@ const conditionalFollowUps = {
   ],
 
   // Morning routine follow-up
-  "morningPhoneUse_No": [
+  morningPhoneUse_No: [
     {
       subKey: "morningSunlight",
       subTitle: "Do you get sunlight within 1 hr of waking?",
@@ -2873,7 +3070,7 @@ const conditionalFollowUps = {
   ],
 
   // Alcohol quantity follow-up
-  "eveningAlcohol_Yes": [
+  eveningAlcohol_Yes: [
     {
       subKey: "alcoholQuantity",
       subTitle: "How many drinks?",

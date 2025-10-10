@@ -239,16 +239,22 @@ export default function Questionnaire() {
         const selectedConditions = baseConditionalAnswer || {};
 
         Object.keys(selectedConditions).forEach((conditionId) => {
-          
           let lookupKey = conditionId;
 
           // Apply 'mh_' prefix for non-mental health conditions for consistent lookup
           if (
-              ["heartDisease", "diabetes", "respiratoryDisease", "cancer", "oralHealth", "otherCondition"].includes(conditionId)
+            [
+              "heartDisease",
+              "diabetes",
+              "respiratoryDisease",
+              "cancer",
+              "oralHealth",
+              "otherCondition",
+            ].includes(conditionId)
           ) {
-              lookupKey = `mh_${conditionId}`;
+            lookupKey = `mh_${conditionId}`;
           }
-          
+
           if (
             selectedConditions[conditionId] &&
             conditionalFollowUps[lookupKey]
@@ -419,7 +425,9 @@ export default function Questionnaire() {
           conditionalFollowUps[activityLevel]
         ) {
           console.log("Adding initial barriers question");
-          physicalActivityFollowUps.push(...conditionalFollowUps[activityLevel]);
+          physicalActivityFollowUps.push(
+            ...conditionalFollowUps[activityLevel]
+          );
         }
 
         // Q1c: Add satisfaction if needed (triggered by exerciseIntensity)
@@ -432,7 +440,9 @@ export default function Questionnaire() {
           conditionalFollowUps[activityLevel]
         ) {
           console.log("Adding initial satisfaction question");
-          physicalActivityFollowUps.push(...conditionalFollowUps[activityLevel]);
+          physicalActivityFollowUps.push(
+            ...conditionalFollowUps[activityLevel]
+          );
         }
 
         // Handle barrier-specific follow-ups (nested after Q1b)
@@ -472,7 +482,8 @@ export default function Questionnaire() {
               ...conditionalFollowUps[followUpAnswers.maintenanceDirection]
             );
           } else if (
-            followUpAnswers.satisfaction === "No, I feel stuck / not improving" &&
+            followUpAnswers.satisfaction ===
+              "No, I feel stuck / not improving" &&
             conditionalFollowUps[followUpAnswers.satisfaction]
           ) {
             physicalActivityFollowUps.push(
@@ -494,10 +505,9 @@ export default function Questionnaire() {
         baseConditionalKey === "hasMedicalConditions" &&
         baseConditionalAnswer === "Yes"
       ) {
-        if (conditionalFollowUps[baseConditionalAnswer]) {
-          physicalActivityFollowUps.push(
-            ...conditionalFollowUps[baseConditionalAnswer]
-          );
+        const uniqueKey = "PA_hasMedicalConditions_Yes";
+        if (conditionalFollowUps[uniqueKey]) {
+          physicalActivityFollowUps.push(...conditionalFollowUps[uniqueKey]);
         }
 
         // Handle condition-specific follow-ups
@@ -533,7 +543,10 @@ export default function Questionnaire() {
         }
       }
 
-      console.log("Final physical activity follow-ups:", physicalActivityFollowUps);
+      console.log(
+        "Final physical activity follow-ups:",
+        physicalActivityFollowUps
+      );
       setPhysicalActivityQuestions(physicalActivityFollowUps);
     }
   }, [
@@ -694,9 +707,10 @@ export default function Questionnaire() {
 
         if (baseConditionalAnswer === "Yes") {
           // Add the sleep treatments question
-          if (conditionalFollowUps[baseConditionalAnswer]) {
-            sleepFollowUps.push(...conditionalFollowUps[baseConditionalAnswer]);
-            console.log("Added sleep treatments question");
+          const uniqueKey = "Sleep_hasDiagnosis_Yes"; // Use the new unique key
+          if (conditionalFollowUps[uniqueKey]) {
+            sleepFollowUps.push(...conditionalFollowUps[uniqueKey]);
+            // ...
           }
 
           // Handle treatment type follow-ups if treatments are already selected
@@ -979,24 +993,42 @@ export default function Questionnaire() {
             isHealthAreaFollowUp &&
             (!followUpAnswers.healthAreasAffected ||
               !Object.keys(followUpAnswers.healthAreasAffected).includes(
-                q.subKey.replace(/Diagnosis|Avoidance|ConditionLink|Clearance|Issues|Worsening|Concern|Impact|Guidance|Details/g, '')
+                q.subKey.replace(
+                  /Diagnosis|Avoidance|ConditionLink|Clearance|Issues|Worsening|Concern|Impact|Guidance|Details/g,
+                  ""
+                )
               )) // Simplified check for parent area
           ) {
             // Check if the parent area that triggers this specific sub-key is actually selected
-            const parentKey = q.subKey.replace(/Diagnosis|Avoidance|ConditionLink|Clearance|Issues|Worsening|Concern|Impact|Guidance|Details/g, '');
+            const parentKey = q.subKey.replace(
+              /Diagnosis|Avoidance|ConditionLink|Clearance|Issues|Worsening|Concern|Impact|Guidance|Details/g,
+              ""
+            );
             if (
-              q.subKey === "liverDiagnosis" && !followUpAnswers.healthAreasAffected?.liver ||
-              q.subKey === "alcoholAvoidance" && !followUpAnswers.healthAreasAffected?.liver ||
-              q.subKey === "heartConditionLink" && !followUpAnswers.healthAreasAffected?.heartBP ||
-              q.subKey === "medicalClearance" && !followUpAnswers.healthAreasAffected?.heartBP ||
-              q.subKey === "digestiveIssues" && !followUpAnswers.healthAreasAffected?.digestion ||
-              q.subKey === "symptomWorsening" && !followUpAnswers.healthAreasAffected?.digestion ||
-              q.subKey === "weightConcern" && !followUpAnswers.healthAreasAffected?.weight ||
-              q.subKey === "brainMentalImpact" && !followUpAnswers.healthAreasAffected?.brainMental ||
-              q.subKey === "mentalHealthClearance" && !followUpAnswers.healthAreasAffected?.brainMental ||
-              q.subKey === "cancerAlcoholLink" && !followUpAnswers.healthAreasAffected?.cancer ||
-              q.subKey === "cancerAlcoholGuidance" && !followUpAnswers.healthAreasAffected?.cancer ||
-              q.subKey === "otherHealthDetails" && !followUpAnswers.healthAreasAffected?.otherHealth
+              (q.subKey === "liverDiagnosis" &&
+                !followUpAnswers.healthAreasAffected?.liver) ||
+              (q.subKey === "alcoholAvoidance" &&
+                !followUpAnswers.healthAreasAffected?.liver) ||
+              (q.subKey === "heartConditionLink" &&
+                !followUpAnswers.healthAreasAffected?.heartBP) ||
+              (q.subKey === "medicalClearance" &&
+                !followUpAnswers.healthAreasAffected?.heartBP) ||
+              (q.subKey === "digestiveIssues" &&
+                !followUpAnswers.healthAreasAffected?.digestion) ||
+              (q.subKey === "symptomWorsening" &&
+                !followUpAnswers.healthAreasAffected?.digestion) ||
+              (q.subKey === "weightConcern" &&
+                !followUpAnswers.healthAreasAffected?.weight) ||
+              (q.subKey === "brainMentalImpact" &&
+                !followUpAnswers.healthAreasAffected?.brainMental) ||
+              (q.subKey === "mentalHealthClearance" &&
+                !followUpAnswers.healthAreasAffected?.brainMental) ||
+              (q.subKey === "cancerAlcoholLink" &&
+                !followUpAnswers.healthAreasAffected?.cancer) ||
+              (q.subKey === "cancerAlcoholGuidance" &&
+                !followUpAnswers.healthAreasAffected?.cancer) ||
+              (q.subKey === "otherHealthDetails" &&
+                !followUpAnswers.healthAreasAffected?.otherHealth)
             ) {
               isSkippedByParent = true;
             }
@@ -1105,7 +1137,9 @@ export default function Questionnaire() {
 
           // 1. Mostly sitting goes directly to barriers (Q1b) ONLY
           if (activityLevel === "Mostly sitting (little or no exercise)") {
-            console.log("Mostly sitting - going directly to barriers (subStep 1)");
+            console.log(
+              "Mostly sitting - going directly to barriers (subStep 1)"
+            );
             setSubStep(1); // Go directly to barriers follow-ups
             return;
           }
@@ -1122,13 +1156,18 @@ export default function Questionnaire() {
         if (currentStepData.key === "exerciseIntensity") {
           const activityLevel = answers.activityLevel;
 
-          console.log("Reached end of Q1a questions, activity level:", activityLevel);
+          console.log(
+            "Reached end of Q1a questions, activity level:",
+            activityLevel
+          );
 
           // Light movement goes to barriers (Q1b) after Q1a
           if (
             activityLevel === "Light movement (walks, chores, light activity)"
           ) {
-            console.log("Light movement - showing barriers (subStep 1) after Q1a");
+            console.log(
+              "Light movement - showing barriers (subStep 1) after Q1a"
+            );
             setSubStep(1); // Show barriers follow-ups
             return;
           }
@@ -1139,12 +1178,14 @@ export default function Questionnaire() {
             activityLevel ===
               "Very active (exercise most days / vigorous workouts/sports)"
           ) {
-            console.log("Moderate/Very active - showing satisfaction (subStep 1) after Q1a");
+            console.log(
+              "Moderate/Very active - showing satisfaction (subStep 1) after Q1a"
+            );
             setSubStep(1); // Show satisfaction follow-ups
             return;
           }
         }
-        
+
         // [Rest of your existing branching logic for other goals...]
         // Special logic for healthConditionsMH (Mental Health)
         if (currentStepData.key === "healthConditionsMH") {
@@ -1331,34 +1372,50 @@ export default function Questionnaire() {
           const isSittingOrLightMovement =
             activityLevel === "Mostly sitting (little or no exercise)" ||
             activityLevel === "Light movement (walks, chores, light activity)";
-          
+
           // Check if we were in the barriers flow
           if (isSittingOrLightMovement) {
             // After barriers (Q1b), move to the next main question (Q2: hasMedicalConditions)
             // The step ID for Q2 is 12. We need to find the step after the one we are on.
-            const currentQuestionIndex = questions.findIndex(q => q.id === currentStepData.id);
-            const nextStep = questions.find((q, index) => index > currentQuestionIndex && q.key === 'hasMedicalConditions');
-            
+            const currentQuestionIndex = questions.findIndex(
+              (q) => q.id === currentStepData.id
+            );
+            const nextStep = questions.find(
+              (q, index) =>
+                index > currentQuestionIndex && q.key === "hasMedicalConditions"
+            );
+
             if (nextStep) {
-              console.log("Skipping to next main step (Q2: hasMedicalConditions)");
+              console.log(
+                "Skipping to next main step (Q2: hasMedicalConditions)"
+              );
               setCurrentStep(nextStep.id);
               setSubStep(0);
               return;
             }
           }
-          
+
           // Check if we were in the satisfaction flow
           const isModerateOrVeryActive =
-            activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
-            activityLevel === "Very active (exercise most days / vigorous workouts/sports)";
-            
+            activityLevel ===
+              "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" ||
+            activityLevel ===
+              "Very active (exercise most days / vigorous workouts/sports)";
+
           if (isModerateOrVeryActive) {
             // After satisfaction (Q1c), move to the next main question (Q2: hasMedicalConditions)
-            const currentQuestionIndex = questions.findIndex(q => q.id === currentStepData.id);
-            const nextStep = questions.find((q, index) => index > currentQuestionIndex && q.key === 'hasMedicalConditions');
+            const currentQuestionIndex = questions.findIndex(
+              (q) => q.id === currentStepData.id
+            );
+            const nextStep = questions.find(
+              (q, index) =>
+                index > currentQuestionIndex && q.key === "hasMedicalConditions"
+            );
 
             if (nextStep) {
-              console.log("Skipping to next main step (Q2: hasMedicalConditions)");
+              console.log(
+                "Skipping to next main step (Q2: hasMedicalConditions)"
+              );
               setCurrentStep(nextStep.id);
               setSubStep(0);
               return;
@@ -1477,11 +1534,23 @@ export default function Questionnaire() {
         }
         // Special Case: If 'doctorAdvice' is changed to 'No', clear health areas affected
         // AND if it changes to 'Yes', clear healthInfo
-        else if (
-          subKey === "doctorAdvice" &&
-          value === "No"
-        ) {
-          const { healthAreasAffected, liverDiagnosis, alcoholAvoidance, heartConditionLink, medicalClearance, digestiveIssues, symptomWorsening, weightConcern, brainMentalImpact, mentalHealthClearance, cancerAlcoholLink, cancerAlcoholGuidance, otherHealthDetails, ...restFollowUps } = prevAnswers.followUps || {};
+        else if (subKey === "doctorAdvice" && value === "No") {
+          const {
+            healthAreasAffected,
+            liverDiagnosis,
+            alcoholAvoidance,
+            heartConditionLink,
+            medicalClearance,
+            digestiveIssues,
+            symptomWorsening,
+            weightConcern,
+            brainMentalImpact,
+            mentalHealthClearance,
+            cancerAlcoholLink,
+            cancerAlcoholGuidance,
+            otherHealthDetails,
+            ...restFollowUps
+          } = prevAnswers.followUps || {};
           return {
             ...prevAnswers,
             followUps: {
@@ -1490,10 +1559,7 @@ export default function Questionnaire() {
               healthInfo: undefined, // Clear Q6b if it was set
             },
           };
-        } else if (
-          subKey === "doctorAdvice" &&
-          value === "Yes"
-        ) {
+        } else if (subKey === "doctorAdvice" && value === "Yes") {
           const { healthInfo, ...restFollowUps } = prevAnswers.followUps || {};
           return {
             ...prevAnswers,
@@ -1572,16 +1638,32 @@ export default function Questionnaire() {
           newSelections = { noIssues: !isCurrentlySelected };
           // If 'noIssues' is selected, clear other effects follow-ups to prevent validation errors on step change
           if (!isCurrentlySelected && currentKey === "drinkingEffects") {
-            const { sleepEnergy, focusProductivity, familyTension, healthImpact, ...restEffects } = newSelections;
+            const {
+              sleepEnergy,
+              focusProductivity,
+              familyTension,
+              healthImpact,
+              ...restEffects
+            } = newSelections;
             // Clear related follow-up answers when 'noIssues' is selected
-            const { sleepEnergyFrequency, sleepEnergyTips, focusAffectedAreas, focusStrategies, conflictTiming, conflictGuidance, doctorAdvice, healthRiskAssessment, ...restFollowUps } = prevAnswers.followUps || {};
+            const {
+              sleepEnergyFrequency,
+              sleepEnergyTips,
+              focusAffectedAreas,
+              focusStrategies,
+              conflictTiming,
+              conflictGuidance,
+              doctorAdvice,
+              healthRiskAssessment,
+              ...restFollowUps
+            } = prevAnswers.followUps || {};
             return {
-                ...prevAnswers,
-                [currentKey]: newSelections,
-                followUps: {
-                    ...restFollowUps,
-                }
-            }
+              ...prevAnswers,
+              [currentKey]: newSelections,
+              followUps: {
+                ...restFollowUps,
+              },
+            };
           }
         } else if (key === "noneMH") {
           // If 'noneMH' is selected (for mental health), clear all others and toggle 'noneMH'
@@ -1597,7 +1679,7 @@ export default function Questionnaire() {
 
           // If a non-special option is selected for drinkingEffects, deselect 'noIssues'
           if (currentKey === "drinkingEffects" && newSelections[key]) {
-              newSelections.noIssues = false;
+            newSelections.noIssues = false;
           }
 
           // Re-check: if no other options are selected, automatically check 'none' or 'nothing' or 'noIssues' or 'noneMH' or 'noneFeelings'
@@ -2299,7 +2381,9 @@ export default function Questionnaire() {
               cancer: ["cancerAlcoholLink", "cancerAlcoholGuidance"],
               otherHealth: ["otherHealthDetails"],
             };
-            const parentArea = Object.keys(parentKeyMap).find(key => parentKeyMap[key].includes(q.subKey));
+            const parentArea = Object.keys(parentKeyMap).find((key) =>
+              parentKeyMap[key].includes(q.subKey)
+            );
 
             // Skip if doctorAdvice is not Yes OR the parent area wasn't selected in healthAreasAffected
             if (
