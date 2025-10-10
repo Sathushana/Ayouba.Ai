@@ -1113,7 +1113,7 @@ export default function Questionnaire() {
     }
   };
 
-  // UPDATED HANDLE NEXT FUNCTION WITH PROPER PHYSICAL ACTIVITY FLOW
+  // UPDATED HANDLE NEXT FUNCTION WITH PROPER PHYSICAL ACTIVITY FLOWs
   const handleNext = () => {
     console.log("HandleNext called:", {
       currentStep,
