@@ -1,10 +1,17 @@
 "use client";
 import React from "react";
+const PRIMARY_COLOR_HEX = "#C263F2"; 
+const SECONDARY_COLOR_HOVER_HEX = "#E6E6FA";
+const PRIMARY_COLOR_HOVER_DARKER_HEX = "#A44DE2"; 
+
 
 export default function DoctorVideoClips() {
   const APP_NAME = "Ayubo.AI";
-  const PRIMARY_COLOR_TEXT = "text-[#e72638]";
+  const PRIMARY_COLOR_TEXT = `text-[${PRIMARY_COLOR_HEX}]`;
   const ACCENT_BG = "bg-gray-100";
+  const PRIMARY_COLOR_BORDER = `border-[${PRIMARY_COLOR_HEX}]`;
+  const PRIMARY_COLOR_HOVER_BG = `hover:bg-[${PRIMARY_COLOR_HEX}]`;
+  const PRIMARY_COLOR_HOVER_BORDER_DARK = `hover:border-[${PRIMARY_COLOR_HOVER_DARKER_HEX}]`;
 
   const doctorClips = [
     {
@@ -31,10 +38,13 @@ export default function DoctorVideoClips() {
     <div className="aspect-video w-full rounded-xl shadow-2xl overflow-hidden relative bg-black">
       <video
         className="w-full h-full object-cover"
+        autoPlay
+        loop
+        playsInline
         controls
         preload="metadata"
         muted
-        poster="https://placehold.co/640x360/e72638/ffffff?text=Click+to+Play"
+        poster={`https://placehold.co/640x360/${PRIMARY_COLOR_HEX.slice(1)}/ffffff?text=Click+to+Play`}
         onError={(e) =>
           console.error(
             `Video failed to load for ${name}. Check path: ${videoUrl}`,
@@ -51,8 +61,7 @@ export default function DoctorVideoClips() {
   return (
     <section id="doctor-clips" className={`w-full py-16 md:py-24 ${ACCENT_BG}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 space-y-12">
-        {/* Section Title */}
-        <div className="text-center space-y-4">
+          <div className="text-center space-y-4">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
             Trusted by Health Leaders
           </h2>
@@ -62,7 +71,7 @@ export default function DoctorVideoClips() {
           </p>
         </div>
 
-        {/* Video Clips Grid */}
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
           {doctorClips.map((clip, index) => (
             <div
@@ -71,7 +80,7 @@ export default function DoctorVideoClips() {
             >
               <VideoEmbed videoUrl={clip.videoUrl} name={clip.name} />
 
-              <div className="w-full p-6 bg-white rounded-xl shadow-lg border-t-4 border-[#e72638] transform hover:scale-[1.02] transition duration-300">
+              <div className={`w-full p-6 bg-white rounded-xl shadow-lg border-t-4 border-[${PRIMARY_COLOR_HEX}] transform hover:scale-[1.02] transition duration-300`}>
                 <blockquote className="text-gray-700 italic mb-3 text-base">
                   &quot;{clip.quote}&quot;
                 </blockquote>
@@ -82,11 +91,11 @@ export default function DoctorVideoClips() {
           ))}
         </div>
 
-        {/* CTA */}
+        
         <div className="text-center pt-8">
           <a
             href="/about"
-            className="border-[#e72638] text-[#e72638] px-8 py-3 rounded-xl font-semibold hover:bg-[#e72638] hover:text-white transition border-2 hover:border-[#c71f40] shadow-md"
+            className={`${PRIMARY_COLOR_BORDER} ${PRIMARY_COLOR_TEXT} px-8 py-3 rounded-xl font-semibold ${PRIMARY_COLOR_HOVER_BG} hover:text-white transition border-2 ${PRIMARY_COLOR_HOVER_BORDER_DARK} shadow-md`}
           >
             Learn More
           </a>

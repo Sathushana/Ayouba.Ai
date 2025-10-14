@@ -1,10 +1,13 @@
 "use client";
 import React from "react";
+const PRIMARY_COLOR_HEX = "#C263F2";
+const SECONDARY_COLOR_HOVER_HEX = "#E6E6FA"; 
+
 
 export default function About() {
   const APP_NAME = "Ayubo.AI";
-  const PRIMARY_COLOR = "text-[#e72638]";
-  const ACCENT_BG = "bg-[#e0e4ef]";
+  const PRIMARY_COLOR = `text-[${PRIMARY_COLOR_HEX}]`;
+  const ACCENT_BG = "bg-[#e0e4ef]"; 
 
   return (
     <section
@@ -12,7 +15,6 @@ export default function About() {
       className="w-full py-16 md:py-24 bg-white pt-20 md:pt-24"
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-16">
-        {/* Section 1: Mission and Core Philosophy */}
         <div className="text-center space-y-4">
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">
             Our Mission: Wellness Made{" "}
@@ -25,7 +27,6 @@ export default function About() {
           </p>
         </div>
 
-        {/* Section 2: Scientific Foundation */}
         <div
           className={`p-8 md:p-12 rounded-2xl shadow-xl ${ACCENT_BG} space-y-8`}
         >
@@ -38,7 +39,7 @@ export default function About() {
             to provide AI-powered, contextual support.
           </p>
 
-          {/* Info Grid */}
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex flex-col justify-start p-4 bg-white rounded-xl shadow-md">
               <span className="font-semibold text-lg text-black">
@@ -72,14 +73,19 @@ export default function About() {
           </div>
         </div>
 
-        {/* Section 3: Call to Action */}
         <div className="text-center pt-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
             Ready to live well and smile more?
           </h3>
           <a
             href="/try"
-            className="bg-[#e72638] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#c71f40] transition shadow-lg"
+            style={{
+              backgroundColor: PRIMARY_COLOR_HEX,
+              color: "white",
+              border: `2px solid ${PRIMARY_COLOR_HEX}`,
+              transition: "all 0.3s ease",
+            }}
+            className={`px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-[${PRIMARY_COLOR_HEX}] hover:border-[${PRIMARY_COLOR_HEX}] transition shadow-lg`}
           >
             Try Ayubo
           </a>

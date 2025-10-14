@@ -1,9 +1,12 @@
 "use client";
 import React from "react";
+const PRIMARY_COLOR_HEX = "#C263F2"; 
+const PRIMARY_COLOR_DARKER_HEX = "#A326E7"; 
+
 
 export default function Contact() {
-  const PRIMARY_COLOR_BG = "bg-[#e72638]";
-  const PRIMARY_COLOR_TEXT = "text-[#e72638]";
+  const PRIMARY_COLOR_BG = `bg-[${PRIMARY_COLOR_HEX}]`;
+  const PRIMARY_COLOR_TEXT = `text-[${PRIMARY_COLOR_HEX}]`;
 
   return (
     <section
@@ -22,7 +25,7 @@ export default function Contact() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10">
-          {/* Contact Form */}
+          
           <div className="lg:w-2/3 p-8 bg-white rounded-2xl shadow-xl">
             <form className="space-y-6">
               <div>
@@ -36,7 +39,7 @@ export default function Contact() {
                   type="text"
                   id="name"
                   name="name"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#e72638] focus:border-[#e72638] transition text-black"
+                  className={`w-full p-3 border border-gray-300 rounded-lg focus:ring-[${PRIMARY_COLOR_DARKER_HEX}] focus:border-[${PRIMARY_COLOR_DARKER_HEX}] transition text-black`}
                   placeholder="Your Full Name"
                 />
               </div>
@@ -52,7 +55,8 @@ export default function Contact() {
                   type="email"
                   id="email"
                   name="email"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#e72638] focus:border-[#e72638] transition text-black"
+                  
+                  className={`w-full p-3 border border-gray-300 rounded-lg focus:ring-[${PRIMARY_COLOR_DARKER_HEX}] focus:border-[${PRIMARY_COLOR_DARKER_HEX}] transition text-black`}
                   placeholder="name@example.com"
                 />
               </div>
@@ -68,21 +72,29 @@ export default function Contact() {
                   id="message"
                   name="message"
                   rows="4"
+                  
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#e72638] focus:border-[#e72638] transition text-black"
                   placeholder="How can we help?"
                 ></textarea>
               </div>
 
+              
               <button
                 type="submit"
-                className={`w-full py-3 rounded-xl font-semibold text-white ${PRIMARY_COLOR_BG} hover:bg-[#c71f40] transition shadow-md`}
+                style={{
+                  backgroundColor: PRIMARY_COLOR_HEX,
+                  color: "white",
+                  border: `2px solid ${PRIMARY_COLOR_HEX}`,
+                  transition: "all 0.3s ease",
+                }}
+                className={`w-full py-3 rounded-xl font-semibold hover:bg-white hover:text-[${PRIMARY_COLOR_HEX}] hover:border-[${PRIMARY_COLOR_HEX}] transition shadow-md`}
               >
                 Send Message
               </button>
             </form>
           </div>
 
-          {/* Contact Details */}
+          
           <div className="lg:w-1/3 p-6 space-y-6 bg-white rounded-2xl shadow-xl">
             <h3 className="text-xl font-bold text-gray-900">Details</h3>
 
