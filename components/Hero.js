@@ -7,9 +7,11 @@ const SECONDARY_COLOR_HEX = "#E6E6FA";
 
 
 export default function Hero() {
+  const PATTERN_SVG_URL = `url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f0f0f0' fill-opacity='0.5' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E")`;
+
   return (
     <>
-      <section id="hero" className="w-full bg-white pt-20">
+      <section id="hero" className="w-full bg-white pt-20 py-12 md:py-16">
         <div className="flex flex-col md:flex-row max-w-7xl mx-auto relative px-4 md:px-0">
           <div
             className="md:flex-2 w-full h-[250px] md:h-[600px] bg-[#e0e4ef] bg-no-repeat bg-cover relative"
@@ -66,7 +68,7 @@ export default function Hero() {
       </section>
 
       {/* Section 2 */}
-      <section id="section2" className="w-full py-10 md:py-16 bg-white">
+      {/* <section id="section2" className="w-full py-10 md:py-16 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col items-center space-y-10 md:space-y-16 px-4 md:px-0">
           <div className="w-full flex flex-col md:flex-row gap-8">
             <div className="md:flex-1 flex flex-col justify-center px-4 md:px-0 py-4 bg-white">
@@ -130,7 +132,7 @@ export default function Hero() {
             />
           </div>
         </div>
-      </section>
+      </section> */}
 
       
       <section id="how-it-works" className="w-full py-16 bg-gray-100">
@@ -170,48 +172,49 @@ export default function Hero() {
           </div>
         </div>
       </section>
-
-      
-      <section id="build-life" className="w-full py-12 md:py-16 bg-white">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 px-4 md:px-8">
-          <div className="w-full md:w-2/5 flex justify-center">
-            <img
-              src="/hero_img_51.png"
-              alt="Build a happy life with LifeShift"
-              className="rounded-2xl shadow-lg w-full max-w-xs md:max-w-md"
-            />
-          </div>
-
-          <div className="w-full md:w-3/5 text-center md:text-left space-y-4 md:space-y-6">
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
+            <section 
+        id="build-life" 
+        className="w-full py-16 md:py-20 bg-white relative overflow-hidden"
+        style={{ backgroundImage: PATTERN_SVG_URL }} 
+      >
+        <div className="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center gap-10 px-4 md:px-8 relative z-10">
+          <div className="w-full md:w-3/5 text-center md:text-left space-y-5">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">
               Build Your Happier, Healthier Life{" "}
               <span style={{ color: PRIMARY_COLOR_HEX }}>with Lifeshift</span>{" "}
-              
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              Your personal AI lifestyle coach helps you set goals, stay
-              motivated, and celebrate milestones — one small change at a time.
+              Your AI coach helps you set achievable goals, keeps you motivated through fun challenges, and celebrates every milestone. Start your journey of sustainable change today.
             </p>
 
-            <div className="flex justify-center md:justify-start">
+            <div className="flex justify-center md:justify-start pt-4">
               
               <a
                 href="/try"
                 style={{
                   backgroundColor: PRIMARY_COLOR_HEX,
                   color: "white",
-                  border: `2px solid ${PRIMARY_COLOR_HEX}`,
-                  transition: "all 0.3s ease",
                 }}
                 
-                className={`px-6 py-3 rounded-xl font-semibold hover:bg-[${SECONDARY_COLOR_HEX}] hover:text-[${PRIMARY_COLOR_HEX}] hover:border-[${PRIMARY_COLOR_HEX}]`}
+                className={`px-8 py-3 rounded-xl font-bold transition duration-300 shadow-lg hover:shadow-xl hover:bg-opacity-90 active:scale-95`}
               >
-                Try Lifeshift
+                Join the Movement
               </a>
             </div>
           </div>
+          
+          <div className="w-full md:w-2/5 flex justify-center">
+            <img
+              src="/hero_img_51.png"
+              alt="Build a happy life with LifeShift"
+              className="rounded-3xl shadow-2xl w-full max-w-xs md:max-w-md transition duration-500 hover:scale-[1.02]"
+            />
+          </div>
         </div>
       </section>
+
+      
+      
     </>
   );
 }
