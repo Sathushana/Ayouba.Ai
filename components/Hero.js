@@ -95,7 +95,7 @@ export default function Hero() {
 
             <div className="md:flex-1 w-full flex h-64 md:h-auto">
               <img
-                src="/hero_img.png"
+                src="/logo.jpg"
                 alt="Hero"
                 className="w-full h-full object-contain"
               />

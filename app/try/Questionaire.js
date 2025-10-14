@@ -35,7 +35,7 @@ const BRANCHING_KEYS = {
   sleepDisorderDiagnosis: "Sleep",
 };
 
-const APP_NAME = "Ayubo";
+const APP_NAME = "Lifeshift";
 
 export default function Questionnaire() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -1786,7 +1786,7 @@ export default function Questionnaire() {
             key={option}
             className={`flex items-center p-4 rounded-xl cursor-pointer border-2 transition ${
               currentAnswer === option
-                ? "bg-[#e0e4ef] border-[#e72638] shadow-md"
+                ? "bg-[#e0e4ef] border-[#C263F2] shadow-md"
                 : "bg-white border-gray-200 hover:bg-gray-50"
             }`}
             onClick={() => handleInputChange(option, option, subKey, "radio")}
@@ -1794,7 +1794,7 @@ export default function Questionnaire() {
             <div
               className={`w-5 h-5 rounded-full border-2 mr-4 flex items-center justify-center transition ${
                 currentAnswer === option
-                  ? "bg-[#e72638] border-[#e72638]"
+                  ? "bg-[#C263F2] border-[#C263F2]"
                   : "bg-white border-gray-400"
               }`}
             >
@@ -1850,7 +1850,7 @@ export default function Questionnaire() {
                     key={option.id}
                     className={`flex items-center justify-between p-4 rounded-xl cursor-pointer border-2 transition ${
                       isSelected
-                        ? "bg-[#e0e4ef] border-[#e72638] shadow-md"
+                        ? "bg-[#e0e4ef] border-[#C263F2] shadow-md"
                         : "bg-white border-gray-200 hover:bg-gray-50"
                     }`}
                     onClick={() =>
@@ -1873,7 +1873,7 @@ export default function Questionnaire() {
                     <div
                       className={`w-5 h-5 rounded border-2 flex items-center justify-center transition ${
                         isSelected
-                          ? "bg-[#e72638] border-[#e72638]"
+                          ? "bg-[#C263F2] border-[#C263F2]"
                           : "bg-white border-gray-400"
                       }`}
                     >
@@ -1965,7 +1965,7 @@ export default function Questionnaire() {
                 key={option}
                 className={`flex-1 flex items-center p-3 rounded-xl cursor-pointer border-2 transition ${
                   unitSystem === option
-                    ? "bg-[#e0e4ef] border-[#e72638] shadow-md"
+                    ? "bg-[#e0e4ef] border-[#C263F2] shadow-md"
                     : "bg-white border-gray-200 hover:bg-gray-50"
                 }`}
                 onClick={() => handleUnitSelect(option)}
@@ -1973,7 +1973,7 @@ export default function Questionnaire() {
                 <div
                   className={`w-4 h-4 rounded-full border-2 mr-2 flex items-center justify-center transition ${
                     unitSystem === option
-                      ? "bg-[#e72638] border-[#e72638]"
+                      ? "bg-[#C263F2] border-[#C263F2]"
                       : "bg-white border-gray-400"
                   }`}
                 >
@@ -2005,7 +2005,7 @@ export default function Questionnaire() {
                   handleMeasurementInput("height", e.target.value)
                 }
                 placeholder="e.g., 170"
-                className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition ml-2 text-black"
+                className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition ml-2 text-black"
                 min="1"
               />
             </div>
@@ -2024,7 +2024,7 @@ export default function Questionnaire() {
                   handleMeasurementInput("weight", e.target.value)
                 }
                 placeholder="e.g., 65"
-                className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition ml-2 text-black"
+                className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition ml-2 text-black"
                 min="1"
               />
             </div>
@@ -2048,7 +2048,7 @@ export default function Questionnaire() {
                     handleMeasurementInput("heightFt", e.target.value)
                   }
                   placeholder="Feet (e.g., 5)"
-                  className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+                  className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
                   min="1"
                 />
                 <input
@@ -2058,7 +2058,7 @@ export default function Questionnaire() {
                     handleMeasurementInput("heightIn", e.target.value)
                   }
                   placeholder="Inches (e.g., 8)"
-                  className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+                  className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
                   min="0"
                   max="11"
                 />
@@ -2081,7 +2081,7 @@ export default function Questionnaire() {
                   handleMeasurementInput("weight", e.target.value)
                 }
                 placeholder="e.g., 143"
-                className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition sm:ml-2 text-black"
+                className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition sm:ml-2 text-black"
                 min="1"
               />
             </div>
@@ -2116,7 +2116,7 @@ export default function Questionnaire() {
               type="time"
               value={bedtime}
               onChange={(e) => handleScheduleInput("bedtime", e.target.value)}
-              className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+              className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
               required
             />
           </div>
@@ -2129,7 +2129,7 @@ export default function Questionnaire() {
               type="time"
               value={waketime}
               onChange={(e) => handleScheduleInput("waketime", e.target.value)}
-              className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+              className="flex-1 p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
               required
             />
           </div>
@@ -2201,7 +2201,7 @@ export default function Questionnaire() {
                   )
                 }
                 placeholder="Medicine Name"
-                className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#C263F2] focus:ring-0 text-black"
                 required
               />
 
@@ -2218,7 +2218,7 @@ export default function Questionnaire() {
                       index
                     )
                   }
-                  className="p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                  className="p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#C263F2] focus:ring-0 text-black"
                   required
                 >
                   {q.routineOptions.map((opt) => (
@@ -2242,7 +2242,7 @@ export default function Questionnaire() {
                     )
                   }
                   placeholder="Dose (e.g., 50mg)"
-                  className="p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                  className="p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#C263F2] focus:ring-0 text-black"
                   required
                 />
               </div>
@@ -2261,7 +2261,7 @@ export default function Questionnaire() {
                   )
                 }
                 placeholder="Duration (e.g., 6 months, ongoing)"
-                className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#C263F2] focus:ring-0 text-black"
               />
 
               {/* Side Effects */}
@@ -2278,7 +2278,7 @@ export default function Questionnaire() {
                   )
                 }
                 placeholder="Side effects (if any)"
-                className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#e72638] focus:ring-0 text-black"
+                className="w-full p-3 border-2 border-gray-300 rounded-lg text-sm focus:border-[#C263F2] focus:ring-0 text-black"
               />
             </div>
           </div>
@@ -2423,7 +2423,7 @@ export default function Questionnaire() {
             <div key={q.subKey} className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800">
                 {q.subTitle}
-                {q.required && <span className="text-[#e72638] ml-1">*</span>}
+                {q.required && <span className="text-[#C263F2] ml-1">*</span>}
               </h3>
               {q.subType === "radio" &&
                 renderRadioButtons(q.options, answerValue, q.subKey)}
@@ -2443,7 +2443,7 @@ export default function Questionnaire() {
                     )
                   }
                   placeholder={q.placeholder}
-                  className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+                  className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
                 />
               )}
               {/* NEW CUSTOM TYPE RENDERER */}
@@ -2491,7 +2491,7 @@ export default function Questionnaire() {
               handleInputChange(currentStepData.key, e.target.value)
             }
             placeholder={currentStepData.placeholder}
-            className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+            className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
           />
         );
       case "number":
@@ -2506,7 +2506,7 @@ export default function Questionnaire() {
               )
             }
             placeholder={currentStepData.placeholder}
-            className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#e72638] focus:ring-0 transition text-black"
+            className="w-full max-w-lg p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
             min="1"
             max="120"
           />
@@ -2582,15 +2582,15 @@ export default function Questionnaire() {
             onClick={() => router.push("/")}
             className="flex items-center gap-2 px-2 py-2 rounded-lg border border-gray-300 
              bg-white text-gray-900 font-medium shadow-sm 
-             hover:bg-[#e72638] hover:text-white hover:border-[#e72638] 
+             hover:bg-[#C263F2] hover:text-white hover:border-[#C263F2] 
              transition-colors duration-200 mr-10"
           >
             ← Back
           </button>
-          <div className="text-xl font-bold text-[#e72638]">{APP_NAME}</div>
+          <div className="text-xl font-bold text-[#C263F2]">{APP_NAME}</div>
           <div className="flex-1 mx-4 h-2 bg-gray-200 rounded-full">
             <div
-              className="h-2 bg-[#e72638] rounded-full transition-all duration-500"
+              className="h-2 bg-[#C263F2] rounded-full transition-all duration-500"
               style={{ width: `${calculateProgress()}%` }}
             ></div>
           </div>
@@ -2598,7 +2598,7 @@ export default function Questionnaire() {
           {!isFinalScreen ? (
             <button
               onClick={handleNext}
-              className="text-gray-500 hover:text-[#e72638] font-medium"
+              className="text-gray-500 hover:text-[#C263F2] font-medium"
               disabled={
                 currentStepData?.required &&
                 !isStepValid() &&
@@ -2628,8 +2628,7 @@ export default function Questionnaire() {
           </p>
         </div>
 
-        {/* Step-specific Input/Options */}
-        {renderStepContent()}
+        <div className="w-full max-w-lg px-2">{renderStepContent()}</div>
 
         {/* Navigation Buttons */}
         <div className="mt-10 flex gap-4 w-full max-w-lg">
@@ -2637,7 +2636,7 @@ export default function Questionnaire() {
           {(currentStep > 1 || subStep === 1) && (
             <button
               onClick={handleBack}
-              className="flex-1 py-3 rounded-xl font-semibold border-2 border-[#e72638] text-[#e72638] bg-white hover:bg-[#e72638] hover:text-white transition"
+              className="flex-1 py-3 rounded-xl font-semibold border-2 border-[#C263F2] text-[#C263F2] bg-white hover:bg-[#C263F2] hover:text-white transition"
             >
               Back
             </button>
@@ -2648,7 +2647,7 @@ export default function Questionnaire() {
             className={`flex-1 py-3 rounded-xl font-semibold transition ${
               currentStepData?.required && !isStepValid()
                 ? "bg-gray-400 text-white cursor-not-allowed"
-                : "bg-[#e72638] text-white hover:bg-[#c71f40]"
+                : "bg-[#C263F2] text-white hover:bg-[#ffffff] hover:text-black hover:border-[#C263F2] border-2"
             }`}
           >
             {getButtonText()}
