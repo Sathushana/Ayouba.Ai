@@ -1316,33 +1316,37 @@ const substanceQuantityFollowUps = {
   otherDrugs: "otherDrugs_quantity",
 };
 
-const getQuestions = (primaryGoals = [], currentAnswers = {}, age = 0, sex = "") => {
-  let allQuestions = [...baseQuestions];
-  let currentId = Math.max(...baseQuestions.map(q => q.id));
-
-  if (sex === "Female" && age > 18) {
+const getBaseQuestions = (currentAnswers = {}, age = 0, sex = "") => {
+  let base = [...baseQuestions];
+  
+  // Add pregnant question logic here once
+  if (sex === "Female" && age > 18 && currentAnswers.isPregnant === undefined) {
     const pregnantQuestion = conditionalFollowUps["pregnantQuestion"];
-    
-    const isPregnantQuestionAlreadyAdded = allQuestions.some(q => q.key === "isPregnant");
-    
-    if (pregnantQuestion && !isPregnantQuestionAlreadyAdded) {
-        currentId++;
-        const insertionIndex = allQuestions.findIndex(q => q.key === "sex") + 1;
-        allQuestions.splice(insertionIndex, 0, {
+    if (pregnantQuestion && !base.some(q => q.key === "isPregnant")) {
+      const insertionIndex = base.findIndex(q => q.key === "sex") + 1;
+      base.splice(insertionIndex, 0, {
         ...pregnantQuestion,
-        id: currentId,
+        id: 3.5, // Use decimal to insert between 3 and 4
         type: pregnantQuestion.subType,
         title: pregnantQuestion.subTitle,
         description: pregnantQuestion.description,
         key: "isPregnant",
         required: pregnantQuestion.required,
-        });
+      });
     }
   }
+  
+  return base;
+};
 
+const getQuestions = (primaryGoals = [], currentAnswers = {}, age = 0, sex = "") => {
+  let allQuestions = getBaseQuestions(currentAnswers, age, sex);
+  let currentId = Math.max(...allQuestions.map(q => q.id));
+  
+  // Only add goal-specific questions
   let selectedGoals = [];
-
-   if (Array.isArray(primaryGoals)) {
+  
+  if (Array.isArray(primaryGoals)) {
     selectedGoals = primaryGoals;
   } else if (typeof primaryGoals === 'object' && primaryGoals !== null) {
     selectedGoals = Object.keys(primaryGoals).filter(key => primaryGoals[key] && key !== "none");
@@ -1352,9 +1356,7 @@ const getQuestions = (primaryGoals = [], currentAnswers = {}, age = 0, sex = "")
     const key = goalKey.id || goalKey;
     if (goalSpecificQuestions[key]) {
       goalSpecificQuestions[key].forEach(q => {
-        if (q.showCondition && !q.showCondition(currentAnswers)) {
-          return; 
-        }
+        if (q.showCondition && !q.showCondition(currentAnswers)) return;
         
         currentId++;
         allQuestions.push({ ...q, id: currentId });
