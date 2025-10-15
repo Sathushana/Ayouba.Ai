@@ -64,11 +64,11 @@ export default function ThankYou() {
         </h1>
         
         <p className="text-lg text-gray-600 mb-8">
-          You've successfully completed the questionnaire. We now have a clear picture of your health goals and lifestyle. Your dedication means we can create the most effective **{APP_NAME}** plan for you!
+          You've successfully completed the questionnaire. We now have a clear picture of your health goals and lifestyle. Your dedication means we can create the most effective {APP_NAME} plan for you!
         </p>
         
         <p className="text-base text-gray-700 mb-6 font-medium">
-          Click below to see your personalized **Lifeshift Plan** tailored just for you.
+          Click below to see your personalized Lifeshift Plan tailored just for you.
         </p>
 
         <button

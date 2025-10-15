@@ -51,12 +51,12 @@ export default function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
-          <Link
+          {/* <Link
             href="#learn"
             className={`font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105`}
           >
             Features
-          </Link>
+          </Link> */}
           <Link
             href="/about"
             className={`font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105`}
@@ -99,14 +99,14 @@ export default function Header() {
         } bg-white border-t border-gray-100`}
       >
         <nav className="flex flex-col p-4 gap-2">
-          <Link
+          {/* <Link
             href="#learn"
             className={`px-3 py-3 font-medium text-gray-700 rounded-lg transition duration-300 hover:text-white hover:font-semibold`}
             style={{ backgroundColor: open ? PRIMARY_COLOR_HEX : "" }}
             onClick={handleLinkClick}
           >
             Features
-          </Link>
+          </Link> */}
           <Link
             href="/about"
             className={`px-3 py-3 font-medium text-gray-700 rounded-lg transition duration-300 hover:text-white hover:font-semibold`}
