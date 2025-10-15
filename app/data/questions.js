@@ -2,40 +2,36 @@
 
 //BASE QUESTIONS 
 const baseQuestions = [
-  // 1. Preferred First Name
   {
     id: 1,
     type: "text",
-    title: "1. What is your preferred first name?",
+    title: "What is your preferred first name?",
     key: "firstName",
     placeholder: "Enter your preferred first name",
     required: true,
   },
-  // 2. Age
   {
     id: 2,
     type: "number",
-    title: "2. Age",
+    title: "Age",
     description: "Your age helps us give you the right health advice for your stage of life. It also helps us identify health risks early and create a plan that suits your needs safely and effectively.",
     key: "age",
     placeholder: "Enter age in years (e.g., 35)",
     required: true,
   },
-  // 3. Sex 
   {
     id: 3,
     type: "radio",
-    title: "3. Sex",
+    title: "Sex",
     description: "Men and women have different health risks and reference ranges for lab values. This helps us give you personalized advice.",
     key: "sex",
     options: ["Male", "Female"],
     required: true,
   },
-  // 4. Height and Weight
   {
     id: 4,
     type: "measurements",
-    title: "4. Height and Weight",
+    title: "Height and Weight",
     description: "This helps us calculate your Body Mass Index (BMI), which is an important measure of your overall health. It helps identify if your weight is in a healthy range and detect possible health risks early.",
     key: "measurements",
     inputs: [
@@ -43,7 +39,6 @@ const baseQuestions = [
     ],
     required: true,
   },
-  //  Current Lifestyle
   {
     id: 5,
     type: "radio",
@@ -61,11 +56,10 @@ const baseQuestions = [
     ],
     required: true,
   },
-  // 5. Diagnosed Conditions 
   {
     id: 6,
     type: "multiselect",
-    title: "5. Are you diagnosed with any of the following conditions?",
+    title: "Are you diagnosed with any of the following conditions?",
     description: "Knowing your medical conditions helps us provide you with safe, personalised advice and create a plan tailored to your health needs.",
     key: "diagnosedConditions",
     options: [
@@ -89,11 +83,10 @@ const baseQuestions = [
     ],
     required: true,
   },
-  // 6. Pick Your Goals 
   {
     id: 7,
     type: "multiselect",
-    title: "6. Pick your goals (you can choose more than one)",
+    title: "Pick your goals (you can choose more than one)",
     description: "Your health journey starts with a few small steps. Select what you want to work on — we'll make a plan that suits you best.",
     key: "primaryGoals",
     options: [
@@ -112,7 +105,6 @@ const baseQuestions = [
 const goalSpecificQuestions = {
   // Goal: 🥗 Eat healthy & get enough nutrition
   nutrition: [
-    // Diet Type 
     {
       id: 101,
       type: "radio",
@@ -127,7 +119,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Do you use any of the following? 
     {
       id: 102,
       type: "multiselect",
@@ -141,7 +132,6 @@ const goalSpecificQuestions = {
       ],
       required: false,
     },
-    //  Meal Patterns
     {
       id: 103,
       type: "radio",
@@ -155,7 +145,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Eating Out
     {
       id: 104,
       type: "radio",
@@ -169,7 +158,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Sugary Drinks/Snacks
     {
       id: 105,
       type: "radio",
@@ -182,7 +170,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Track What You Eat
     {
       id: 106,
       type: "radio",
@@ -191,7 +178,6 @@ const goalSpecificQuestions = {
       options: ["Yes, regularly", "Sometimes", "No"],
       required: true,
     },
-    //  Water Intake
     {
       id: 107,
       type: "radio",
@@ -200,7 +186,6 @@ const goalSpecificQuestions = {
       options: ["Less than 1 liter", "1–2 liters", "More than 2 liters"],
       required: true,
     },
-    //  Fruits, Veg, Whole Grains
     {
       id: 108,
       type: "radio",
@@ -209,7 +194,6 @@ const goalSpecificQuestions = {
       options: ["Rarely", "Sometimes", "Every day"],
       required: true,
     },
-    //  Main Nutrition Focus
     {
       id: 109,
       type: "multiselect",
@@ -224,7 +208,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Main Nutrition Goal
     {
       id: 110,
       type: "multiselect",
@@ -248,7 +231,6 @@ const goalSpecificQuestions = {
 
   // Goal: 🏃 Be more active & do regular exercise
   activity: [
-    // Baseline Activity
     {
       id: 201,
       type: "radio",
@@ -262,11 +244,10 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Frequency & Duration 
     {
       id: 202,
       type: "radio",
-      title: "2. Frequency & Duration : How many days per week do you exercise?",
+      title: "Frequency & Duration : How many days per week do you exercise?",
       key: "exerciseDays",
       options: ["0–1", "2–3", "4–5", "6–7"],
       required: true,
@@ -275,11 +256,10 @@ const goalSpecificQuestions = {
         return activityLevel && activityLevel !== "Mostly sitting (little or no exercise)";
       }
     },
-    //  Weekly Minutes of Activity
     {
       id: 203,
       type: "radio",
-      title: "Step Weekly Minutes of Activity (Q2)",
+      title: "Weekly Minutes of Activity",
       description: "In a typical week, how much time do you spend doing moderate or vigorous physical activity?",
       key: "weeklyActivityMinutes",
       options: [
@@ -294,11 +274,10 @@ const goalSpecificQuestions = {
         return activityLevel && activityLevel !== "Mostly sitting (little or no exercise)";
       }
     },
-    //  Type of Physical Activity
     {
       id: 204,
       type: "multiselect",
-      title: "Step Type of Physical Activity (Q3)",
+      title: "Type of Physical Activity",
       description: "Which of these best describes your usual physical activities? (choose all that apply)",
       key: "usualActivityTypes",
       options: [
@@ -312,7 +291,6 @@ const goalSpecificQuestions = {
         return activityLevel && activityLevel !== "Mostly sitting (little or no exercise)";
       }
     },
-    //  Challenge Level 
     {
       id: 205,
       type: "radio",
@@ -325,11 +303,10 @@ const goalSpecificQuestions = {
         return activityLevel && activityLevel !== "Mostly sitting (little or no exercise)";
       }
     },
-    // Q Preferences & Environment - Location
     {
       id: 206,
       type: "radio",
-      title: "Step Exercise Location",
+      title: "Exercise Location",
       description: "Where do you usually prefer to exercise or would like to exercise?",
       key: "exerciseLocation",
       options: [
@@ -340,11 +317,10 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Q Preferences & Environment - Activity Type Preference
     {
       id: 207,
       type: "multiselect",
-      title: "Step Activity Type Preference",
+      title: "Activity Type Preference",
       description: "Which types of activities do you enjoy most or would like to try? (multi-select)",
       key: "activityTypePreference",
       options: [
@@ -359,17 +335,15 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Q Preferences & Environment - Time Availability
     {
       id: 208,
       type: "radio",
-      title: "Step Time Availability",
+      title: "Time Availability",
       description: "How much time can you usually dedicate to exercise per day?",
       key: "timeAvailability",
       options: ["<10 minutes", "10–20 minutes", "20–40 minutes", "40+ minutes"],
       required: true,
     },
-    // Fitness & Health Goals
     {
       id: 209,
       type: "multiselect",
@@ -392,17 +366,15 @@ const goalSpecificQuestions = {
 
   // Goal: ⚖️ Lose weight & stay in good shape
   weight: [
-    // Step  Baseline & Life Situation 
     {
       id: 301,
       type: "radio",
       title: "Life Situation Details",
       description: "Based on your 'Current Lifestyle' answer, please provide more details.",
       key: "wl_lifeSituation",
+      options: ["Click 'Continue' to proceed"],
       required: true,
-      options: ["Continue"], 
     },
-    //  Sleep Hours
     {
       id: 302,
       type: "radio",
@@ -411,11 +383,10 @@ const goalSpecificQuestions = {
       options: ["Less than 5 hours", "5–6 hours", "7–8 hours", "More than 8 hours"],
       required: true,
     },
-    // Step  Current Physical Activity Level
     {
       id: 303,
       type: "radio",
-      title: "Step In a normal week, how active are you?",
+      title: "In a normal week, how active are you?",
       key: "wl_activityLevel",
       options: [
         "Mostly sitting (little or no exercise)",
@@ -425,7 +396,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step  Eating Habits (Weight-Related)
     {
       id: 304,
       type: "radio",
@@ -440,7 +410,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Do you use any of the following? 
     {
       id: 305,
       type: "multiselect",
@@ -454,7 +423,6 @@ const goalSpecificQuestions = {
       ],
       required: false,
     },
-    //  Meal Patterns
     {
       id: 306,
       type: "radio",
@@ -468,7 +436,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Eating Out
     {
       id: 307,
       type: "radio",
@@ -482,7 +449,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Sugary Drinks/Snacks
     {
       id: 308,
       type: "radio",
@@ -495,7 +461,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Track What You Eat
     {
       id: 309,
       type: "radio",
@@ -504,7 +469,6 @@ const goalSpecificQuestions = {
       options: ["Yes, regularly", "Sometimes", "No"],
       required: true,
     },
-    //  Water Intake
     {
       id: 310,
       type: "radio",
@@ -513,7 +477,6 @@ const goalSpecificQuestions = {
       options: ["Less than 1 liter", "1–2 liters", "More than 2 liters"],
       required: true,
     },
-    //  Fruits, Veg, Whole Grains
     {
       id: 311,
       type: "radio",
@@ -522,7 +485,6 @@ const goalSpecificQuestions = {
       options: ["Rarely", "Sometimes", "Every day"],
       required: true,
     },
-    // Step  Barriers & Preferences
     {
       id: 312,
       type: "radio",
@@ -531,7 +493,6 @@ const goalSpecificQuestions = {
       options: ["Yes", "No"],
       required: true,
     },
-    //  What usually makes it hard for you to maintain a healthy weight?
     {
       id: 313,
       type: "multiselect",
@@ -549,7 +510,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  What kind of plan would suit you best?
     {
       id: 314,
       type: "radio",
@@ -563,7 +523,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step  Motivation & Goal Setting
     {
       id: 315,
       type: "radio",
@@ -578,7 +537,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Main weight loss goal
     {
       id: 316,
       type: "multiselect",
@@ -602,7 +560,6 @@ const goalSpecificQuestions = {
 
   // Goal: 🚭🍺 Cut down or quit smoking, alcohol, or drugs
   substance: [
-    //Current Substance Use 
     {
       id: 401,
       type: "multiselect",
@@ -618,11 +575,10 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Usage Frequency
     {
       id: 402,
       type: "radio",
-      title: " How often do you use it?",
+      title: "How often do you use it?",
       key: "substanceFrequency",
       options: [
         "Daily",
@@ -632,15 +588,13 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Quantity/Details Placeholder
     {
       id: 403,
       type: "placeholder",
-      title: "Substance Usage Details (Quantity/Duration)",
+      title: "Substance Usage Details (Frequency/Quantity)",
       key: "substanceDetailsPlaceholder",
       required: false,
     },
-    //  Duration of Use
     {
       id: 404,
       type: "radio",
@@ -654,11 +608,10 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Reasons for Use
     {
       id: 405,
       type: "multiselect",
-      title: "What makes you use these substances?",
+      title: "What makes you use these substances? (Select all that apply)",
       key: "substanceReasons",
       options: [
         { id: "stressAnxiety", label: "Stress/anxiety" },
@@ -669,11 +622,10 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Situations for Use
     {
       id: 406,
       type: "multiselect",
-      title: "In what situations do you usually taken these substances?",
+      title: "“In what situations do you usually taken these substances?” (Multi-select)",
       key: "substanceSituations",
       options: [
         { id: "atHomeAlone", label: "At home alone" },
@@ -685,11 +637,10 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Consequences & Self-Reflection 
     {
       id: 407,
       type: "multiselect",
-      title: "Consequences & Self-Reflection: Have you noticed any of these effects?",
+      title: "Consequences & Self-Reflection: Have you noticed any of these effects from your [smoking / drinking / tobacco / drug use]? (Select all that apply)",
       key: "substanceConsequences",
       options: [
         { id: "troubleSleep", label: "Trouble with sleep or low energy" },
@@ -706,16 +657,14 @@ const goalSpecificQuestions = {
 
   // Goal: 🧘 Feel calmer & reduce stress
   mental: [
-    // Step  Baseline & Life Situation
     {
       id: 501,
       type: "placeholder",
-      title: "Step Baseline & Life Situation",
+      title: "Baseline & Life Situation",
       description: "Based on your 'Current Lifestyle' answer, please provide more details on your main stress factor.",
       key: "mh_lifeSituation",
       required: true,
     },
-    //  Who do you currently live with?
     {
       id: 502,
       type: "radio",
@@ -729,7 +678,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Financial situation
     {
       id: 503,
       type: "radio",
@@ -743,7 +691,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step  Lifestyle & Daily Routine
     {
       id: 504,
       type: "radio",
@@ -752,11 +699,10 @@ const goalSpecificQuestions = {
       options: ["No", "Yes"],
       required: true,
     },
-    //  Daily Routine
     {
       id: 505,
       type: "multiselect",
-      title: "Q How would you describe your daily routine?",
+      title: "How would you describe your daily routine?",
       key: "mh_dailyRoutine",
       options: [
         { id: "sedentary", label: "Mostly sedentary / desk work / studying" },
@@ -770,7 +716,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Coping Mechanisms
     {
       id: 506,
       type: "multiselect",
@@ -787,7 +732,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step  Mental & Emotional State
     {
       id: 507,
       type: "radio",
@@ -801,11 +745,10 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Social Connection
     {
       id: 508,
       type: "radio",
-      title: "Q How connected and supported do you feel socially?",
+      title: "How connected and supported do you feel socially?",
       key: "mh_socialConnection",
       options: [
         "Very connected – I have friends/family to talk to",
@@ -815,7 +758,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Recent Feelings 
     {
       id: 509,
       type: "multiselect",
@@ -832,7 +774,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step  Identify Root Causes / Triggers
     {
       id: 510,
       type: "multiselect",
@@ -848,7 +789,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    // Step Goals & Readiness
     {
       id: 511,
       type: "multiselect",
@@ -873,7 +813,6 @@ const goalSpecificQuestions = {
 
   // Goal: 😴 Sleep better & wake up fresh
   sleep: [
-    // Sleep and Wake Time
     {
       id: 601,
       type: "sleepSchedule",
@@ -885,20 +824,18 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Sleep Disorder Diagnosis 
     {
       id: 602,
       type: "radio",
-      title: "Q2)Have you been diagnosed with insomnia or another sleep disorder?",
+      title: "Have you been diagnosed with insomnia or another sleep disorder?",
       key: "sleepDisorderDiagnosis",
       options: ["Yes", "No"],
       required: true,
     },
-    //  Biggest Sleep Challenge 
     {
       id: 603,
       type: "radio",
-      title: "(Q3): What is your biggest challenge when it comes to sleep?",
+      title: "What is your biggest challenge when it comes to sleep?",
       key: "sleepChallenge",
       options: [
         "Difficulty falling asleep",
@@ -909,7 +846,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Last Meal Timing
     {
       id: 604,
       type: "radio",
@@ -924,7 +860,6 @@ const goalSpecificQuestions = {
       ],
       required: true,
     },
-    //  Sleep Goals
     {
       id: 605,
       type: "multiselect",
@@ -949,7 +884,6 @@ const goalSpecificQuestions = {
 
 // CONDITIONAL FOLLOW-UP DATA 
 const conditionalFollowUps = {
-  //  BASE PROFILE FOLLOW-UPS ( Sex) 
   "pregnantQuestion": {
     subKey: "isPregnant",
     subTitle: " Are you currently pregnant? (Yes/No)",
@@ -1067,7 +1001,6 @@ const conditionalFollowUps = {
     required: true,
   },
 
-  // Follow-up Question for Identifying Disease Levels
   disease_control: {
     subKey: "diseaseControlLevel",
     subTitle: "How well is your condition currently controlled or managed?",
@@ -1129,7 +1062,7 @@ const conditionalFollowUps = {
     required: true,
   },
 
-  // Substance use quantity checks
+  // Substance use quantity checks (Nutrition)
   "Rarely (special occasions)": null,
   "Sometimes (1–2 times a week)": "alcohol_quantity_nutrition",
   "Frequently (3–5 times a week)": "alcohol_quantity_nutrition",
@@ -1181,98 +1114,136 @@ const conditionalFollowUps = {
   "Other / Not sure": { subKey: "otherNotSure", subTitle: "Would you like the app to suggest activities based on your goals and environment?", subType: "radio", options: ["Yes", "No"], required: true },
 
   // WEIGHT LOSS FOLLOW-UPS 
-"Student / Studying": [
-    { subKey: "studentSitting", subTitle: "a. How many hours a day do you usually sit for classes or study?", subType: "radio", options: ["Less than 3 hours", "3–6 hours", "More than 6 hours"], required: true },
-    { subKey: "studentLiving", subTitle: "b. Do you live in a hostel or at home?", subType: "radio", options: ["Hostel / Shared accommodation", "At home with family"], required: true },
-    { subKey: "studentGym", subTitle: "c. Do you have access to a gym, playground, or space for exercise?", subType: "radio", options: ["Yes", "No"], required: true },
+  "Student / Studying": [
+    { subKey: "studentSitting", subTitle: "How many hours a day do you usually sit for classes or study?", subType: "radio", options: ["Less than 3 hours", "3–6 hours", "More than 6 hours"], required: true },
+    { subKey: "studentLiving", subTitle: "Do you live in a hostel or at home?", subType: "radio", options: ["Hostel / Shared accommodation", "At home with family"], required: true },
+    { subKey: "studentGym", subTitle: "Do you have access to a gym, playground, or space for exercise?", subType: "radio", options: ["Yes", "No"], required: true },
   ],
   "Employed – Office-based (mostly sitting)": [
-    { subKey: "officeWorkday", subTitle: "a. How long is your average workday?", subType: "radio", options: ["Less than 6 hours", "6–8 hours", "More than 8 hours"], required: true },
-    { subKey: "officeBreaks", subTitle: "b. Do you usually take breaks to move around or stretch during work?", subType: "radio", options: ["Rarely", "Sometimes", "Regularly"], required: true },
-    { subKey: "officeWellness", subTitle: "c. Do you have any wellness or fitness programs at your workplace?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "officeWorkday", subTitle: "How long is your average workday?", subType: "radio", options: ["Less than 6 hours", "6–8 hours", "More than 8 hours"], required: true },
+    { subKey: "officeBreaks", subTitle: "Do you usually take breaks to move around or stretch during work?", subType: "radio", options: ["Rarely", "Sometimes", "Regularly"], required: true },
+    { subKey: "officeWellness", subTitle: "Do you have any wellness or fitness programs at your workplace?", subType: "radio", options: ["Yes", "No"], required: true },
   ],
   "Employed – Active work (standing, moving around)": [
-    { subKey: "activeWorkType", subTitle: "a. What type of physical work do you do most of the day?", subType: "radio", options: ["Walking / Standing", "Lifting / Carrying", "Manual labor or field work", "Other --> Please specify"], required: true },
-    { subKey: "activeWorkFatigue", subTitle: "b. After work, how tired do you usually feel?", subType: "radio", options: ["Not tired – can still exercise", "Somewhat tired – light exercise only", "Very tired – no energy left"], required: true },
+    { subKey: "activeWorkType", subTitle: "What type of physical work do you do most of the day?", subType: "radio", options: ["Walking / Standing", "Lifting / Carrying", "Manual labor or field work", "Other --> Please specify"], required: true },
+    { subKey: "activeWorkFatigue", subTitle: "After work, how tired do you usually feel?", subType: "radio", options: ["Not tired – can still exercise", "Somewhat tired – light exercise only", "Very tired – no energy left"], required: true },
   ],
   "Employed – Shift work / irregular hours": [
-    { subKey: "shiftWorkType", subTitle: "a. What shift do you usually work?", subType: "radio", options: ["Day", "Night", "Rotating"], required: true },
-    { subKey: "shiftWorkSleep", subTitle: "b. How well do you sleep with your current schedule?", subType: "radio", options: ["Well", "Irregular / poor sleep", "Hardly get enough sleep"], required: true },
+    { subKey: "shiftWorkType", subTitle: "What shift do you usually work?", subType: "radio", options: ["Day", "Night", "Rotating"], required: true },
+    { subKey: "shiftWorkSleep", subTitle: "How well do you sleep with your current schedule?", subType: "radio", options: ["Well", "Irregular / poor sleep", "Hardly get enough sleep"], required: true },
   ],
   "Self-employed / Business owner": [
-    { subKey: "selfEmployedWorkType", subTitle: "a. What type of work do you do?", subType: "text", placeholder: "e.g., Online store, retail shop, professional services", required: true }, 
-    { subKey: "selfEmployedHours", subTitle: "b. How many hours a day do you typically work?", subType: "radio", options: ["Less than 6", "6–8", "More than 8"], required: true },
-    { subKey: "selfEmployedFlexibility", subTitle: "c. How flexible is your daily schedule for exercise or meal planning?", subType: "radio", options: ["Very flexible", "Somewhat flexible", "Not flexible"], required: true },
+    { subKey: "selfEmployedWorkType", subTitle: "What type of work do you do?", subType: "text", placeholder: "e.g., Online store, retail shop, professional services", required: true }, 
+    { subKey: "selfEmployedHours", subTitle: "How many hours a day do you typically work?", subType: "radio", options: ["Less than 6", "6–8", "More than 8"], required: true },
+    { subKey: "selfEmployedFlexibility", subTitle: "How flexible is your daily schedule for exercise or meal planning?", subType: "radio", options: ["Very flexible", "Somewhat flexible", "Not flexible"], required: true },
   ],
   "Homemaker / Caregiver": [
-    { subKey: "homemakerTasks", subTitle: "a. What kind of daily tasks do you usually do?", subType: "radio", options: ["Cooking and cleaning", "Childcare / Elder care", "Gardening / Errands", "All of the above"], required: true },
-    { subKey: "homemakerDemand", subTitle: "b. How physically demanding do you find your daily routine?", subType: "radio", options: ["Light", "Moderate", "Heavy"], required: true },
-    { subKey: "homemakerSelfCare", subTitle: "c. Do you get any time for self-care or exercise?", subType: "radio", options: ["Yes, regularly", "Occasionally", "Rarely / Never"], required: true },
+    { subKey: "homemakerTasks", subTitle: "What kind of daily tasks do you usually do?", subType: "radio", options: ["Cooking and cleaning", "Childcare / Elder care", "Gardening / Errands", "All of the above"], required: true },
+    { subKey: "homemakerDemand", subTitle: "How physically demanding do you find your daily routine?", subType: "radio", options: ["Light", "Moderate", "Heavy"], required: true },
+    { subKey: "homemakerSelfCare", subTitle: "Do you get any time for self-care or exercise?", subType: "radio", options: ["Yes, regularly", "Occasionally", "Rarely / Never"], required: true },
   ],
   "Retired": [
-    { subKey: "retiredActivity", subTitle: "a. How active are you on a typical day?", subType: "radio", options: ["Mostly resting / sitting", "Light household work or walks", "Regular outdoor activity or exercise"], required: true },
-    { subKey: "retiredMobility", subTitle: "b. Do you have any mobility limitations or pain that affects movement?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "retiredActivity", subTitle: "How active are you on a typical day?", subType: "radio", options: ["Mostly resting / sitting", "Light household work or walks", "Regular outdoor activity or exercise"], required: true },
+    { subKey: "retiredMobility", subTitle: "Do you have any mobility limitations or pain that affects movement?", subType: "radio", options: ["Yes", "No"], required: true },
   ],
   "Other": [
-    { subKey: "otherLifestyleDetails", subTitle: "a. Please describe your lifestyle:", subType: "text", placeholder: "e.g., Unemployed, volunteer, etc.", required: true },
+    { subKey: "otherLifestyleDetails", subTitle: "Please describe your lifestyle:", subType: "text", placeholder: "e.g., Unemployed, volunteer, etc.", required: true },
   ],
 
-  // Step  Barriers & Preferences
+  // Step  Barriers & Preferences (WL)
   Yes: [
-    { subKey: "wl_methodsTried", subTitle: " What methods have you tried?", subType: "multiselect", options: [{ id: "dietPlan", label: "Diet plan" }, { id: "exerciseRoutine", label: "Exercise routine" }, { id: "fastingSkipping", label: "Fasting / skipping meals" }, { id: "supplements", label: "Supplements or shakes" }, { id: "medication", label: "Medication" }, { id: "other", label: "Other" }], required: true },
-    { subKey: "wl_previousResult", subTitle: " What was the result of your previous attempt(s)?" , subType: "radio", options: ["Lost weight and maintained it", "Lost weight but regained it", "Didn't see much change", "Other"], required: true },
+    { subKey: "wl_methodsTried", subTitle: "What methods have you tried?", subType: "multiselect", options: [{ id: "dietPlan", label: "Diet plan" }, { id: "exerciseRoutine", label: "Exercise routine" }, { id: "fastingSkipping", label: "Fasting / skipping meals" }, { id: "supplements", label: "Supplements or shakes" }, { id: "medication", label: "Medication" }, { id: "other", label: "Other" }], required: true },
+    { subKey: "wl_previousResult", subTitle: "What was the result of your previous attempt(s)?" , subType: "radio", options: ["Lost weight and maintained it", "Lost weight but regained it", "Didn't see much change", "Other"], required: true },
   ],
 
   // SUBSTANCE GOAL FOLLOW-UPS 
   "I used in the past, but quit": {
     subKey: "substanceQuitDuration",
-    subTitle: "Q2a: How long ago did you quit?",
+    subTitle: "How long ago did you quit?",
     subType: "radio",
     options: ["Less than 1 month ago", "1–6 months ago", "6–12 months ago", "More than 1 year ago"],
     required: true,
   },
-  alcohol: [
-    { subKey: "alcoholFrequencyGoal", subTitle: " How often do you usually drink alcohol?", subType: "radio", options: ["Rarely (special occasions only)", "Sometimes (1–2 times a week)", "Often (3–5 times a week)", "Daily or almost daily"], required: true },
-  ],
-  "Sometimes (1–2 times a week)_goal": { subKey: "alcoholQuantityGoal", subTitle: " When you drink, how much do you usually have?", subType: "radio", options: ["1–2 drinks", "3–4 drinks", "5+ drinks"], required: true },
+  
+  // Q3 Quantity/Details - Alcohol flow (Q3.1/Q3.2)
+  alcohol_frequency: { 
+    subKey: "alcoholFrequencyGoal", 
+    subTitle: "“How often do you usually drink alcohol?”", 
+    subType: "radio", 
+    options: ["Rarely (special occasions only)", "Sometimes (1–2 times a week)", "Often (3–5 times a week)", "Daily or almost daily"], 
+    required: true 
+  },
+  "Sometimes (1–2 times a week)_goal": { 
+    subKey: "alcoholQuantityGoal", 
+    subTitle: "“When you drink, how much do you usually have?”", 
+    subType: "radio", 
+    options: ["1–2 drinks", "3–4 drinks", "5+ drinks"], 
+    required: true 
+  },
   "Often (3–5 times a week)_goal": "Sometimes (1–2 times a week)_goal",
   "Daily or almost daily_goal": "Sometimes (1–2 times a week)_goal",
-  "Rarely (special occasions only)_goal": null,
 
-  cigarettes: { subKey: "cigarettesQuantityGoal", subTitle: "Q Number smoked per day (for daily) or per week (for weekly/occasional)", subType: "text", placeholder: "e.g., 10 per day", required: true },
-  beedi: { subKey: "beediQuantityGoal", subTitle: "Q Number smoked per day (for daily) or per week (for weekly/occasional)", subType: "text", placeholder: "e.g., 5 per day", required: true },
-  chewingTobacco: { subKey: "chewingQuantityGoal", subTitle: "Q Number of leaves/grams per day (or per week)", subType: "text", placeholder: "e.g., 3 leaves per day", required: true },
-  otherDrugs: { subKey: "otherDrugsFrequencyGoal", subTitle: "Q Frequency per week/day", subType: "text", placeholder: "e.g., 2 times per week", required: true },
+  // Q3 Quantity/Details - Specific substances (Q3)
+  cigarettes_quantity: { subKey: "cigarettesQuantityGoal", subTitle: "Number smoked per day (for daily) or per week (for weekly/occasional)", subType: "text", placeholder: "e.g., 10 per day", required: true },
+  beedi_quantity: { subKey: "beediQuantityGoal", subTitle: "Number smoked per day (for daily) or per week (for weekly/occasional)", subType: "text", placeholder: "e.g., 5 per day", required: true },
+  chewingTobacco_quantity: { subKey: "chewingQuantityGoal", subTitle: "Number of leaves/grams per day (or per week)", subType: "text", placeholder: "e.g., 3 leaves per day", required: true },
+  otherDrugs_quantity: { subKey: "otherDrugsFrequencyGoal", subTitle: "Frequency per week/day", subType: "text", placeholder: "e.g., 2 times per week", required: true },
 
-  // Q Situations for Use
-  atHomeAlone: { subKey: "atHomeAloneReason", subTitle: "Q4b When you consume at home, is it usually because you feel bored, lonely, or stressed?", subType: "radio", options: ["Boredom", "Loneliness", "Stress", "Habit", "Other"], required: true },
-  socialGatherings: { subKey: "socialPressureGoal", subTitle: "Q4b When you consume in social settings, do you feel pressured by others, or is it mostly by choice?", subType: "radio", options: ["Peer pressure", "By choice", "Both"], required: true },
-  afterWorkStress: { subKey: "stressCopingGoal", subTitle: "Q4b Do you usually consume as your main way to cope with stress or unwind?", subType: "radio", options: ["Yes, often", "Sometimes", "Rarely", "No"], required: true },
-  duringMeals: { subKey: "mealRoutineCultural", subTitle: "Q4b When you consume during meals, is it more of a routine, cultural habit, or for enjoyment?", subType: "radio", options: ["Routine", "Cultural", "For enjoyment/taste", "Other"], required: true },
-  weekendsOnly: { subKey: "weekendConsumptionPattern", subTitle: "Q4b When you consume on weekends, is it usually moderate or heavy (more than your usual amount)?", subType: "radio", options: ["Always moderate", "Sometimes heavy", "Often heavy", "Not sure"], required: true },
-  otherSituation: { subKey: "otherSituationDetails", subTitle: "Q4b Please describe when and why you usually consume", subType: "text", placeholder: "Open text response", required: true },
+  // Q6 Situations for Use (Q4b1-Q4b6)
+  atHomeAlone: { subKey: "atHomeAloneReason", subTitle: "When you consume at home, is it usually because you feel bored, lonely, or stressed?", subType: "radio", options: ["Boredom", "Loneliness", "Stress", "Habit", "Other"], required: true },
+  socialGatherings: { subKey: "socialPressureGoal", subTitle: "When you consume in social settings, do you feel pressured by others, or is it mostly by choice?", subType: "radio", options: ["Peer pressure", "By choice", "Both"], required: true },
+  afterWorkStress: { subKey: "stressCopingGoal", subTitle: "Do you usually consume as your main way to cope with stress or unwind?", subType: "radio", options: ["Yes, often", "Sometimes", "Rarely", "No"], required: true },
+  duringMeals: { subKey: "mealRoutineCultural", subTitle: "When you consume during meals, is it more of a routine, cultural habit, or for enjoyment?", subType: "radio", options: ["Routine", "Cultural", "For enjoyment/taste", "Other"], required: true },
+  weekendsOnly: { subKey: "weekendConsumptionPattern", subTitle: "When you consume on weekends, is it usually moderate or heavy (more than your usual amount)?", subType: "radio", options: ["Always moderate", "Sometimes heavy", "Often heavy", "Not sure"], required: true },
+  otherSituation: { subKey: "otherSituationDetails", subTitle: "Please describe when and why you usually consume", subType: "text", placeholder: "Open text response", required: true },
 
-  // Consequences & Self-Reflection
+  // Consequences & Self-Reflection (Q5a-Q6)
   troubleSleep: [
-    { subKey: "sleepEnergyFrequencyConsequence", subTitle: "Q5a: How often do you notice sleep or energy problems after [using/consuming]?", subType: "radio", options: ["Every time I [use/consume]", "Sometimes", "Rarely"], required: true },
-    { subKey: "sleepEnergyTipsConsequence", subTitle: "Q5b: Would you like tips on improving sleep and energy while managing [your use/consumption]?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true },
+    { subKey: "sleepEnergyFrequencyConsequence", subTitle: "1. Trouble with sleep or energy. How often do you notice sleep or energy problems after [using/consuming]?", subType: "radio", options: ["Every time I [use/consume]", "Sometimes", "Rarely"], required: true },
+    { subKey: "sleepEnergyTipsConsequence", subTitle: "Would you like tips on improving sleep and energy while managing [your use/consumption]?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true },
   ],
   difficultyFocusing: [
-    { subKey: "focusAffectedAreasConsequence", subTitle: "Q5c: Do you notice this effect mainly at work, home, or both?", subType: "radio", options: ["Work", "Home", "Both"], required: true },
-    { subKey: "focusStrategiesConsequence", subTitle: "Q5d: Would you like strategies to maintain focus and productivity while reducing [your use/consumption]?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true },
+    { subKey: "focusAffectedAreasConsequence", subTitle: "2. Affects focus or productivity. Do you notice this effect mainly at work, home, or both?", subType: "radio", options: ["Work", "Home", "Both"], required: true },
+    { subKey: "focusStrategiesConsequence", subTitle: "Would you like strategies to maintain focus and productivity while reducing [your use/consumption]?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true },
   ],
   tensionConflict: [
-    { subKey: "conflictTimingConsequence", subTitle: "Q5e: Do conflicts usually happen when you [use/consume] or after it?", subType: "radio", options: ["During", "After", "Both"], required: true },
-    { subKey: "conflictGuidanceConsequence", subTitle: "Q5f: Would you like guidance on reducing relationships or social tension related to [your use/consumption]?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true },
+    { subKey: "conflictTimingConsequence", subTitle: "3. Causes tension with family / friends. Do conflicts usually happen when you [use/consume] or after it?", subType: "radio", options: ["During", "After", "Both"], required: true },
+    { subKey: "conflictGuidanceConsequence", subTitle: "Would you like guidance on reducing relationships or social tension related to [your use/consumption]?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true },
   ],
   changesHealth: [
-    { subKey: "doctorAdviceConsequence", subTitle: "Q Have you been told by a doctor or health professional that [smoking / drinking / tobacco / drug use] is affecting your health?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "doctorAdviceConsequence", subTitle: "4. Impacts health. Have you been told by a doctor or health professional that [smoking / drinking / tobacco / drug use] is affecting your health?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+
+  // MENTAL HEALTH FOLLOW-UPS (Adaptive by Lifestyle/Placeholder)
+  "Student / Studying": [
+    { subKey: "studentStressCause", subTitle: "What usually causes you the most stress at school or university?", subType: "radio", options: ["Academic pressure / exams / results", "Tuition / extra classes pressure", "Managing time between studies and family expectations", "Peer pressure / social life", "Financial concerns (fees, travel, living costs)", "Other"], required: true },
+  ],
+  "Employed – Office-based (mostly sitting)": [
+    { subKey: "officeStressCause", subTitle: "What usually causes you the most stress at work?", subType: "radio", options: ["Heavy workload / long hours", "Job insecurity / contract uncertainty", "Difficult boss / workplace conflict", "Low pay or limited benefits", "Commute / travel stress (traffic is a big factor in Colombo & other cities)", "Other"], required: true },
+  ],
+  "Employed – Active work (standing, moving around)": [
+    { subKey: "activeWorkStressCause", subTitle: "What usually causes you the most stress at work?", subType: "radio", options: ["Heavy workload / long hours", "Job insecurity / contract uncertainty", "Difficult boss / workplace conflict", "Low pay or limited benefits", "Commute / travel stress (traffic is a big factor in Colombo & other cities)", "Other"], required: true },
+  ],
+  "Employed – Shift work / irregular hours": [
+    { subKey: "shiftWorkStressCause", subTitle: "What usually causes you the most stress at work?", subType: "radio", options: ["Heavy workload / long hours", "Job insecurity / contract uncertainty", "Difficult boss / workplace conflict", "Low pay or limited benefits", "Commute / travel stress (traffic is a big factor in Colombo & other cities)", "Other"], required: true },
+  ],
+  "Self-employed / Business owner": [
+    { subKey: "bizOwnerStressFactor", subTitle: "What is your biggest stress factor in running your business?", subType: "radio", options: ["Financial uncertainty / cash flow", "Government regulations or taxes", "Customer or client issues", "Lack of stability / market changes", "Work-life balance", "Other"], required: true },
+  ],
+  "Homemaker / Caregiver": [
+    { subKey: "homemakerStressfulRole", subTitle: "What usually feels most stressful in your role?", subType: "radio", options: ["Household responsibilities", "Caring for children / elderly / family members", "Lack of personal time / self-care", "Feeling unrecognized / unsupported", "Financial dependency / constraints", "Other"], required: true },
+  ],
+  "Retired": [
+    { subKey: "retiredChallenge", subTitle: "What is your biggest challenge in retirement?", subType: "radio", options: ["Loneliness / isolation", "Health issues / managing chronic conditions", "Financial concerns / pension limitations", "Lack of routine or purpose", "Other"], required: true },
+  ],
+  "Other": [
+    { subKey: "otherStressCause", subTitle: "Please specify your main source of stress.", subType: "text", placeholder: "Enter details of your main stressor", required: true },
   ],
 
   // MENTAL HEALTH FOLLOW-UPS 
   mh_medicalConditionAffects_Yes: {
     subKey: "mh_impactAreas",
-    subTitle: "Q2a: How does it affect you?",
+    subTitle: "How does it affect you?",
     subType: "multiselect",
     options: [
       { id: "causesStress", label: "Causes stress / anxiety" },
@@ -1316,60 +1287,6 @@ const conditionalFollowUps = {
   "My schedule is irregular (e.g., shift work)": { subKey: "irregularScheduleReason", subTitle: "What is the main reason your bedtime and wake time change so much?", subType: "radio", options: ["Necessary late work/studying or early duties", "Social activities, chats or calls with friends or partner, late-night movies, or gaming", "I have no fixed schedule/routine"], required: true },
 };
 
-// EXPORT FUNCTIONS
-const getQuestions = (primaryGoals = [], currentAnswers = {}, age = 0, sex = "") => {
-  let allQuestions = [...baseQuestions];
-  let currentId = Math.max(...baseQuestions.map(q => q.id));
-
-  //Conditional Pregnancy Check
-  if (sex === "Female" && age > 18) {
-    const pregnantQuestion = conditionalFollowUps["pregnantQuestion"];
-    
-    // *** FIX: Check if the 'isPregnant' question key already exists in the list ***
-    const isPregnantQuestionAlreadyAdded = allQuestions.some(q => q.key === "isPregnant");
-    
-    if (pregnantQuestion && !isPregnantQuestionAlreadyAdded) {
-        currentId++;
-        const insertionIndex = allQuestions.findIndex(q => q.key === "sex") + 1;
-        allQuestions.splice(insertionIndex, 0, {
-        ...pregnantQuestion,
-        id: currentId,
-        type: pregnantQuestion.subType,
-        title: pregnantQuestion.subTitle,
-        description: pregnantQuestion.description,
-        key: "isPregnant",
-        required: pregnantQuestion.required,
-        });
-    }
-  }
-
-  let selectedGoals = [];
-
-   if (Array.isArray(primaryGoals)) {
-    // If it's already an array, use it directly
-    selectedGoals = primaryGoals;
-  } else if (typeof primaryGoals === 'object' && primaryGoals !== null) {
-    // If it's an object (from multiselect), convert to array of selected keys
-    selectedGoals = Object.keys(primaryGoals).filter(key => primaryGoals[key] && key !== "none");
-  }
-
-  selectedGoals.forEach(goalKey => {
-    const key = goalKey.id || goalKey;
-    if (goalSpecificQuestions[key]) {
-      goalSpecificQuestions[key].forEach(q => {
-        if (q.showCondition && !q.showCondition(currentAnswers)) {
-          return; 
-        }
-        
-        currentId++;
-        allQuestions.push({ ...q, id: currentId });
-      });
-    }
-  });
-
-  return allQuestions.sort((a, b) => a.id - b.id);
-};
-
 // Map condition keys to their follow-up logic
 const healthConditionFollowUps = {
   heartDisease: ["heartDisease_type", "disease_control"],
@@ -1392,10 +1309,60 @@ const healthConditionFollowUps = {
 
 // Map substance keys to their quantity/details follow-up
 const substanceQuantityFollowUps = {
-  cigarettes: "cigarettes",
-  beedi: "beedi",
-  chewingTobacco: "chewingTobacco",
-  otherDrugs: "otherDrugs",
+  alcohol: "alcohol_frequency",
+  cigarettes: "cigarettes_quantity",
+  beedi: "beedi_quantity",
+  chewingTobacco: "chewingTobacco_quantity",
+  otherDrugs: "otherDrugs_quantity",
+};
+
+const getQuestions = (primaryGoals = [], currentAnswers = {}, age = 0, sex = "") => {
+  let allQuestions = [...baseQuestions];
+  let currentId = Math.max(...baseQuestions.map(q => q.id));
+
+  if (sex === "Female" && age > 18) {
+    const pregnantQuestion = conditionalFollowUps["pregnantQuestion"];
+    
+    const isPregnantQuestionAlreadyAdded = allQuestions.some(q => q.key === "isPregnant");
+    
+    if (pregnantQuestion && !isPregnantQuestionAlreadyAdded) {
+        currentId++;
+        const insertionIndex = allQuestions.findIndex(q => q.key === "sex") + 1;
+        allQuestions.splice(insertionIndex, 0, {
+        ...pregnantQuestion,
+        id: currentId,
+        type: pregnantQuestion.subType,
+        title: pregnantQuestion.subTitle,
+        description: pregnantQuestion.description,
+        key: "isPregnant",
+        required: pregnantQuestion.required,
+        });
+    }
+  }
+
+  let selectedGoals = [];
+
+   if (Array.isArray(primaryGoals)) {
+    selectedGoals = primaryGoals;
+  } else if (typeof primaryGoals === 'object' && primaryGoals !== null) {
+    selectedGoals = Object.keys(primaryGoals).filter(key => primaryGoals[key] && key !== "none");
+  }
+
+  selectedGoals.forEach(goalKey => {
+    const key = goalKey.id || goalKey;
+    if (goalSpecificQuestions[key]) {
+      goalSpecificQuestions[key].forEach(q => {
+        if (q.showCondition && !q.showCondition(currentAnswers)) {
+          return; 
+        }
+        
+        currentId++;
+        allQuestions.push({ ...q, id: currentId });
+      });
+    }
+  });
+
+  return allQuestions.sort((a, b) => a.id - b.id);
 };
 
 export {

@@ -9,35 +9,30 @@ import {
   substanceQuantityFollowUps,
 } from "../data/questions";
 
-// Keys that trigger a subStep 1 conditional flow
 const BRANCHING_KEYS = [
-  "sex", // For pregnancy check
-  //"isPregnant", // Pregnancy question itself
-  "diagnosedConditions", // 5.1 & 5.2 checks
-  "dietType", // Q1a, Q1b Nutrition
-  "substanceUseNutrition", // Q2.1-Q2.4 Nutrition
-  "activityLevel", // Q1a, Q1b, Q1c Activity
-  "exerciseChallenge", // Final question of Q1a flow to trigger Q1b/Q1c
-  "exerciseLocation", // Q3 Preferences Activity
-  "activityTypePreference", // Q3 Preferences Activity
-  "timeAvailability", // Q3 Preferences Activity
-  "wl_lifeSituation", // Placeholder for WL lifecycle questions
-  "wl_dietType", // Q1a, Q1b WL
-  "wl_substanceUse", // Q2.1-Q2.4 WL
-  "wl_triedBefore", // Q1 WL Barriers
-  //"substanceType", // Q1 Substance
-  "substanceFrequency", // Q2 Substance
-  "substanceDetailsPlaceholder", // Q3 Substance details
-  "substanceSituations", // Q6 Substance
-  "substanceConsequences", // Consequences Substance
-  "mh_lifeSituation", // MH Life Situation
-  "mh_medicalConditionAffects", // Q1 MH Lifestyle
-  "mh_dailyRoutine", // Q2 MH Lifestyle
-  "mh_stressFrequency", // Q1 MH Emotional State
-  "mh_recentFeelings", // Q3 MH Emotional State
-  "mh_rootCauses", // Q1 MH Root Causes
-  "sleepDisorderDiagnosis", // Q2 Sleep
-  "sleepChallenge", // Q3 Sleep
+  "sex",
+  "diagnosedConditions",
+  "dietType",
+  "substanceUseNutrition",
+  "activityLevel",
+  "exerciseChallenge",
+  "exerciseLocation",
+  "activityTypePreference",
+  "wl_lifeSituation",
+  "wl_dietType",
+  "wl_substanceUse",
+  "wl_triedBefore",
+  "substanceDetailsPlaceholder",
+  "substanceSituations",
+  "substanceConsequences",
+  "mh_lifeSituation",
+  "mh_medicalConditionAffects",
+  "mh_dailyRoutine",
+  "mh_stressFrequency",
+  "mh_recentFeelings",
+  "mh_rootCauses",
+  "sleepDisorderDiagnosis",
+  "sleepChallenge",
 ];
 
 
@@ -45,7 +40,7 @@ const APP_NAME = "Lifeshift";
 
 export default function Questionnaire() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [subStep, setSubStep] = useState(0); // 0: Base question, 1: Adaptive follow-ups
+  const [subStep, setSubStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [questions, setQuestions] = useState([]);
   const router = useRouter();
@@ -54,12 +49,10 @@ export default function Questionnaire() {
   const isBranchingStep = useMemo(() => currentStepData ? BRANCHING_KEYS.includes(currentStepData.key) : false, [currentStepData]);
   const totalSteps = questions.length;
 
-// Memoize key values from answers to avoid object references in dependencies
   const currentAge = useMemo(() => parseInt(answers.age) || 0, [answers.age]);
   const currentSex = useMemo(() => answers.sex || "", [answers.sex]);
   const currentLifestyle = useMemo(() => answers.lifestyle || "", [answers.lifestyle]);
   
-  // Memoize specific answer values that are used in the follow-up logic
   const diagnosedConditions = useMemo(() => answers.diagnosedConditions || {}, [answers.diagnosedConditions]);
   const substanceType = useMemo(() => answers.substanceType || {}, [answers.substanceType]);
   const substanceFrequency = useMemo(() => answers.substanceFrequency || "", [answers.substanceFrequency]);
@@ -76,12 +69,8 @@ export default function Questionnaire() {
   const mhRootCauses = useMemo(() => answers.mh_rootCauses || {}, [answers.mh_rootCauses]);
 
 
-  // Memoize follow-up answers
   const followUpAnswers = useMemo(() => answers.followUps || {}, [answers.followUps]);
 
-  // --- Core State and Question Initialization ---
-
-  // Dynamically re-generate full question list when primary goals, age, or sex change
   useEffect(() => {
     const primaryGoals = answers.primaryGoals || [];
     const age = parseInt(answers.age) || 0;
@@ -91,11 +80,8 @@ export default function Questionnaire() {
     setQuestions(allQuestions);
   }, [answers.primaryGoals, answers.age, answers.sex]);
 
-  // --- Adaptive Follow-up Logic Generation ---
-
   const [followUpQuestions, setFollowUpQuestions] = useState([]);
 
-  // Generate follow-up questions for the current branching step
   useEffect(() => {
     if (!currentStepData || subStep !== 1) {
       setFollowUpQuestions([]);
@@ -106,15 +92,11 @@ export default function Questionnaire() {
     const baseAnswer = answers[key];
     const newFollowUps = [];
 
-    // --- 1. BASE PROFILE (Pregnancy & Diagnosed Conditions) ---
-
-    // Pregnancy check (Q2.1)
     if (key === "sex" && baseAnswer === "Female" && currentAge > 18) {
       const pregnantQ = conditionalFollowUps["pregnantQuestion"];
       if (pregnantQ) newFollowUps.push(pregnantQ);
     }
 
-    // Diagnosed Conditions (Q6) -> 5.1 & 5.2
     if (key === "diagnosedConditions" && baseAnswer) {
       const selectedConditions = Object.keys(diagnosedConditions).filter(c => diagnosedConditions[c] && c !== "none");
       
@@ -124,12 +106,10 @@ export default function Questionnaire() {
           if (followUpKeys) {
             followUpKeys.forEach(followUpKey => {
               if (Array.isArray(conditionalFollowUps[followUpKey])) {
-                // Handle array of questions (like recentSurgery)
                 conditionalFollowUps[followUpKey].forEach(q => {
                   newFollowUps.push({ ...q, parentKey: conditionId });
                 });
               } else if (conditionalFollowUps[followUpKey]) {
-                // Handle single question
                 const q = conditionalFollowUps[followUpKey];
                 newFollowUps.push({ ...q, parentKey: conditionId });
               }
@@ -139,14 +119,11 @@ export default function Questionnaire() {
       }
     }
 
-    // --- 2. NUTRITION GOAL ---
-    // Q1. Diet Type (Q1a/Q1b)
     if (key === "dietType" && baseAnswer && conditionalFollowUps[baseAnswer]) {
       const q = conditionalFollowUps[baseAnswer];
       newFollowUps.push(q);
     }
     
-    // Q2. Substance Use (Q2.1-Q2.4)
     if (key === "substanceUseNutrition" && baseAnswer) {
       const selectedSubstances = Object.keys(substanceUseNutrition).filter(s => substanceUseNutrition[s] && s !== "none");
       selectedSubstances.forEach(substanceId => {
@@ -154,24 +131,19 @@ export default function Questionnaire() {
         if (q) newFollowUps.push({ ...q, parentKey: substanceId });
       });
 
-      // Nested Q2.2 for alcohol quantity (only if alcohol is selected AND frequency is answered/not Rarely)
       if (substanceUseNutrition.alcohol && followUpAnswers.alcoholFrequencyNutrition && followUpAnswers.alcoholFrequencyNutrition !== "Rarely (special occasions)") {
         const freqKey = followUpAnswers.alcoholFrequencyNutrition;
-        // Logic to determine which quantity question to use
         const quantityQKey = (freqKey === "Sometimes (1–2 times a week)" || freqKey === "Frequently (3–5 times a week)" || freqKey === "Daily") ? "alcohol_quantity_nutrition" : freqKey;
         const quantityQ = conditionalFollowUps[quantityQKey];
         if (quantityQ) newFollowUps.push({ ...quantityQ, parentKey: "alcoholQuantity" });
       }
     }
 
-    // --- 3. ACTIVITY GOAL ---
-    // Q1b: Barriers (if Mostly Sitting/Light Movement)
     if ((key === "activityLevel" || key === "exerciseChallenge") && 
         (activityLevel === "Mostly sitting (little or no exercise)" || activityLevel === "Light movement (walks, chores, light activity)")) {
       const barriersQ = conditionalFollowUps["Mostly sitting (little or no exercise)"];
       if (barriersQ) newFollowUps.push(barriersQ);
 
-      // Nested barrier follow-ups
       if (followUpAnswers.activityBarriers) {
         Object.keys(followUpAnswers.activityBarriers).filter(b => followUpAnswers.activityBarriers[b] && b !== "nothing").forEach(barrierId => {
           const q = conditionalFollowUps[barrierId];
@@ -180,54 +152,39 @@ export default function Questionnaire() {
       }
     }
     
-    // Q1c: Satisfaction (if Moderate/Very Active)
     if ((key === "activityLevel" || key === "exerciseChallenge") && 
         (activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" || activityLevel === "Very active (exercise most days / vigorous workouts/sports)")) {
       const satisfactionQ = conditionalFollowUps["Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)"];
       if (satisfactionQ) newFollowUps.push(satisfactionQ);
 
-      // Nested satisfaction follow-ups
       const satisfaction = followUpAnswers.activitySatisfaction;
       if (satisfaction && conditionalFollowUps[satisfaction]) {
-        // If the satisfaction answer points to an object, push it
         if (typeof conditionalFollowUps[satisfaction] === 'object' && !Array.isArray(conditionalFollowUps[satisfaction])) {
             newFollowUps.push(conditionalFollowUps[satisfaction]);
         }
       }
       
-      // Deeply nested Maintain/Push Further follow-ups
       if (satisfaction === "Yes, I'm happy" && followUpAnswers.happyDirection && conditionalFollowUps[followUpAnswers.happyDirection]) {
-        // The follow-ups for Maintain/Push Further are arrays in the conditionalFollowUps object
         const directionQs = conditionalFollowUps[followUpAnswers.happyDirection];
         if (Array.isArray(directionQs)) {
-            directionQs.forEach(q => newFollowUps.push(q));
+            directionQs.forEach(q => newFollowUps.push(directionQs));
         } else {
              newFollowUps.push(directionQs);
         }
       }
     }
     
-    // Q3: Location
     if (key === "exerciseLocation" && baseAnswer && conditionalFollowUps[baseAnswer]) {
       const q = conditionalFollowUps[baseAnswer];
-      // Handle the Gym case, which returns an object that is not a question but a multiselect
       if (q && q.subKey) {
         if (q.subType !== "suggestion") newFollowUps.push(q);
       }
     }
     
-    // Q3: Activity Type Preference
     if (key === "activityTypePreference" && baseAnswer && baseAnswer.otherNotSure && conditionalFollowUps.otherNotSure) {
       newFollowUps.push(conditionalFollowUps.otherNotSure);
     }
-    
-    // Q3: Time Availability - Time availability is a non-branching question so this logic is likely redundant but kept for safety.
-    // if (key === "timeAvailability") {
-    //   // This key does not have subStep 1 conditional flow based on the branching keys.
-    // }
 
-    // --- 4. WEIGHT LOSS GOAL ---
-    // WL Life Situation (Q8) - Adaptive based on BASE Q5
     if (key === "wl_lifeSituation" && currentLifestyle) {
       const questions = conditionalFollowUps[currentLifestyle];
       if (questions) {
@@ -239,13 +196,11 @@ export default function Questionnaire() {
       }
     }
     
-    // WL Diet Type (Q1a/Q1b)
     if (key === "wl_dietType" && baseAnswer && conditionalFollowUps[baseAnswer]) {
       const q = conditionalFollowUps[baseAnswer];
       newFollowUps.push({ ...q, parentKey: "wl_dietType" });
     }
     
-    // WL Substance Use (Q2.1-Q2.4)
     if (key === "wl_substanceUse" && baseAnswer) {
       const selectedSubstances = Object.keys(wlSubstanceUse).filter(s => wlSubstanceUse[s] && s !== "none");
       selectedSubstances.forEach(substanceId => {
@@ -255,25 +210,20 @@ export default function Questionnaire() {
 
       if (wlSubstanceUse.alcohol && followUpAnswers.alcoholFrequencyNutrition && followUpAnswers.alcoholFrequencyNutrition !== "Rarely (special occasions)") {
         const freqKey = followUpAnswers.alcoholFrequencyNutrition;
-        // Logic to determine which quantity question to use
         const quantityQKey = (freqKey === "Sometimes (1–2 times a week)" || freqKey === "Frequently (3–5 times a week)" || freqKey === "Daily") ? "alcohol_quantity_nutrition" : freqKey;
         const q = conditionalFollowUps[quantityQKey];
         if (q) newFollowUps.push({ ...q, parentKey: "wl_alcoholQuantity" });
       }
     }
     
-    // WL Tried Before (Q1a/Q1b)
     if (key === "wl_triedBefore" && wlTriedBefore === "Yes" && conditionalFollowUps.Yes) {
       conditionalFollowUps.Yes.forEach(q => newFollowUps.push(q));
     }
 
-    // --- 5. SUBSTANCE GOAL ---
-    // Q2: Frequency (Q2a)
     if (key === "substanceFrequency" && substanceFrequency === "I used in the past, but quit" && conditionalFollowUps[substanceFrequency]) {
       newFollowUps.push(conditionalFollowUps[substanceFrequency]);
     }
     
-    // Q3: Quantity/Details
     if (key === "substanceDetailsPlaceholder" && baseAnswer) {
       const selectedSubstances = Object.keys(substanceType).filter(s => substanceType[s] && s !== "none");
       selectedSubstances.forEach(substanceId => {
@@ -283,14 +233,12 @@ export default function Questionnaire() {
           if (q) newFollowUps.push({ ...q, parentKey: substanceId });
         }
         
-        // Special handling for alcohol frequency in substance goal
         if (substanceId === "alcohol" && substanceFrequency && substanceFrequency !== "I used in the past, but quit") {
-          const freqQ = conditionalFollowUps["alcohol"];
-          if (freqQ && Array.isArray(freqQ)) {
-            freqQ.forEach(q => newFollowUps.push({ ...q, parentKey: "alcohol_frequency" }));
+          const freqQ = conditionalFollowUps["alcohol_frequency"];
+          if (freqQ) {
+            newFollowUps.push({ ...freqQ, parentKey: "alcohol_frequency" });
           }
           
-          // Nested alcohol quantity
           if (followUpAnswers.alcoholFrequencyGoal && followUpAnswers.alcoholFrequencyGoal !== "Rarely (special occasions only)") {
             const quantityQ = conditionalFollowUps[`${followUpAnswers.alcoholFrequencyGoal}_goal`] || conditionalFollowUps["Sometimes (1–2 times a week)_goal"];
             if (quantityQ) newFollowUps.push({ ...quantityQ, parentKey: "alcohol_quantity" });
@@ -299,7 +247,6 @@ export default function Questionnaire() {
       });
     }
     
-    // Q6: Situations for Use
     if (key === "substanceSituations" && baseAnswer) {
       Object.keys(baseAnswer).filter(s => baseAnswer[s]).forEach(situationId => {
         const q = conditionalFollowUps[situationId];
@@ -307,7 +254,6 @@ export default function Questionnaire() {
       });
     }
     
-    // Consequences & Self-Reflection
     if (key === "substanceConsequences" && baseAnswer) {
       Object.keys(baseAnswer).filter(c => baseAnswer[c] && c !== "noNoticeableIssues").forEach(consequenceId => {
         const questionsArray = conditionalFollowUps[consequenceId];
@@ -321,45 +267,37 @@ export default function Questionnaire() {
       });
     }
 
-    // --- 6. MENTAL HEALTH GOAL ---
-    // Life Situation (Adaptive based on lifestyle)
     if (key === "mh_lifeSituation" && currentLifestyle) {
-      const lifeSituationQ = conditionalFollowUps[currentLifestyle];
-      if (lifeSituationQ) {
-        if (Array.isArray(lifeSituationQ)) {
-          lifeSituationQ.forEach(q => newFollowUps.push(q));
+      const questions = conditionalFollowUps[currentLifestyle];
+      if (questions) {
+        if (Array.isArray(questions)) {
+          questions.forEach(q => newFollowUps.push(q));
         } else {
-          newFollowUps.push(lifeSituationQ);
+          newFollowUps.push(questions);
         }
       }
     }
     
-    // Q1. Medical condition affects mental health
     if (key === "mh_medicalConditionAffects" && mhMedicalConditionAffects === "Yes") {
       newFollowUps.push(conditionalFollowUps.mh_medicalConditionAffects_Yes);
     }
     
-    // Q2. Daily Routine Adaptive Follow-ups
     if (key === "mh_dailyRoutine" && baseAnswer) {
       Object.keys(mhDailyRoutine).filter(r => mhDailyRoutine[r]).forEach(routineKey => {
         const q = conditionalFollowUps[routineKey];
-        // Only trigger follow-ups for specific keys based on logic: sedentary, irregularMeals, poorSleep
         if (routineKey === 'sedentary' || routineKey === 'irregularMeals' || routineKey === 'poorSleep') {
             if (q) newFollowUps.push(q);
         }
       });
     }
     
-    // Q4. Stress Frequency Adaptive Follow-ups
     if (key === "mh_stressFrequency" && mhStressFrequency && conditionalFollowUps[mhStressFrequency]) {
-      // Only show follow-up if frequency is not "Rarely"
       if (mhStressFrequency !== "Rarely – I feel calm most of the time") {
           const q = conditionalFollowUps[mhStressFrequency];
           if (q) newFollowUps.push(q);
       }
     }
     
-    // Q3. Recent Feelings Adaptive Follow-ups
     if (key === "mh_recentFeelings" && baseAnswer) {
       Object.keys(mhRecentFeelings).filter(f => mhRecentFeelings[f] && f !== "noneFeelings").forEach(feelingKey => {
         const q = conditionalFollowUps[feelingKey];
@@ -367,7 +305,6 @@ export default function Questionnaire() {
       });
     }
     
-    // Q1. Root Causes Adaptive Follow-ups
     if (key === "mh_rootCauses" && baseAnswer) {
       Object.keys(mhRootCauses).filter(c => mhRootCauses[c]).forEach(causeKey => {
         const q = conditionalFollowUps[`${causeKey}_impact`];
@@ -375,25 +312,20 @@ export default function Questionnaire() {
       });
     }
 
-    // --- 7. SLEEP GOAL ---
-    // Q2. Sleep Disorder Diagnosis
     if (key === "sleepDisorderDiagnosis" && sleepDisorderDiagnosis === "Yes") {
       newFollowUps.push(conditionalFollowUps.sleepDisorderDiagnosis_Yes);
     }
     
-    // Q3. Biggest Sleep Challenge Adaptive Flow
     if (key === "sleepChallenge" && baseAnswer && conditionalFollowUps[baseAnswer]) {
       newFollowUps.push(conditionalFollowUps[baseAnswer]);
     }
 
-    // Set final, deduplicated list
     const uniqueFollowUps = newFollowUps.filter((q, i, arr) => 
       arr.findIndex(t => t.subKey === q.subKey) === i
     );
     setFollowUpQuestions(uniqueFollowUps);
 
   }, [
-    // Stable dependencies only
     currentStepData,
     subStep,
     currentAge,
@@ -413,10 +345,10 @@ export default function Questionnaire() {
     sleepDisorderDiagnosis,
     mhDailyRoutine,
     mhRootCauses,
-    followUpAnswers
+    followUpAnswers,
+    answers
   ]);
 
-  // --- Utility Functions ---
   const isAnyConditionSelected = useCallback((conditions) => 
     Object.entries(conditions || {}).some(([key, isSelected]) => isSelected && key !== "none"), []);
 
@@ -427,7 +359,6 @@ export default function Questionnaire() {
     Object.entries(multiselectAnswers || {}).some(([, isSelected]) => isSelected), []);
 
 
-  // Converts Imperial to Metric (cm, kg)
   const convertToMetric = useCallback((measurements) => {
     const { unitSystem, height, weight, heightFt, heightIn } = measurements;
     if (unitSystem === "Metric (cm, kg)") return { heightCm: parseFloat(height) || 0, weightKg: parseFloat(weight) || 0 };
@@ -448,7 +379,6 @@ export default function Questionnaire() {
     return "N/A";
   }, [convertToMetric]);
 
-  // Helper function to calculate sleep duration
   const calculateSleepDuration = useCallback((bedtime, waketime) => {
     if (!bedtime || !waketime) return "N/A";
     const bed = new Date(`2000-01-01T${bedtime}`);
@@ -460,36 +390,28 @@ export default function Questionnaire() {
     return `${diffHrs}h ${diffMins}m`;
   }, []);
 
-  // --- Validation Logic ---
   const isStepValid = useCallback(() => {
     if (!currentStepData) return false;
     const currentAnswer = answers[currentStepData.key];
 
-    // Case 1: Validation for Branching Steps
     if (isBranchingStep) {
-      // subStep 0: Validate the base question
       if (subStep === 0) {
         if (!currentStepData.required) return true;
         if (currentStepData.type === "multiselect") return Object.values(currentAnswer || {}).some((v) => v === true);
         if (currentStepData.type === "radio") return !!currentAnswer;
         
-        // ADDED FIX: Placeholder steps are implicitly valid in subStep 0 because they immediately branch.
         if (currentStepData.type === "placeholder" || currentStepData.key === "wl_lifeSituation" || currentStepData.key === "substanceDetailsPlaceholder" || currentStepData.key === "mh_lifeSituation") return true; 
 
         return !!currentAnswer;
       }
-      // subStep 1: Validate all conditional questions
       if (subStep === 1) {
-        // If no follow-up questions were generated, it's valid to proceed.
         if (followUpQuestions.length === 0) return true;
 
         return followUpQuestions.every((q) => {
-          // If a question is not explicitly required, skip validation
           if (!q.required) return true;
 
           const answer = followUpAnswers[q.subKey];
 
-          // Special logic for Recent Surgery 9.4
           if (currentStepData.key === "diagnosedConditions" && q.subKey === "surgeryCurrentSymptoms") {
             if (diagnosedConditions.recentSurgery) {
               return Object.values(answer || {}).some((v) => v === true);
@@ -497,7 +419,6 @@ export default function Questionnaire() {
             return true;
           }
 
-          // General validation for required fields
           if (q.subType === "radio") return !!answer;
           if (q.subType === "multiselect") return Object.values(answer || {}).some((v) => v === true);
           if (q.subType === "text" || q.subType === "textarea") return !!answer && answer.trim().length > 0;
@@ -506,12 +427,10 @@ export default function Questionnaire() {
         });
       }
     }
-    // Case 2: Validation for NON-Branching Steps
     else {
       if (!currentStepData.required) return true;
       if (!currentAnswer) return false;
 
-      // Handle different input types
       if (currentStepData.type === "text" || currentStepData.type === "number" || currentStepData.type === "radio") {
         return !!currentAnswer && (currentStepData.type === "text" ? currentAnswer.trim().length > 0 : true);
       }
@@ -530,14 +449,11 @@ export default function Questionnaire() {
         return !!bedtime && !!waketime;
       }
       if (currentStepData.type === "placeholder") {
-        // Placeholder steps are always valid for the base step since they auto-advance
         return true; 
       }
       return false;
     }
   }, [currentStepData, answers, isBranchingStep, subStep, followUpQuestions, followUpAnswers, diagnosedConditions]);
-
-  // --- Navigation Handlers ---
 
   const handleNext = useCallback(() => {
     if (!isStepValid()) {
@@ -545,24 +461,19 @@ export default function Questionnaire() {
       return;
     }
 
-    // A. If on a Branching Step's Base Question (subStep 0)
     if (isBranchingStep && subStep === 0) {
 
-      // ✨ CRITICAL FIX: If this is an adaptive placeholder key, immediately move to subStep 1.
       if (currentStepData.key === "wl_lifeSituation" || currentStepData.key === "substanceDetailsPlaceholder" || currentStepData.key === "mh_lifeSituation") {
           setSubStep(1);
           return;
       }
       
-      // Logic to determine if subStep 1 (Follow-ups) should be skipped
       const isSkippingFollowUps = (() => {
         if (currentStepData.key === "sex") {
-          // Only show pregnancy follow-up for females over 18
           return !(currentSex === "Female" && currentAge > 18);
         }
         if (currentStepData.key === "diagnosedConditions") return !isAnyConditionSelected(diagnosedConditions);
         if (currentStepData.key === "dietType") {
-          // Skip if the selected diet type does not have a follow-up question
           return !(dietType === "Mostly vegetables and no meat (Vegetarian)" || 
                   dietType === "Only plant-based foods, no meat, eggs, or dairy (Vegan)" || 
                   dietType === "Mostly meat, eggs, and low in bread/rice/potatoes (Keto / Low-carb)");
@@ -571,7 +482,7 @@ export default function Questionnaire() {
         if (currentStepData.key === "wl_substanceUse") return !isAnySubstanceSelected(wlSubstanceUse);
         if (currentStepData.key === "wl_triedBefore" && wlTriedBefore === "No") return true;
         if (currentStepData.key === "substanceType" && (!substanceType || substanceType.none || !isAnySubstanceSelected(substanceType))) return true;
-        if (currentStepData.key === "substanceFrequency" && substanceFrequency !== "I used in the past, but quit") return true; // Only branch if they quit, otherwise frequency is base for next step
+        if (currentStepData.key === "substanceFrequency" && substanceFrequency !== "I used in the past, but quit") return true;
         if (currentStepData.key === "substanceDetailsPlaceholder" && (!substanceType || substanceType.none || !isAnySubstanceSelected(substanceType))) return true;
         if (currentStepData.key === "substanceSituations" && !isAnyKeySelected(answers.substanceSituations)) return true;
         if (currentStepData.key === "substanceConsequences" && answers.substanceConsequences?.noNoticeableIssues) return true;
@@ -581,32 +492,25 @@ export default function Questionnaire() {
         if (currentStepData.key === "mh_recentFeelings" && mhRecentFeelings?.noneFeelings) return true;
         if (currentStepData.key === "sleepDisorderDiagnosis" && sleepDisorderDiagnosis === "No") return true;
 
-        // Activity Goal logic
         if (currentStepData.key === "activityLevel") {
-          // If Moderately/Very Active, skip Barriers and go to Q1a (next main step, which is Q202:exerciseDays)
           return (activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" || 
                   activityLevel === "Very active (exercise most days / vigorous workouts/sports)");
         }
         if (currentStepData.key === "exerciseChallenge") {
-          // Only show Satisfaction & Goals (Q1c) if Moderately/Very Active
           return !(activityLevel === "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)" || 
                   activityLevel === "Very active (exercise most days / vigorous workouts/sports)");
         }
         if (currentStepData.key === "exerciseLocation") {
-          // Skip if the selected location does not have a follow-up question
           return currentStepData.options.find(opt => opt === currentStepData.key) === "Mixed / Any location";
         }
         if (currentStepData.key === "activityTypePreference" && answers.activityTypePreference?.otherNotSure !== true) return true;
-        if (currentStepData.key === "timeAvailability") return true; // No explicit follow-up question, just for logic.
+        if (currentStepData.key === "timeAvailability") return true;
         
-        // MH Daily Routine follow-ups should only show if non-good/non-active options selected
         if (currentStepData.key === "mh_dailyRoutine") {
              const routineAnswers = answers.mh_dailyRoutine || {};
-             // Follow-ups generated for 'sedentary', 'irregularMeals', 'poorSleep'
              return !(routineAnswers.sedentary || routineAnswers.irregularMeals || routineAnswers.poorSleep);
         }
         
-        // MH Root Causes - if nothing selected, skip
         if (currentStepData.key === "mh_rootCauses") {
             return !isAnyKeySelected(mhRootCauses);
         }
@@ -614,20 +518,16 @@ export default function Questionnaire() {
         return false;
       })();
 
-      // If skipping logic says true, move to the next step
       if (isSkippingFollowUps) {
         setCurrentStep(currentStep + 1);
         setSubStep(0);
         return;
       }
       
-      // If no explicit skip, move to subStep 1. The next check handles if subStep 1 is empty.
       setSubStep(1);
 
     }
-    // B. If on a Branching Step's Follow-ups (subStep 1)
     else if (isBranchingStep && subStep === 1) {
-      // *** CRITICAL FIX: If followUpQuestions is empty, skip this screen and go to next step ***
       if (followUpQuestions.length === 0) {
         setCurrentStep(currentStep + 1);
         setSubStep(0);
@@ -637,13 +537,11 @@ export default function Questionnaire() {
       setCurrentStep(currentStep + 1);
       setSubStep(0);
     }
-    // C. If on the FINAL STEP
     else if (currentStep === totalSteps) {
       console.log("Questionnaire Complete! Final Answers:", answers);
       alert("Questionnaire Complete! Check console for final answers.");
       router.push("/thank-you");
     }
-    // D. If on a NON-Branching Step
     else if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
@@ -656,22 +554,18 @@ export default function Questionnaire() {
 
 
   const handleBack = useCallback(() => {
-    // If on a Branching Step and on follow-up questions, go back to base question
     if (isBranchingStep && subStep === 1) {
       setSubStep(0);
     }
-    // Normal step navigation
     else if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
       setSubStep(0);
     }
   }, [isBranchingStep, subStep, currentStep]);
 
-  // --- Input Change Handler ---
   const handleInputChange = useCallback((key, value, subKey = null, type = null, itemIndex = null) => {
     const currentQuestionKey = currentStepData.key;
 
-    // Conditional Follow-Ups (Stored under the 'followUps' key)
     if (subKey) {
       setAnswers(prevAnswers => {
         const followUpAnswers = prevAnswers.followUps || {};
@@ -680,7 +574,6 @@ export default function Questionnaire() {
         if (type === "multiselect") {
           const subSectionAnswer = followUpAnswers[subKey] || {};
           newSubAnswer = { ...subSectionAnswer, [key]: !subSectionAnswer[key] };
-          // Multiselect 'none' logic
           if (key === "none" || key === "nothing" || key === "noNoticeableIssues" || key === "noneFeelings") {
             newSubAnswer = { [key]: !subSectionAnswer[key] };
           }
@@ -700,7 +593,6 @@ export default function Questionnaire() {
         };
       });
     }
-    // Multi-Inputs (Height/Weight, Sleep Schedule)
     else if (currentStepData.type === "measurements" || currentStepData.type === "sleepSchedule") {
       setAnswers(prevAnswers => ({
         ...prevAnswers,
@@ -710,7 +602,6 @@ export default function Questionnaire() {
         },
       }));
     }
-    // Simple Multi-Select (Handles 'none', 'nothing', 'noIssues' exclusion logic)
     else if (currentStepData.type === "multiselect") {
       setAnswers(prevAnswers => {
         let newSelections = prevAnswers[currentQuestionKey] || {};
@@ -732,7 +623,6 @@ export default function Questionnaire() {
         return { ...prevAnswers, [currentQuestionKey]: newSelections };
       });
     }
-    // Single-Value Steps (Radio, Text, Number, Placeholder)
     else {
       setAnswers(prevAnswers => ({
         ...prevAnswers,
@@ -741,7 +631,6 @@ export default function Questionnaire() {
     }
   }, [currentStepData]);
 
-  // --- UI Renderers ---
   const renderRadioButtons = (options, currentAnswer, subKey = null) => {
     return (
       <div className="space-y-4">
@@ -791,20 +680,16 @@ export default function Questionnaire() {
   const renderConditionalFollowUps = () => {
     const followUpAnswers = answers.followUps || {};
 
-    // Filter out suggestions and items that are conditionally hidden
     const visibleFollowUpQuestions = followUpQuestions.filter((q) => {
       if (q.subType === "suggestion") return false;
 
-      // Conditional display check (e.g., recentSurgery follow-ups should only show if recentSurgery is selected)
       if (q.parentKey === "recentSurgery" && !answers.diagnosedConditions?.recentSurgery) return false;
 
-      // Handle nested conditions (e.g., alcohol quantity only after alcohol frequency is selected)
       if (q.parentKey === "alcoholQuantity" || q.parentKey === "wl_alcoholQuantity") {
         const freqAnswer = followUpAnswers.alcoholFrequencyNutrition;
         return (freqAnswer && freqAnswer !== "Rarely (special occasions)");
       }
       
-      // Handle nested WL alcohol quantity for substance goal
       if (q.parentKey === "alcohol_quantity") {
         const freqAnswer = followUpAnswers.alcoholFrequencyGoal;
         return (freqAnswer && freqAnswer !== "Rarely (special occasions only)");
@@ -814,12 +699,10 @@ export default function Questionnaire() {
     });
 
     if (visibleFollowUpQuestions.length === 0 && followUpQuestions.length > 0) {
-        // If there are questions but none are visible (e.g., all were suggestions or conditional hides applied)
         return <p className="text-gray-500 italic">No further details required based on your answer. Click 'Next' to proceed.</p>;
     }
     
     if (visibleFollowUpQuestions.length === 0) {
-      // This case should be handled by handleNext logic, but as a fallback for rendering:
       return <p className="text-gray-500 italic">No further details required based on your answer. Click 'Next' to proceed.</p>;
     }
 
@@ -880,7 +763,6 @@ export default function Questionnaire() {
 
     return (
       <div className="w-full max-w-lg space-y-4">
-        {/* 1. Unit System Selector */}
         <div className="space-y-3">
           <label className="w-full text-gray-700 font-medium block">Select Unit System:</label>
           <div className="flex gap-4">
@@ -896,7 +778,6 @@ export default function Questionnaire() {
           </div>
         </div>
 
-        {/* 2. Metric Inputs */}
         {isMetric && (
           <div className="space-y-4 pt-2">
             <div className="flex items-center">
@@ -909,7 +790,6 @@ export default function Questionnaire() {
             </div>
           </div>
         )}
-        {/* 3. Imperial Inputs */}
         {isImperial && (
           <div className="space-y-4 pt-2">
             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-0">
@@ -925,7 +805,6 @@ export default function Questionnaire() {
             </div>
           </div>
         )}
-        {/* 4. BMI Output */}
         {unitSystem && (
           <div className="mt-4 p-4 bg-[#e0e4ef] rounded-lg text-lg font-semibold flex justify-between">
             <span className="text-black">BMI:</span>
@@ -966,13 +845,9 @@ export default function Questionnaire() {
   const renderStepContent = () => {
     if (!currentStepData) return <p>Step not found.</p>;
 
-    // Handle Branching Steps
     if (isBranchingStep) {
       if (subStep === 0) {
-        // Base Question
-        // ✨ FIX: If it's a "placeholder" key, immediately render the follow-up content (subStep 1 look and feel)
         if (currentStepData.key === "wl_lifeSituation" || currentStepData.key === "substanceDetailsPlaceholder" || currentStepData.key === "mh_lifeSituation") {
-            // For these specific placeholder keys, we render the follow-ups immediately
             return renderConditionalFollowUps();
         }
         
@@ -981,12 +856,10 @@ export default function Questionnaire() {
         if (currentStepData.type === "placeholder") return <p className="text-gray-500 italic">Continue to the next step for adaptive follow-up questions.</p>;
       }
       if (subStep === 1) {
-        // Conditional Follow-ups
         return renderConditionalFollowUps();
       }
     }
 
-    // Handle all non-branching steps
     switch (currentStepData.type) {
       case "text":
         return (
@@ -1025,7 +898,6 @@ export default function Questionnaire() {
     }
   };
 
-  // Determine button text dynamically
   const getButtonText = () => {
     if (currentStep === totalSteps) return "Finish";
     if (isBranchingStep && subStep === 0) return "Continue";
@@ -1040,18 +912,54 @@ export default function Questionnaire() {
   };
 
   if (questions.length === 0 || !currentStepData) {
-    return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-xl font-medium text-[#C263F2]">Loading Questionnaire...</div>
-      </div>
-    );
+   return (
+  <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
+    
+    <div className="flex space-x-3 mb-6">
+      <div className="w-4 h-4 bg-[#C263F2] rounded-full animate-pulse-slow-1"></div>
+      <div className="w-4 h-4 bg-[#63F2C2] rounded-full animate-pulse-slow-2"></div>
+      <div className="w-4 h-4 bg-[#F263C2] rounded-full animate-pulse-slow-3"></div>
+    </div>
+    
+    <div className="text-3xl font-extrabold text-gray-900 mb-2">
+         VIBE CHECK IN PROGRESS....
+    </div>
+    
+    <div className="text-xl font-medium text-gray-700">
+        Hang tight, loading your journey...
+    </div>
+    
+    <style jsx global>{`
+      @keyframes pulse-slow-1 {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(0.75); }
+      }
+      @keyframes pulse-slow-2 {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(0.75); }
+      }
+      @keyframes pulse-slow-3 {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(0.75); }
+      }
+      .animate-pulse-slow-1 {
+        animation: pulse-slow-1 1.5s infinite ease-in-out;
+      }
+      .animate-pulse-slow-2 {
+        animation: pulse-slow-2 1.5s infinite ease-in-out 0.2s;
+      }
+      .animate-pulse-slow-3 {
+        animation: pulse-slow-3 1.5s infinite ease-in-out 0.4s;
+      }
+    `}</style>
+  </div>
+);
   }
 
   const isFinalScreen = currentStep === totalSteps;
 
   return (
     <section id="questionnaire" className="w-full min-h-screen bg-gray-50 flex flex-col pt-14">
-      {/* Header */}
       <div className="w-full bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-3xl mx-auto py-5 px-4 flex justify-between items-center">
           <button
@@ -1078,7 +986,6 @@ export default function Questionnaire() {
         </div>
       </div>
 
-      {/* Main Content Area */}
       <div className="flex-grow flex flex-col items-center pt-10 md:pt-16 pb-10 px-4 md:pb-20 text-center">
         <div className="w-full max-w-lg mb-10">
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
@@ -1090,7 +997,6 @@ export default function Questionnaire() {
 
         <div className="w-full max-w-lg px-2">{renderStepContent()}</div>
 
-        {/* Navigation Buttons */}
         <div className="mt-10 flex gap-4 w-full max-w-lg">
           {(currentStep > 1 || subStep === 1) && (
             <button
@@ -1110,7 +1016,6 @@ export default function Questionnaire() {
         </div>
       </div>
 
-      {/* Footer */}
       <div className="w-full bg-white py-3 text-center border-t border-gray-200 text-xs text-gray-500">
         Copyright © 2025 {APP_NAME}. All rights reserved.
       </div>
