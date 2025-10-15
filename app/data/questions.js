@@ -621,7 +621,7 @@ const goalSpecificQuestions = {
     {
       id: 402,
       type: "radio",
-      title: "Q How often do you use it?",
+      title: " How often do you use it?",
       key: "substanceFrequency",
       options: [
         "Daily",
@@ -635,7 +635,7 @@ const goalSpecificQuestions = {
     {
       id: 403,
       type: "placeholder",
-      title: "Q Substance Usage Details (Quantity/Duration)",
+      title: "Substance Usage Details (Quantity/Duration)",
       key: "substanceDetailsPlaceholder",
       required: false,
     },
@@ -643,7 +643,7 @@ const goalSpecificQuestions = {
     {
       id: 404,
       type: "radio",
-      title: "Q How long have you been using this?",
+      title: "How long have you been using this?",
       key: "substanceDuration",
       options: [
         "Less than 1 year",
@@ -657,7 +657,7 @@ const goalSpecificQuestions = {
     {
       id: 405,
       type: "multiselect",
-      title: "Q What makes you use these substances?",
+      title: "What makes you use these substances?",
       key: "substanceReasons",
       options: [
         { id: "stressAnxiety", label: "Stress/anxiety" },
@@ -672,7 +672,7 @@ const goalSpecificQuestions = {
     {
       id: 406,
       type: "multiselect",
-      title: "Q In what situations do you usually taken these substances?",
+      title: "In what situations do you usually taken these substances?",
       key: "substanceSituations",
       options: [
         { id: "atHomeAlone", label: "At home alone" },
