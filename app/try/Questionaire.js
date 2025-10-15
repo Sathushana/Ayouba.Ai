@@ -175,10 +175,18 @@ export default function Questionnaire() {
     }
     
     if (key === "exerciseLocation" && baseAnswer && conditionalFollowUps[baseAnswer]) {
-      const q = conditionalFollowUps[baseAnswer];
-      if (q && q.subKey) {
-        if (q.subType !== "suggestion") newFollowUps.push(q);
-      }
+      const locationsWithoutFollowUps = ["Mixed / Any location"];
+      
+       if (!locationsWithoutFollowUps.includes(baseAnswer)) {
+    const locationFollowUp = conditionalFollowUps[baseAnswer];
+    
+    if (locationFollowUp && 
+        typeof locationFollowUp === 'object' && 
+        locationFollowUp.subKey && 
+        locationFollowUp.subType) {
+      newFollowUps.push(locationFollowUp);
+    }
+  }
     }
     
     if (key === "activityTypePreference" && baseAnswer && baseAnswer.otherNotSure && conditionalFollowUps.otherNotSure) {
@@ -462,11 +470,18 @@ export default function Questionnaire() {
     }
 
     if (isBranchingStep && subStep === 0) {
+    // SPECIAL CASE: Exercise location with "Mixed / Any location" skips follow-ups
+    if (currentStepData.key === "exerciseLocation" && answers.exerciseLocation === "Mixed / Any location") {
+      setCurrentStep(currentStep + 1);
+      setSubStep(0);
+      return;
+    }
 
-      if (currentStepData.key === "wl_lifeSituation" || currentStepData.key === "substanceDetailsPlaceholder" || currentStepData.key === "mh_lifeSituation") {
-          setSubStep(1);
-          return;
-      }
+    // Your existing placeholder logic
+    if (currentStepData.key === "wl_lifeSituation" || currentStepData.key === "substanceDetailsPlaceholder" || currentStepData.key === "mh_lifeSituation") {
+      setSubStep(1);
+      return;
+    }
       
       const isSkippingFollowUps = (() => {
         if (currentStepData.key === "sex") {

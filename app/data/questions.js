@@ -1111,7 +1111,7 @@ const conditionalFollowUps = {
   "At home": { subKey: "homeEquipment", subTitle: "Would you like suggestions for short routines that don't need equipment?", subType: "radio", options: ["Yes", "No", "Maybe"], required: true },
   "Outdoors (park, streets, trails)": { subKey: "outdoorActivities", subTitle: "Would you like walking, running, or bodyweight exercises?", subType: "radio", options: ["Yes", "No", "Maybe"], required: true },
   "Gym or fitness center": { subKey: "gymEquipment", subTitle: "Do you have access to machines, weights, or classes?", subType: "multiselect", options: [{ id: "machines", label: "Machines" }, { id: "freeWeights", label: "Free weights" }, { id: "classes", label: "Classes" }, { id: "mixed", label: "Mixed" }], required: true },
-  "Other / Not sure": { subKey: "otherNotSure", subTitle: "Would you like the app to suggest activities based on your goals and environment?", subType: "radio", options: ["Yes", "No"], required: true },
+  "Mixed / Any Location": null,
 
   // WEIGHT LOSS FOLLOW-UPS 
   "Student / Studying": [
