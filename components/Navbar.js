@@ -79,7 +79,7 @@ export default function Header() {
             
             className={`px-5 py-2 rounded-xl font-bold transition duration-300 shadow-lg hover:shadow-xl hover:bg-opacity-90 active:scale-95`}
           >
-            Try Free
+            Try Lifeshift
           </Link>
         </nav>
 
@@ -134,7 +134,7 @@ export default function Header() {
             className={`mt-4 px-4 py-3 rounded-xl font-bold text-center transition duration-300 shadow-md hover:bg-opacity-90 active:scale-95`}
             onClick={handleLinkClick}
           >
-            Try Free
+            Try Lifeshift
           </Link>
         </nav>
       </div>
