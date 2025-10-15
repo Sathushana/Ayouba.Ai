@@ -395,11 +395,12 @@ const goalSpecificQuestions = {
     // Step  Baseline & Life Situation 
     {
       id: 301,
-      type: "placeholder",
+      type: "radio",
       title: "Life Situation Details",
       description: "Based on your 'Current Lifestyle' answer, please provide more details.",
       key: "wl_lifeSituation",
       required: true,
+      options: ["Continue"], 
     },
     //  Sleep Hours
     {
@@ -961,63 +962,63 @@ const conditionalFollowUps = {
   //DIAGNOSED CONDITIONS FOLLOW-UPS 
   heartDisease_type: {
     subKey: "heartDiseaseType",
-    subTitle: "1. Heart disease: Which type of heart problem do you have?",
+    subTitle: "Heart disease: Which type of heart problem do you have?",
     subType: "radio",
     options: ["Heart attack (Myocardial infarction / blocked arteries)", "High blood pressure (Hypertension)", "Low blood pressure (Hypotension)", "Heart rhythm problems (irregular heartbeat, palpitations)", "Heart failure (heart is weak, shortness of breath)", "Other (please specify)"],
     required: true,
   },
   stroke_type: {
     subKey: "strokeType",
-    subTitle: "2. Stroke: Which type of stroke have you had?",
+    subTitle: "Stroke: Which type of stroke have you had?",
     subType: "radio",
     options: ["Ischemic stroke (blood clot in the brain)", "Hemorrhagic stroke (bleeding in the brain)", "Mini-stroke / TIA (temporary symptoms)", "Not sure"],
     required: true,
   },
   diabetes_type: {
     subKey: "diabetesType",
-    subTitle: "3. Diabetes / Blood sugar problems: Which type of diabetes do you have?",
+    subTitle: "Diabetes / Blood sugar problems: Which type of diabetes do you have?",
     subType: "radio",
     options: ["Type 1 diabetes (usually starts in children or young adults)", "Type 2 diabetes (most common, often linked to lifestyle)", "Gestational diabetes (during pregnancy)", "Not sure"],
     required: true,
   },
   cancer_type: {
     subKey: "cancerType",
-    subTitle: "4. Cancer: Which type of cancer have you been diagnosed with?",
+    subTitle: "Cancer: Which type of cancer have you been diagnosed with?",
     subType: "radio",
     options: ["Mouth or Lip Cancer", "Lung Cancer", "Colon or Bowel Cancer", "Food Pipe Cancer", "Prostate Cancer", "Breast Cancer", "Cervical Cancer", "Thyroid Cancer", "Ovary Cancer", "Other (please specify)"],
     required: true,
   },
   respiratory_type: {
     subKey: "respiratoryType",
-    subTitle: "5. Respiratory problems: Which breathing problem do you have?",
+    subTitle: "Respiratory problems: Which breathing problem do you have?",
     subType: "radio",
     options: ["Asthma (wheezing, shortness of breath)", "COPD / Chronic bronchitis / Emphysema", "Allergic rhinitis / Hay fever", "Pneumonia (past or chronic lung infection)", "Tuberculosis (past or current TB infection)", "Sleep apnea / Breathing problems during sleep", "Other (please specify)"],
     required: true,
   },
   cld_type: {
     subKey: "cldType",
-    subTitle: "6. Chronic Liver Disease: Which type of liver problem do you have?",
+    subTitle: "Chronic Liver Disease: Which type of liver problem do you have?",
     subType: "radio",
     options: ["Fatty liver (non-alcoholic or due to lifestyle)", "Hepatitis (viral infection of the liver)", "Cirrhosis (scarring of the liver)", "Alcohol-related liver disease", "Other (please specify)"],
     required: true,
   },
   thyroid_type: {
     subKey: "thyroidType",
-    subTitle: "6. Thyroid Disorders: Which thyroid problem do you have?",
+    subTitle: "Thyroid Disorders: Which thyroid problem do you have?",
     subType: "radio",
     options: ["Hypothyroidism (low thyroid, feeling tired, gaining weight)", "Hyperthyroidism (high thyroid, feeling anxious, losing weight)", "Other (please specify)"],
     required: true,
   },
   mentalHealthDisorders_type: {
     subKey: "mentalHealthDisordersType",
-    subTitle: "7. Mental Health Disorders: Which mental health condition do you have?",
+    subTitle: "Mental Health Disorders: Which mental health condition do you have?",
     subType: "radio",
     options: ["Depression (feeling very low or sad for long periods)", "Anxiety (constant worry, nervousness, tension)", "Bipolar disorder (mood swings from very high to very low)", "Other (please specify)"],
     required: true,
   },
   ckd_type: {
     subKey: "ckdType",
-    subTitle: "8. Chronic Kidney Disease (CKD): Which CKD type do you have?",
+    subTitle: "Chronic Kidney Disease (CKD): Which CKD type do you have?",
     subType: "radio",
     options: ["Diabetes-related kidney problems", "High blood pressure-related kidney problem", "Kidney inflammation (glomerulonephritis)", "Kidney stones or blockage causing kidney damage", "Genetic kidney disease (Polycystic Kidney Disease)", "Other (please specify)"],
     required: true,
@@ -1025,14 +1026,14 @@ const conditionalFollowUps = {
   recentSurgery: [
     {
       subKey: "surgeryInjuryType",
-      subTitle: "1 Please select the type of surgery or injury you have had:",
+      subTitle: "Please select the type of surgery or injury you have had:",
       subType: "radio",
       options: ["Bone or joint surgery (e.g., knee, hip, back)", "Heart or cardiovascular surgery (e.g., bypass, stent)", "Abdominal or digestive surgery (e.g., appendix, gallbladder)", "Eye, ear, or ENT surgery", "Sports or muscle injury (sprain, strain, ligament injury)", "Accident-related injury (e.g., fracture, road traffic injury)", "Other (please specify)"],
       required: true,
     },
     {
       subKey: "surgeryInjuryTiming",
-      subTitle: " When did this occur?",
+      subTitle: "When did this occur?",
       subType: "radio",
       options: ["Less than 2 weeks ago", "Less than 1 month ago", "Less than 3 months ago", "3–6 months ago", "More than 6 months ago"],
       required: true,

@@ -472,10 +472,17 @@ export default function Questionnaire() {
         if (!currentStepData.required) return true;
         if (currentStepData.type === "multiselect") return Object.values(currentAnswer || {}).some((v) => v === true);
         if (currentStepData.type === "radio") return !!currentAnswer;
+        
+        // ADDED FIX: Placeholder steps are implicitly valid in subStep 0 because they immediately branch.
+        if (currentStepData.type === "placeholder" || currentStepData.key === "wl_lifeSituation" || currentStepData.key === "substanceDetailsPlaceholder" || currentStepData.key === "mh_lifeSituation") return true; 
+
         return !!currentAnswer;
       }
       // subStep 1: Validate all conditional questions
       if (subStep === 1) {
+        // If no follow-up questions were generated, it's valid to proceed.
+        if (followUpQuestions.length === 0) return true;
+
         return followUpQuestions.every((q) => {
           // If a question is not explicitly required, skip validation
           if (!q.required) return true;
@@ -523,7 +530,8 @@ export default function Questionnaire() {
         return !!bedtime && !!waketime;
       }
       if (currentStepData.type === "placeholder") {
-        return true; // Placeholder steps are always valid
+        // Placeholder steps are always valid for the base step since they auto-advance
+        return true; 
       }
       return false;
     }
@@ -539,6 +547,13 @@ export default function Questionnaire() {
 
     // A. If on a Branching Step's Base Question (subStep 0)
     if (isBranchingStep && subStep === 0) {
+
+      // ✨ CRITICAL FIX: If this is an adaptive placeholder key, immediately move to subStep 1.
+      if (currentStepData.key === "wl_lifeSituation" || currentStepData.key === "substanceDetailsPlaceholder" || currentStepData.key === "mh_lifeSituation") {
+          setSubStep(1);
+          return;
+      }
+      
       // Logic to determine if subStep 1 (Follow-ups) should be skipped
       const isSkippingFollowUps = (() => {
         if (currentStepData.key === "sex") {
@@ -595,9 +610,6 @@ export default function Questionnaire() {
         if (currentStepData.key === "mh_rootCauses") {
             return !isAnyKeySelected(mhRootCauses);
         }
-
-        // Life situation questions always show follow-ups
-        if (currentStepData.key === "wl_lifeSituation" || currentStepData.key === "mh_lifeSituation") return false;
 
         return false;
       })();
@@ -958,6 +970,12 @@ export default function Questionnaire() {
     if (isBranchingStep) {
       if (subStep === 0) {
         // Base Question
+        // ✨ FIX: If it's a "placeholder" key, immediately render the follow-up content (subStep 1 look and feel)
+        if (currentStepData.key === "wl_lifeSituation" || currentStepData.key === "substanceDetailsPlaceholder" || currentStepData.key === "mh_lifeSituation") {
+            // For these specific placeholder keys, we render the follow-ups immediately
+            return renderConditionalFollowUps();
+        }
+        
         if (currentStepData.type === "radio") return renderRadioButtons(currentStepData.options, answers[currentStepData.key]);
         if (currentStepData.type === "multiselect") return renderMultiselectOptions(currentStepData.options, answers[currentStepData.key]);
         if (currentStepData.type === "placeholder") return <p className="text-gray-500 italic">Continue to the next step for adaptive follow-up questions.</p>;
