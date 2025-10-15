@@ -279,7 +279,7 @@ const goalSpecificQuestions = {
     {
       id: 203,
       type: "radio",
-      title: "Step  Weekly Minutes of Activity (Q2)",
+      title: "Step Weekly Minutes of Activity (Q2)",
       description: "In a typical week, how much time do you spend doing moderate or vigorous physical activity?",
       key: "weeklyActivityMinutes",
       options: [
@@ -298,7 +298,7 @@ const goalSpecificQuestions = {
     {
       id: 204,
       type: "multiselect",
-      title: "Step  Type of Physical Activity (Q3)",
+      title: "Step Type of Physical Activity (Q3)",
       description: "Which of these best describes your usual physical activities? (choose all that apply)",
       key: "usualActivityTypes",
       options: [
@@ -329,7 +329,7 @@ const goalSpecificQuestions = {
     {
       id: 206,
       type: "radio",
-      title: "Step  Exercise Location",
+      title: "Step Exercise Location",
       description: "Where do you usually prefer to exercise or would like to exercise?",
       key: "exerciseLocation",
       options: [
@@ -344,7 +344,7 @@ const goalSpecificQuestions = {
     {
       id: 207,
       type: "multiselect",
-      title: "Step  Activity Type Preference",
+      title: "Step Activity Type Preference",
       description: "Which types of activities do you enjoy most or would like to try? (multi-select)",
       key: "activityTypePreference",
       options: [
@@ -363,7 +363,7 @@ const goalSpecificQuestions = {
     {
       id: 208,
       type: "radio",
-      title: "Step  Time Availability",
+      title: "Step Time Availability",
       description: "How much time can you usually dedicate to exercise per day?",
       key: "timeAvailability",
       options: ["<10 minutes", "10–20 minutes", "20–40 minutes", "40+ minutes"],
@@ -414,7 +414,7 @@ const goalSpecificQuestions = {
     {
       id: 303,
       type: "radio",
-      title: "Step  In a normal week, how active are you?",
+      title: "Step In a normal week, how active are you?",
       key: "wl_activityLevel",
       options: [
         "Mostly sitting (little or no exercise)",
@@ -709,7 +709,7 @@ const goalSpecificQuestions = {
     {
       id: 501,
       type: "placeholder",
-      title: "Step  Baseline & Life Situation",
+      title: "Step Baseline & Life Situation",
       description: "Based on your 'Current Lifestyle' answer, please provide more details on your main stress factor.",
       key: "mh_lifeSituation",
       required: true,
@@ -1101,28 +1101,28 @@ const conditionalFollowUps = {
   //  Substance Use (Nutrition)
   alcohol_nutrition: {
     subKey: "alcoholFrequencyNutrition",
-    subTitle: "1. How often do you drink alcohol?",
+    subTitle: "How often do you drink alcohol?",
     subType: "radio",
     options: ["Rarely (special occasions)", "Sometimes (1–2 times a week)", "Frequently (3–5 times a week)", "Daily"],
     required: true,
   },
   alcohol_quantity_nutrition: {
     subKey: "alcoholQuantityNutrition",
-    subTitle: "2. On days you drink, how many drinks do you usually have?",
+    subTitle: "On days you drink, how many drinks do you usually have?",
     subType: "radio",
     options: ["1–2", "3–4", "5 or more"],
     required: true,
   },
   tobacco_nutrition: {
     subKey: "tobaccoFrequencyNutrition",
-    subTitle: "3. How often do you smoke?",
+    subTitle: "How often do you smoke?",
     subType: "radio",
     options: ["Rarely (less than once a week)", "Sometimes (1–5 cigarettes per day)", "Frequently (6–10 cigarettes per day)", "Heavy (more than 10 per day)"],
     required: true,
   },
   drugs_nutrition: {
     subKey: "drugsFrequencyNutrition",
-    subTitle: "4. How often do you use recreational drugs?",
+    subTitle: "How often do you use recreational drugs?",
     subType: "radio",
     options: ["Rarely", "Sometimes (monthly / weekends)", "Frequently (weekly)", "Daily"],
     required: true,
@@ -1137,7 +1137,7 @@ const conditionalFollowUps = {
   //  ACTIVITY FOLLOW-UPS 
   "Mostly sitting (little or no exercise)": {
     subKey: "activityBarriers",
-    subTitle: "3. Barriers : What usually makes it hard for you to be more active?",
+    subTitle: "Barriers : What usually makes it hard for you to be more active?",
     subType: "multiselect",
     options: [
       { id: "lackTime", label: "Lack of time" },
@@ -1159,7 +1159,7 @@ const conditionalFollowUps = {
   // Satisfaction & Goals
   "Moderate activity (exercise 3–4 days/week, brisk walking, cycling, sports)": {
     subKey: "activitySatisfaction",
-    subTitle: "4. Satisfaction & Goals : Do you feel your current routine gives you the results you want?",
+    subTitle: "Satisfaction & Goals : Do you feel your current routine gives you the results you want?",
     subType: "radio",
     options: ["Yes, I'm happy", "Not sure", "No, I feel stuck / not improving"],
     required: true,
@@ -1177,8 +1177,7 @@ const conditionalFollowUps = {
   "At home": { subKey: "homeEquipment", subTitle: "Would you like suggestions for short routines that don't need equipment?", subType: "radio", options: ["Yes", "No", "Maybe"], required: true },
   "Outdoors (park, streets, trails)": { subKey: "outdoorActivities", subTitle: "Would you like walking, running, or bodyweight exercises?", subType: "radio", options: ["Yes", "No", "Maybe"], required: true },
   "Gym or fitness center": { subKey: "gymEquipment", subTitle: "Do you have access to machines, weights, or classes?", subType: "multiselect", options: [{ id: "machines", label: "Machines" }, { id: "freeWeights", label: "Free weights" }, { id: "classes", label: "Classes" }, { id: "mixed", label: "Mixed" }], required: true },
-
-  // Q Preferences & Environment (Activity Type)
+  "Other / Not sure": { subKey: "otherNotSure", subTitle: "Would you like the app to suggest activities based on your goals and environment?", subType: "radio", options: ["Yes", "No"], required: true },
 
   // WEIGHT LOSS FOLLOW-UPS 
 "Student / Studying": [
@@ -1300,11 +1299,12 @@ const conditionalFollowUps = {
   troubleSleep: { subKey: "troubleSleep_type", subTitle: "Which of these best describes your sleep issue?", subType: "radio", options: ["Trouble falling asleep", "Wake up often at night", "Wake up too early", "Sleeping too much"], required: true },
   feelingDownSad: { subKey: "sadness_impact", subTitle: "Did this sadness affect your daily routine (work, studies, relationships, self-care)?", subType: "radio", options: ["Yes, significantly", "Yes, somewhat", "No"], required: true },
 
-  workStudies: { subKey: "workStudies_impact", subTitle: "Work / studies: Does this affect your sleep, energy, or relationships?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
-  familyHousehold: { subKey: "familyHousehold_impact", subTitle: "Family / household: Does this limit your personal time or self-care?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
-  financialStress: { subKey: "financialStress_impact", subTitle: "Financial: Do financial concerns impact your mood or motivation?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
-  healthLifestyle: { subKey: "healthLifestyle_impact", subTitle: "Health / lifestyle: Do you feel tired or low energy due to lifestyle habits?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
-  socialRelationships: { subKey: "socialRelationships_impact", subTitle: "Social: Do you feel isolated or unsupported?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
+  // Root Cause follow-ups
+  workStudies_impact: { subKey: "workStudies_impact_detail", subTitle: "Work / studies: Does this affect your sleep, energy, or relationships?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
+  familyHousehold_impact: { subKey: "familyHousehold_impact_detail", subTitle: "Family / household: Does this limit your personal time or self-care?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
+  financialStress_impact: { subKey: "financialStress_impact_detail", subTitle: "Financial: Do financial concerns impact your mood or motivation?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
+  healthLifestyle_impact: { subKey: "healthLifestyle_impact_detail", subTitle: "Health / lifestyle: Do you feel tired or low energy due to lifestyle habits?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
+  socialRelationships_impact: { subKey: "socialRelationships_impact_detail", subTitle: "Social: Do you feel isolated or unsupported?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
 
   // === SLEEP FOLLOW-UPS ===
   "sleepDisorderDiagnosis_Yes": { subKey: "sleepDiagnosisDetails", subTitle: "Please provide details of your diagnosis and treatment (if any).", subType: "text", placeholder: "e.g., Sleep Apnea treated with CPAP, Insomnia treated with CBT-I", required: true },
@@ -1323,17 +1323,23 @@ const getQuestions = (primaryGoals = [], currentAnswers = {}, age = 0, sex = "")
   //Conditional Pregnancy Check
   if (sex === "Female" && age > 18) {
     const pregnantQuestion = conditionalFollowUps["pregnantQuestion"];
-    currentId++;
-    const insertionIndex = allQuestions.findIndex(q => q.key === "sex") + 1;
-    allQuestions.splice(insertionIndex, 0, {
-      ...pregnantQuestion,
-      id: currentId,
-      type: pregnantQuestion.subType,
-      title: pregnantQuestion.subTitle,
-      description: pregnantQuestion.description,
-      key: "isPregnant",
-      required: pregnantQuestion.required,
-    });
+    
+    // *** FIX: Check if the 'isPregnant' question key already exists in the list ***
+    const isPregnantQuestionAlreadyAdded = allQuestions.some(q => q.key === "isPregnant");
+    
+    if (pregnantQuestion && !isPregnantQuestionAlreadyAdded) {
+        currentId++;
+        const insertionIndex = allQuestions.findIndex(q => q.key === "sex") + 1;
+        allQuestions.splice(insertionIndex, 0, {
+        ...pregnantQuestion,
+        id: currentId,
+        type: pregnantQuestion.subType,
+        title: pregnantQuestion.subTitle,
+        description: pregnantQuestion.description,
+        key: "isPregnant",
+        required: pregnantQuestion.required,
+        });
+    }
   }
 
   let selectedGoals = [];
@@ -1359,22 +1365,6 @@ const getQuestions = (primaryGoals = [], currentAnswers = {}, age = 0, sex = "")
       });
     }
   });
-
-  // 2. Add Goal-Specific Questions with proper ID sequencing
-  // primaryGoals.forEach(goalKey => {
-  //   const key = goalKey.id || goalKey;
-  //   if (goalSpecificQuestions[key]) {
-  //     goalSpecificQuestions[key].forEach(q => {
-  //       // Check if question should be shown based on conditions
-  //       if (q.showCondition && !q.showCondition(currentAnswers)) {
-  //         return; // Skip this question
-  //       }
-        
-  //       currentId++;
-  //       allQuestions.push({ ...q, id: currentId });
-  //     });
-  //   }
-  // });
 
   return allQuestions.sort((a, b) => a.id - b.id);
 };

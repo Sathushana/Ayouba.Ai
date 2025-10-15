@@ -12,7 +12,7 @@ import {
 // Keys that trigger a subStep 1 conditional flow
 const BRANCHING_KEYS = [
   "sex", // For pregnancy check
-  "isPregnant", // Pregnancy question itself
+  //"isPregnant", // Pregnancy question itself
   "diagnosedConditions", // 5.1 & 5.2 checks
   "dietType", // Q1a, Q1b Nutrition
   "substanceUseNutrition", // Q2.1-Q2.4 Nutrition
@@ -25,7 +25,7 @@ const BRANCHING_KEYS = [
   "wl_dietType", // Q1a, Q1b WL
   "wl_substanceUse", // Q2.1-Q2.4 WL
   "wl_triedBefore", // Q1 WL Barriers
-  "substanceType", // Q1 Substance
+  //"substanceType", // Q1 Substance
   "substanceFrequency", // Q2 Substance
   "substanceDetailsPlaceholder", // Q3 Substance details
   "substanceSituations", // Q6 Substance
