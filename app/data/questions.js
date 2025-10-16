@@ -1158,7 +1158,7 @@ const conditionalFollowUps = {
     required: true,
   },
   
-  // Q3 Quantity/Details - Alcohol flow (Q3.1/Q3.2)
+  // Q3 Quantity/Details - Alcohol flow 
   alcohol_frequency: { 
     subKey: "alcoholFrequencyGoal", 
     subTitle: "“How often do you usually drink alcohol?”", 
@@ -1190,21 +1190,21 @@ const conditionalFollowUps = {
   weekendsOnly: { subKey: "weekendConsumptionPattern", subTitle: "When you consume on weekends, is it usually moderate or heavy (more than your usual amount)?", subType: "radio", options: ["Always moderate", "Sometimes heavy", "Often heavy", "Not sure"], required: true },
   otherSituation: { subKey: "otherSituationDetails", subTitle: "Please describe when and why you usually consume", subType: "text", placeholder: "Open text response", required: true },
 
-  // Consequences & Self-Reflection (Q5a-Q6)
+  // Consequences & Self-Reflection 
   troubleSleep: [
-    { subKey: "sleepEnergyFrequencyConsequence", subTitle: "1. Trouble with sleep or energy. How often do you notice sleep or energy problems after [using/consuming]?", subType: "radio", options: ["Every time I [use/consume]", "Sometimes", "Rarely"], required: true },
+    { subKey: "sleepEnergyFrequencyConsequence", subTitle: "Trouble with sleep or energy. How often do you notice sleep or energy problems after [using/consuming]?", subType: "radio", options: ["Every time I [use/consume]", "Sometimes", "Rarely"], required: true },
     { subKey: "sleepEnergyTipsConsequence", subTitle: "Would you like tips on improving sleep and energy while managing [your use/consumption]?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true },
   ],
   difficultyFocusing: [
-    { subKey: "focusAffectedAreasConsequence", subTitle: "2. Affects focus or productivity. Do you notice this effect mainly at work, home, or both?", subType: "radio", options: ["Work", "Home", "Both"], required: true },
+    { subKey: "focusAffectedAreasConsequence", subTitle: "Affects focus or productivity. Do you notice this effect mainly at work, home, or both?", subType: "radio", options: ["Work", "Home", "Both"], required: true },
     { subKey: "focusStrategiesConsequence", subTitle: "Would you like strategies to maintain focus and productivity while reducing [your use/consumption]?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true },
   ],
   tensionConflict: [
-    { subKey: "conflictTimingConsequence", subTitle: "3. Causes tension with family / friends. Do conflicts usually happen when you [use/consume] or after it?", subType: "radio", options: ["During", "After", "Both"], required: true },
+    { subKey: "conflictTimingConsequence", subTitle: "Causes tension with family / friends. Do conflicts usually happen when you [use/consume] or after it?", subType: "radio", options: ["During", "After", "Both"], required: true },
     { subKey: "conflictGuidanceConsequence", subTitle: "Would you like guidance on reducing relationships or social tension related to [your use/consumption]?", subType: "radio", options: ["Yes", "Maybe", "No"], required: true },
   ],
   changesHealth: [
-    { subKey: "doctorAdviceConsequence", subTitle: "4. Impacts health. Have you been told by a doctor or health professional that [smoking / drinking / tobacco / drug use] is affecting your health?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "doctorAdviceConsequence", subTitle: "Impacts health. Have you been told by a doctor or health professional that [smoking / drinking / tobacco / drug use] is affecting your health?", subType: "radio", options: ["Yes", "No"], required: true },
   ],
 
   // MENTAL HEALTH FOLLOW-UPS (Adaptive by Lifestyle/Placeholder)
@@ -1271,7 +1271,7 @@ const conditionalFollowUps = {
   healthLifestyle_impact: { subKey: "healthLifestyle_impact_detail", subTitle: "Health / lifestyle: Do you feel tired or low energy due to lifestyle habits?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
   socialRelationships_impact: { subKey: "socialRelationships_impact_detail", subTitle: "Social: Do you feel isolated or unsupported?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
 
-  // === SLEEP FOLLOW-UPS (FIRST LAYER) ===
+  // SLEEP FOLLOW-UPS (FIRST LAYER)
   "sleepDisorderDiagnosis_Yes": { 
     subKey: "sleepDiagnosisDetails", 
     subTitle: "Please provide details of your diagnosis and treatment (if any).", 

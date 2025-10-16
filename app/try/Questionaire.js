@@ -1729,7 +1729,7 @@ export default function Questionnaire() {
         <div className="max-w-3xl mx-auto py-5 px-4 flex justify-between items-center">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-gray-700 hover:text-[#C263F2] font-medium transition-colors duration-200 mr-6"
+            className="flex items-center gap-2 text-gray-700 hover:text-[#C263F2] font-medium transition-colors duration-200 mr-6 cursor-pointer"
           >
             <span className="text-xl">🡨</span>
             <span className="hidden sm:inline">Back</span>
