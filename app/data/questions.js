@@ -368,7 +368,7 @@ const goalSpecificQuestions = {
   weight: [
     {
       id: 301,
-      type: "radio",
+      type: "placeholder",
       title: "Life Situation Details",
       description: "Based on your 'Current Lifestyle' answer, please provide more details.",
       key: "wl_lifeSituation",

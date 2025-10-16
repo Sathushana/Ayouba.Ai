@@ -916,6 +916,22 @@ export default function Questionnaire() {
 
       if (isOtherText) {
         setAnswers((prevAnswers) => {
+          if (subKey) {
+            const followUpAnswers = prevAnswers.followUps || {};
+            const subAnswer = followUpAnswers[subKey] || {};
+
+            // We assume the value being changed is the 'otherText' for the selected 'Other' option
+            return {
+              ...prevAnswers,
+              followUps: {
+                ...followUpAnswers,
+                [subKey]: {
+                  ...subAnswer,
+                  otherText: value,
+                },
+              },
+            };
+          }
           const currentAnswersForKey = prevAnswers[currentQuestionKey] || {};
           return {
             ...prevAnswers,
@@ -1018,10 +1034,15 @@ export default function Questionnaire() {
     const isRadioOtherSelected = mainAnswer === "Other";
 
     const handleRadioClick = (option) => {
-      if (option === "Other") {
+      const isOtherOption =
+        option === "Other" || option === "Other (please specify)";
+      if (isOtherOption) {
+        const shouldResetText = mainAnswer !== option;
+        const newOtherText = option === mainAnswer ? otherTextValue : "";
+
         handleInputChange(
           questionKey,
-          { selectedOption: "Other", otherText: otherTextValue },
+          { selectedOption: option, otherText: newOtherText },
           subKey,
           "radio"
         );
@@ -1059,19 +1080,20 @@ export default function Questionnaire() {
             </div>
 
             {/* Conditional Text Input for 'Other' selection */}
-            {option === "Other" && isRadioOtherSelected && (
-              <div className="pl-12 pt-1">
-                <input
-                  type="text"
-                  value={otherTextValue || ""}
-                  onChange={(e) =>
-                    handleInputChange("otherText", e.target.value)
-                  }
-                  placeholder="Please specify"
-                  className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
-                />
-              </div>
-            )}
+            {(option === "Other" || option === "Other (please specify)") &&
+              mainAnswer === option && (
+                <div className="pl-12 pt-1">
+                  <input
+                    type="text"
+                    value={otherTextValue || ""}
+                    onChange={(e) =>
+                      handleInputChange("otherText", e.target.value)
+                    }
+                    placeholder="Please specify"
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
+                  />
+                </div>
+              )}
           </React.Fragment>
         ))}
       </div>
@@ -1214,7 +1236,7 @@ export default function Questionnaire() {
           const currentSubAnswer = followUpAnswers[q.subKey];
 
           return (
-            <div key={q.subKey} className="space-y-3 border-b pb-4">
+            <div key={q.subKey} className="space-y-3  pb-4">
               <h3 className="text-lg font-semibold text-gray-800">
                 {q.subTitle}
                 {q.required && <span className="text-[#C263F2] ml-1">*</span>}
