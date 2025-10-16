@@ -643,17 +643,26 @@ export default function Questionnaire() {
         currentStepData.type === "number" ||
         currentStepData.type === "radio"
       ) {
-        if (typeof currentAnswer === 'object' && currentAnswer.selectedOption === "Other") {
-              return !!currentAnswer.otherText && currentAnswer.otherText.trim().length > 0;
-          }
-          return !!currentAnswer;
+        if (
+          typeof currentAnswer === "object" &&
+          currentAnswer.selectedOption === "Other"
+        ) {
+          return (
+            !!currentAnswer.otherText &&
+            currentAnswer.otherText.trim().length > 0
+          );
+        }
+        return !!currentAnswer;
       }
       if (currentStepData.type === "multiselect") {
         const isOtherSelected = currentAnswer.other || false;
-          if (isOtherSelected) {
-              return !!currentAnswer.otherText && currentAnswer.otherText.trim().length > 0;
-          }
-          return Object.values(currentAnswer || {}).some((v) => v === true);
+        if (isOtherSelected) {
+          return (
+            !!currentAnswer.otherText &&
+            currentAnswer.otherText.trim().length > 0
+          );
+        }
+        return Object.values(currentAnswer || {}).some((v) => v === true);
       }
       if (currentStepData.type === "measurements") {
         const { unitSystem, height, weight, heightFt, heightIn } =
@@ -887,18 +896,18 @@ export default function Questionnaire() {
   ]);
 
   const handleBack = useCallback(() => {
-   if (currentStep === 1) {
-    router.push("/");
-    return;
-  }
+    if (currentStep === 1) {
+      router.push("/");
+      return;
+    }
 
-  if (isBranchingStep && subStep === 1) {
-    setSubStep(0);
-  } else if (currentStep > 1) {
-    setCurrentStep(currentStep - 1);
-    setSubStep(0);
-  }
-}, [currentStep, subStep, isBranchingStep, router]);
+    if (isBranchingStep && subStep === 1) {
+      setSubStep(0);
+    } else if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      setSubStep(0);
+    }
+  }, [currentStep, subStep, isBranchingStep, router]);
 
   const handleInputChange = useCallback(
     (key, value, subKey = null, type = null, itemIndex = null) => {
@@ -1075,44 +1084,83 @@ export default function Questionnaire() {
     const otherTextValue = currentAnswer.otherText || "";
 
     return (
-        <div className="space-y-3">
-            {options.map((option) => {
-                const isSelected = currentAnswer[option.id] || false;
-                const isOtherOption = option.id === "other" || option.label.includes("Other"); // Check for 'other' or 'Other' label in follow-ups
-                
-                return (
-                    <React.Fragment key={option.id}>
-                        <div
-                            className={`flex items-center justify-between p-4 rounded-xl cursor-pointer border-2 transition ${isSelected ? "bg-[#e0e4ef] border-[#C263F2] shadow-md" : "bg-white border-gray-200 hover:bg-gray-50"}`}
-                            onClick={() => handleInputChange(option.id, isSelected, subKey, "multiselect")}
-                        >
-                            <div className="flex items-center">
-                                {option.icon && <span className="mr-3 text-xl">{option.icon}</span>}
-                                <span className="text-base text-gray-700 font-medium">{option.label}</span>
-                            </div>
-                            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition ${isSelected ? "bg-[#C263F2] border-[#C263F2]" : "bg-white border-gray-400"}`}>
-                                {isSelected && <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
-                            </div>
-                        </div>
+      <div className="space-y-3">
+        {options.map((option) => {
+          const isSelected = currentAnswer[option.id] || false;
+          const isOtherOption =
+            option.id === "other" || option.label.includes("Other"); // Check for 'other' or 'Other' label in follow-ups
 
-                        {/* Conditional Text Input for 'Other' selection */}
-                        {isOtherOption && isSelected && (
-                            <div className="pl-4 pt-1">
-                                <input
-                                    type="text"
-                                    value={otherTextValue}
-                                    onChange={(e) => handleInputChange("otherText", e.target.value)}
-                                    placeholder="Please specify your other choice"
-                                    className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
-                                />
-                            </div>
-                        )}
-                    </React.Fragment>
-                );
-            })}
-        </div>
+          return (
+            <React.Fragment key={option.id}>
+              <div
+                className={`flex items-center justify-between p-4 rounded-xl cursor-pointer border-2 transition ${
+                  isSelected
+                    ? "bg-[#e0e4ef] border-[#C263F2] shadow-md"
+                    : "bg-white border-gray-200 hover:bg-gray-50"
+                }`}
+                onClick={() =>
+                  handleInputChange(
+                    option.id,
+                    isSelected,
+                    subKey,
+                    "multiselect"
+                  )
+                }
+              >
+                <div className="flex items-center">
+                  {option.icon && (
+                    <span className="mr-3 text-xl">{option.icon}</span>
+                  )}
+                  <span className="text-base text-gray-700 font-medium">
+                    {option.label}
+                  </span>
+                </div>
+                <div
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition ${
+                    isSelected
+                      ? "bg-[#C263F2] border-[#C263F2]"
+                      : "bg-white border-gray-400"
+                  }`}
+                >
+                  {isSelected && (
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="3"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                  )}
+                </div>
+              </div>
+
+              {/* Conditional Text Input for 'Other' selection */}
+              {isOtherOption && isSelected && (
+                <div className="pl-4 pt-1">
+                  <input
+                    type="text"
+                    value={otherTextValue}
+                    onChange={(e) =>
+                      handleInputChange("otherText", e.target.value)
+                    }
+                    placeholder="Please specify your other choice"
+                    className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
+                  />
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
     );
-};
+  };
 
   const renderConditionalFollowUps = () => {
     const followUpAnswers = answers.followUps || {};
@@ -1576,81 +1624,82 @@ export default function Questionnaire() {
   const isFinalScreen = currentStep === totalSteps;
 
   return (
-  <section
-    id="questionnaire"
-    className="w-full min-h-screen bg-gray-50 flex flex-col"
-  >
-    {/* Fixed Navbar */}
-    <div className="w-full bg-white shadow-sm fixed top-0 z-50">
-      <div className="max-w-3xl mx-auto py-5 px-4 flex justify-between items-center">
-        <button
-          onClick={handleBack}
-          className="flex items-center gap-2 px-2 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 font-medium shadow-sm hover:bg-[#C263F2] hover:text-white hover:border-[#C263F2] transition-colors duration-200 mr-10"
-          disabled={false}
-        >
-          ← Back
-        </button>
-        <div className="text-xl font-bold text-[#C263F2]">{APP_NAME}</div>
-        <div className="flex-1 mx-4 h-2 bg-gray-200 rounded-full">
-          <div
-            className="h-2 bg-[#C263F2] rounded-full transition-all duration-500"
-            style={{ width: `${calculateProgress()}%` }}
-          ></div>
-        </div>
-        <button
-          onClick={handleNext}
-          className={`text-gray-500 hover:text-[#C263F2] font-medium ${
-            isFinalScreen && "opacity-0 select-none"
-          }`}
-          disabled={!isStepValid()}
-        >
-          Skip
-        </button>
-      </div>
-    </div>
-
-    {/* Content with proper spacing */}
-    <div className="flex-grow flex flex-col items-center pt-24 pb-10 px-4 mt-4">
-      <div className="w-full max-w-lg mb-10 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
-          {currentStepData.title}
-          {currentStepData.required && (
-            <span className="text-red-500 ml-1 text-base">*</span>
-          )}
-        </h2>
-        <p className="text-base text-gray-600 mb-6">
-          {currentStepData.description}
-        </p>
-      </div>
-
-      <div className="w-full max-w-lg px-2">{renderStepContent()}</div>
-
-      <div className="mt-10 flex gap-4 w-full max-w-lg">
-        {(currentStep > 1 || subStep === 1) && (
+    <section
+      id="questionnaire"
+      className="w-full min-h-screen bg-gray-50 flex flex-col"
+    >
+      {/* Fixed Navbar */}
+      <div className="w-full bg-white shadow-sm fixed top-0 z-50">
+        <div className="max-w-3xl mx-auto py-5 px-4 flex justify-between items-center">
           <button
             onClick={handleBack}
-            className="flex-1 py-3 rounded-xl font-semibold border-2 border-[#C263F2] text-[#C263F2] bg-white hover:bg-[#e0e4ef] transition"
+            className="flex items-center gap-2 text-gray-700 hover:text-[#C263F2] font-medium transition-colors duration-200 mr-6"
           >
-            Back
+            <span className="text-xl">🡨</span>
+            <span className="hidden sm:inline">Back</span>
           </button>
-        )}
-        <button
-          onClick={handleNext}
-          disabled={!isStepValid()}
-          className={`flex-1 py-3 rounded-xl font-semibold transition ${
-            !isStepValid()
-              ? "bg-gray-400 text-white cursor-not-allowed"
-              : "bg-[#C263F2] text-white hover:bg-[#9E47CC] border-2 border-[#C263F2]"
-          }`}
-        >
-          {getButtonText()}
-        </button>
-      </div>
-    </div>
 
-    <div className="w-full bg-white py-3 text-center border-t border-gray-200 text-xs text-gray-500">
-      Copyright © 2025 {APP_NAME}. All rights reserved.
-    </div>
-  </section>
-);
+          <div className="text-xl font-bold text-[#C263F2]">{APP_NAME}</div>
+          <div className="flex-1 mx-4 h-2 bg-gray-200 rounded-full">
+            <div
+              className="h-2 bg-[#C263F2] rounded-full transition-all duration-500"
+              style={{ width: `${calculateProgress()}%` }}
+            ></div>
+          </div>
+          <button
+            onClick={handleNext}
+            className={`text-gray-500 hover:text-[#C263F2] font-medium ${
+              isFinalScreen && "opacity-0 select-none"
+            }`}
+            disabled={!isStepValid()}
+          >
+            Skip
+          </button>
+        </div>
+      </div>
+
+      {/* Content with proper spacing */}
+      <div className="flex-grow flex flex-col items-center pt-24 pb-10 px-4 mt-4">
+        <div className="w-full max-w-lg mb-10 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">
+            {currentStepData.title}
+            {currentStepData.required && (
+              <span className="text-red-500 ml-1 text-base">*</span>
+            )}
+          </h2>
+          <p className="text-base text-gray-600 mb-6">
+            {currentStepData.description}
+          </p>
+        </div>
+
+        <div className="w-full max-w-lg px-2">{renderStepContent()}</div>
+
+        <div className="mt-10 flex gap-4 w-full max-w-lg">
+          {(currentStep > 1 || subStep === 1) && (
+            <button
+              onClick={handleBack}
+              className="flex-1 py-3 rounded-xl font-semibold border-2 border-[#C263F2] text-[#C263F2] bg-white hover:bg-[#e0e4ef] transition"
+            >
+              Back
+            </button>
+          )}
+          <button
+            onClick={handleNext}
+            disabled={!isStepValid()}
+            className={`flex-1 py-3 rounded-xl font-semibold transition ${
+              !isStepValid()
+                ? "bg-gray-400 text-white cursor-not-allowed"
+                : "bg-[#C263F2] text-white hover:bg-[#9E47CC] border-2 border-[#C263F2]"
+            }`}
+          >
+            {getButtonText()}
+          </button>
+        </div>
+      </div>
+
+      <div className="w-full bg-white py-3 text-center border-t border-gray-200 text-xs text-gray-500">
+        Copyright © 2025 {APP_NAME}. All rights reserved.
+      </div>
+    </section>
+  );
 }
