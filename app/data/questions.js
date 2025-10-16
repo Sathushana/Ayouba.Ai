@@ -993,14 +993,7 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  // otherCondition_details: {
-  //   subKey: "otherConditionDetails",
-  //   subTitle: "Please specify the other health condition(s):",
-  //   subType: "text",
-  //   placeholder: "e.g., Asthma, Multiple Sclerosis, Chronic Migraines",
-  //   required: true,
-  // },
-
+  
   disease_control: {
     subKey: "diseaseControlLevel",
     subTitle: "How well is your condition currently controlled or managed?",
@@ -1278,13 +1271,155 @@ const conditionalFollowUps = {
   healthLifestyle_impact: { subKey: "healthLifestyle_impact_detail", subTitle: "Health / lifestyle: Do you feel tired or low energy due to lifestyle habits?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
   socialRelationships_impact: { subKey: "socialRelationships_impact_detail", subTitle: "Social: Do you feel isolated or unsupported?", subType: "radio", options: ["Yes", "Sometimes", "No"], required: true },
 
-  // === SLEEP FOLLOW-UPS ===
-  "sleepDisorderDiagnosis_Yes": { subKey: "sleepDiagnosisDetails", subTitle: "Please provide details of your diagnosis and treatment (if any).", subType: "text", placeholder: "e.g., Sleep Apnea treated with CPAP, Insomnia treated with CBT-I", required: true },
-  "Difficulty falling asleep": { subKey: "fallingAsleepReason", subTitle: "When you're trying to fall asleep, what is the primary thing keeping you awake?", subType: "radio", options: ["Racing thoughts / Stress / Anxiety", "Physical discomfort (pain, heat, noise, hunger)", "Not feeling tired (too much energy, late activity)"], required: true },
-  "Waking up frequently during the night": { subKey: "wakingUpReason", subTitle: "When you wake up at night, what usually causes it?", subType: "radio", options: ["Need to use the bathroom", "Temperature (too hot or too cold)", "Noise or a partner's movement", "I just woke up and can't go back to sleep (no clear reason)"], required: true },
-  "Waking up too early and can't go back to sleep": { subKey: "earlyWakingReason", subTitle: "When you wake up too early, what is your first thought or feeling?", subType: "radio", options: ["Worrying about things I can't control (family, work, future).", "Hunger or a desire for a morning beverage", "It's just my internal clock; I feel done sleeping"], required: true },
-  "Feeling unrefreshed/tired even after a full night's sleep": { subKey: "unrefreshedFeeling", subTitle: "How do you feel after waking up?", subType: "radio", options: ["Crash mid-day", "Groggy, need caffeine", "Rarely feel rested"], required: true },
-  "My schedule is irregular (e.g., shift work)": { subKey: "irregularScheduleReason", subTitle: "What is the main reason your bedtime and wake time change so much?", subType: "radio", options: ["Necessary late work/studying or early duties", "Social activities, chats or calls with friends or partner, late-night movies, or gaming", "I have no fixed schedule/routine"], required: true },
+  // === SLEEP FOLLOW-UPS (FIRST LAYER) ===
+  "sleepDisorderDiagnosis_Yes": { 
+    subKey: "sleepDiagnosisDetails", 
+    subTitle: "Please provide details of your diagnosis and treatment (if any).", 
+    subType: "text", 
+    placeholder: "e.g., Sleep Apnea treated with CPAP, Insomnia treated with CBT-I", 
+    required: true 
+  },
+  "Difficulty falling asleep": { 
+    subKey: "fallingAsleepReason", 
+    subTitle: "When you're trying to fall asleep, what is the primary thing keeping you awake?", 
+    subType: "radio", 
+    options: ["Racing thoughts / Stress / Anxiety", "Physical discomfort (pain, heat, noise, hunger)", "Not feeling tired (too much energy, late activity)"], 
+    required: true 
+  },
+  "Waking up frequently during the night": { 
+    subKey: "wakingUpReason", 
+    subTitle: "When you wake up at night, what usually causes it?", 
+    subType: "radio", 
+    options: ["Need to use the bathroom", "Temperature (too hot or too cold)", "Noise or a partner's movement", "I just woke up and can't go back to sleep (no clear reason)"], 
+    required: true 
+  },
+  "Waking up too early and can't go back to sleep": { 
+    subKey: "earlyWakingReason", 
+    subTitle: "When you wake up too early, what is your first thought or feeling?", 
+    subType: "radio", 
+    options: ["Worrying about things I can't control (family, work, future).", "Hunger or a desire for a morning beverage", "It's just my internal clock; I feel done sleeping"], 
+    required: true 
+  },
+  "Feeling unrefreshed/tired even after a full night's sleep": { 
+    subKey: "unrefreshedFeeling", 
+    subTitle: "How do you feel after waking up?", 
+    subType: "radio", 
+    options: ["Crash mid-day", "Groggy, need caffeine", "Rarely feel rested"], 
+    required: true 
+  },
+  "My schedule is irregular (e.g., shift work)": { 
+    subKey: "irregularScheduleReason", 
+    subTitle: "What is the main reason your bedtime and wake time change so much?", 
+    subType: "radio", 
+    options: ["Necessary late work/studying or early duties", "Social activities, chats or calls with friends or partner, late-night movies, or gaming", "I have no fixed schedule/routine"], 
+    required: true 
+  },
+
+  //SLEEP FOLLOW-UPS (SECOND LAYER & DEEPER) 
+
+  // Difficulty falling asleep -> Racing thoughts / Stress / Anxiety
+  "Racing thoughts / Stress / Anxiety": [ 
+    { subKey: "academicStressSleep", subTitle: "ACADEMIC: Is your mind usually focused on upcoming exams, assignments, or project deadlines when you try to sleep?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "professionalStressSleep", subTitle: "PROFESSIONAL: Are you checking work emails or planning the next day's meetings/tasks in the hour before bed?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "homeFamilyStressSleep", subTitle: "HOME/FAMILY: Do you find yourself worrying about family logistics, chores, or the well-being of others just as you are trying to relax?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "generalAnxietySleep", subTitle: "GENERAL: Do you consistently feel anxious or restless about general worries when you lie down?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+
+  //Difficulty falling asleep -> Physical discomfort (THIRD LAYER starts here with 'mostCommonDiscomfort')
+  "Physical discomfort (pain, heat, noise, hunger)": [ 
+    { subKey: "mostCommonDiscomfort", subTitle: "Which discomfort is most common?", subType: "radio", options: ["Pain", "Noise", "Heat", "Hunger"], required: true },
+    { subKey: "discomfortMedical", subTitle: "Do you have a medical diagnosis related to this?", subType: "text", placeholder: "e.g., Arthritis, Back pain, Possible Sleep Apnea", required: false },
+  ],
+  
+  //  Difficulty falling asleep -> Not feeling tired
+  "Not feeling tired (too much energy, late activity)": [ 
+    { subKey: "lateCaffeine", subTitle: "Do you drink tea/coffee/energy drinks within 4 hrs of bedtime?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "lateActivity", subTitle: "Do you exercise or use screens late at night?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+  
+  //Waking up frequently during the night -> Need to use the bathroom
+  "Need to use the bathroom": [ 
+    { subKey: "urinateCount", subTitle: "How many times do you wake to urinate?", subType: "radio", options: ["1", "2", "3+"], required: true },
+    { subKey: "urinateMedical", subTitle: "Do you have diabetes, prostate issues, or kidney/liver problems?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "diureticUse", subTitle: "Do you take diuretic tablets?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+  
+  //Waking up frequently during the night -> Temperature (too hot or too cold)
+  "Temperature (too hot or too cold)": [ 
+    { subKey: "sweatingWaking", subTitle: "Do you often wake sweating/throwing blankets?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "thermostatControl", subTitle: "Do you use a fan/AC or open windows?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "hormonalCondition", subTitle: "Any thyroid or hormonal condition?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+  
+  // Waking up frequently during the night -> Noise or a partner's movement
+  "Noise or a partner's movement": [ 
+    { subKey: "noiseSource", subTitle: "Is it outside noise (traffic, dogs, neighbors) or inside (partner snoring, movement)?", subType: "radio", options: ["Outside Noise", "Inside Noise (Partner)", "Both"], required: true },
+    { subKey: "partnerSleepApnea", subTitle: "If partner snoring: Have you noticed pauses in their breathing?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+  
+  // Waking up frequently during the night -> I just woke up and can't go back to sleep (no clear reason)
+  "I just woke up and can't go back to sleep (no clear reason)": [
+    { subKey: "heartRacing", subTitle: "Do you feel your heart racing or gasping for breath?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "testedForDisorders", subTitle: "Have you been tested for sleep apnea, GERD (acid reflux), or anxiety?", subType: "radio", options: ["Yes", "No"], required: true },
+    // Text box for result of test is handled if 'testedForDisorders' is 'Yes' via a dedicated key/logic in Questionnaire.js
+  ],
+  
+  // Waking up too early -> Worrying about things I can't control
+  "Worrying about things I can't control (family, work, future).": [ 
+    { subKey: "awakeDuration", subTitle: "How long do you stay awake?", subType: "radio", options: ["<30 mins", "30–60 mins", ">1 hr"], required: true },
+    { subKey: "earlyWakeMentalDiagnosis", subTitle: "Any mental health diagnosis?", subType: "radio", options: ["Depression", "Anxiety", "None", "Other"], required: true },
+    { subKey: "mentalHealthTreatment", subTitle: "On treatment/medicine?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+  
+  //Waking up too early -> Hunger or a desire for a morning beverage
+  "Hunger or a desire for a morning beverage": [ 
+    { subKey: "lateHeavyMeal", subTitle: "Do you eat heavy meals or drink tea/coffee close to bedtime?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "lateAlcohol", subTitle: "Do you take alcohol before sleep?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+  
+  // Waking up too early -> It's just my internal clock; I feel done sleeping
+  "It's just my internal clock; I feel done sleeping": [ 
+    { subKey: "internalClockSleepDuration", subTitle: "Average sleep duration when this happens?", subType: "radio", options: ["<6 hrs", "6–7 hrs", ">7 hrs"], required: true },
+    { subKey: "alarmUse", subTitle: "Do you use alarm clocks or wake naturally?", subType: "radio", options: ["Use Alarm", "Wake Naturally"], required: true },
+  ],
+  
+  // Feeling unrefreshed/tired -> Crash mid-day
+  "Crash mid-day": [ 
+    { subKey: "middayNap", subTitle: "Do you nap during the day?", subType: "radio", options: ["Yes", "No"], required: true },
+    // If 'Yes' is chosen, a follow-up for nap duration is usually present, but for simplicity, we'll keep the main flow here.
+  ],
+  
+  // Feeling unrefreshed/tired -> Groggy, need caffeine
+  "Groggy, need caffeine": [ 
+    { subKey: "phoneCheckGroggy", subTitle: "Do you check your phone immediately?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "sunlightExposure", subTitle: "Do you get sunlight within 1 hr of waking?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+  
+  // Feeling unrefreshed/tired -> Rarely feel rested
+  "Rarely feel rested": [ 
+    { subKey: "rarelyRestedAvgSleep", subTitle: "Average hours of sleep?", subType: "radio", options: ["<6", "6–7.5", ">7.5"], required: true },
+    { subKey: "rarelyRestedDiagnosis", subTitle: "Do you have a sleep apnea diagnosis/snoring/obesity?", subType: "radio", options: ["Yes", "No"], required: true },
+    // If 'Yes' is chosen, details follow up
+  ],
+
+  //Irregular schedule -> Necessary late work/studying or early duties
+  "Necessary late work/studying or early duties": [
+    { subKey: "lateStudyCaffeine", subTitle: "ACADEMIC: On a late study night, are you usually consuming caffeinated drinks (e.g., Kopi/tea) within 4 hours of your intended sleep time?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "shiftWorkFrequency", subTitle: "PROFESSIONAL: Does your work require you to be awake at different hours (shift work) more than twice a week?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "familyInterruption", subTitle: "HOME/FAMILY: How often does caring for children/family members interrupt your sleep for more than 30 minutes?", subType: "radio", options: ["Rarely", "1-2 times a week", "Almost every night"], required: true },
+  ],
+  
+  // Irregular schedule -> Social activities, chats or calls with friends or partner, late-night movies, or gaming
+  "Social activities, chats or calls with friends or partner, late-night movies, or gaming": [
+    { subKey: "nightAlcoholSocial", subTitle: "Do you drink alcohol at night?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "lateScreenUseSocial", subTitle: "Do you use your phone/TV/games until bedtime?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
+  
+  // 5. Irregular schedule -> I have no fixed schedule/routine
+  "I have no fixed schedule/routine": [
+    { subKey: "lateBedtimeFrequency", subTitle: "Do you go to sleep later than midnight at least 3 times per week?", subType: "radio", options: ["Yes", "No"], required: true },
+    { subKey: "delayedSleepDiagnosis", subTitle: "Have you ever been told by the doctor that you may have “Delayed Sleep Phase Disorder”?", subType: "radio", options: ["Yes", "No"], required: true },
+  ],
 };
 
 // Map condition keys to their follow-up logic
@@ -1319,14 +1454,14 @@ const substanceQuantityFollowUps = {
 const getBaseQuestions = (currentAnswers = {}, age = 0, sex = "") => {
   let base = [...baseQuestions];
   
-  // Add pregnant question logic here once
+  
   if (sex === "Female" && age > 18 && currentAnswers.isPregnant === undefined) {
     const pregnantQuestion = conditionalFollowUps["pregnantQuestion"];
     if (pregnantQuestion && !base.some(q => q.key === "isPregnant")) {
       const insertionIndex = base.findIndex(q => q.key === "sex") + 1;
       base.splice(insertionIndex, 0, {
         ...pregnantQuestion,
-        id: 3.5, // Use decimal to insert between 3 and 4
+        id: 3.5, 
         type: pregnantQuestion.subType,
         title: pregnantQuestion.subTitle,
         description: pregnantQuestion.description,

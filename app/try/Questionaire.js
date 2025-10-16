@@ -1,4 +1,3 @@
-// components/Questionnaire.js
 "use client";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -33,6 +32,12 @@ const BRANCHING_KEYS = [
   "mh_rootCauses",
   "sleepDisorderDiagnosis",
   "sleepChallenge",
+  "fallingAsleepReason",
+  "wakingUpReason",
+  "earlyWakingReason",
+  "unrefreshedFeeling",
+  "irregularScheduleReason",
+  "mostCommonDiscomfort", 
 ];
 
 const APP_NAME = "Lifeshift";
@@ -142,6 +147,7 @@ export default function Questionnaire() {
     const baseAnswer = answers[key];
     const newFollowUps = [];
 
+    // --- BASE & DIAGNOSTICS LOGIC ---
     if (key === "sex" && baseAnswer === "Female" && currentAge > 18) {
       const pregnantQ = conditionalFollowUps["pregnantQuestion"];
       if (pregnantQ) newFollowUps.push(pregnantQ);
@@ -171,6 +177,7 @@ export default function Questionnaire() {
       }
     }
 
+    // NUTRITION LOGIC 
     if (key === "dietType" && baseAnswer && conditionalFollowUps[baseAnswer]) {
       const q = conditionalFollowUps[baseAnswer];
       newFollowUps.push(q);
@@ -204,6 +211,7 @@ export default function Questionnaire() {
       }
     }
 
+    // ACTIVITY LOGIC 
     if (
       (key === "activityLevel" || key === "exerciseChallenge") &&
       (activityLevel === "Mostly sitting (little or no exercise)" ||
@@ -291,6 +299,7 @@ export default function Questionnaire() {
       newFollowUps.push(conditionalFollowUps.otherNotSure);
     }
 
+    // --- WEIGHT LOSS LOGIC ---
     if (key === "wl_lifeSituation" && currentLifestyle) {
       const questions = conditionalFollowUps[currentLifestyle];
       if (questions) {
@@ -346,6 +355,7 @@ export default function Questionnaire() {
       conditionalFollowUps.Yes.forEach((q) => newFollowUps.push(q));
     }
 
+    //SUBSTANCE LOGIC
     if (
       key === "substanceFrequency" &&
       substanceFrequency === "I used in the past, but quit" &&
@@ -418,6 +428,7 @@ export default function Questionnaire() {
         });
     }
 
+    //  MENTAL HEALTH LOGIC
     if (key === "mh_lifeSituation" && currentLifestyle) {
       const questions = conditionalFollowUps[currentLifestyle];
       if (questions) {
@@ -480,6 +491,7 @@ export default function Questionnaire() {
         });
     }
 
+    //SLEEP LOGIC (FIRST LAYER)
     if (key === "sleepDisorderDiagnosis" && sleepDisorderDiagnosis === "Yes") {
       newFollowUps.push(conditionalFollowUps.sleepDisorderDiagnosis_Yes);
     }
@@ -491,6 +503,51 @@ export default function Questionnaire() {
     ) {
       newFollowUps.push(conditionalFollowUps[baseAnswer]);
     }
+
+ 
+
+    // Get the first-level answer keys
+    const fallingAsleepReason = followUpAnswers.fallingAsleepReason;
+    const wakingUpReason = followUpAnswers.wakingUpReason;
+    const earlyWakingReason = followUpAnswers.earlyWakingReason;
+    const unrefreshedFeeling = followUpAnswers.unrefreshedFeeling;
+    const irregularScheduleReason = followUpAnswers.irregularScheduleReason;
+
+    const firstLevelSleepReasons = [
+        fallingAsleepReason, 
+        wakingUpReason, 
+        earlyWakingReason, 
+        unrefreshedFeeling, 
+        irregularScheduleReason
+    ].filter(Boolean);
+    firstLevelSleepReasons.forEach(reason => {
+        const questionsArray = conditionalFollowUps[reason];
+        if (questionsArray) {
+            if (Array.isArray(questionsArray)) {
+                questionsArray.forEach(q => newFollowUps.push(q));
+            } else if (typeof questionsArray === 'object') {
+                newFollowUps.push(questionsArray);
+            }
+        }
+    });
+
+    //Third Layer Logic
+    const commonDiscomfort = followUpAnswers.mostCommonDiscomfort;
+    if (fallingAsleepReason === "Physical discomfort (pain, heat, noise, hunger)" && commonDiscomfort) {
+        const thirdLevelKey = commonDiscomfort;
+        const thirdLevelQuestions = conditionalFollowUps[thirdLevelKey];
+
+        if (thirdLevelQuestions) {
+            if (Array.isArray(thirdLevelQuestions)) {
+                thirdLevelQuestions.forEach(q => newFollowUps.push(q));
+            } else if (typeof thirdLevelQuestions === 'object') {
+                 newFollowUps.push(thirdLevelQuestions);
+            }
+        }
+    }
+    
+    // END OF SLEEP LOGIC
+
 
     const uniqueFollowUps = newFollowUps.filter(
       (q, i, arr) => arr.findIndex((t) => t.subKey === q.subKey) === i
@@ -604,6 +661,11 @@ export default function Questionnaire() {
           currentStepData.key === "mh_lifeSituation"
         )
           return true;
+        
+        // This case handles the first layer of sleep branching questions being answered
+        if (["fallingAsleepReason", "wakingUpReason", "earlyWakingReason", "unrefreshedFeeling", "irregularScheduleReason"].includes(currentStepData.key)) {
+            return !!currentAnswer;
+        }
 
         return !!currentAnswer;
       }
@@ -723,6 +785,12 @@ export default function Questionnaire() {
         setSubStep(1);
         return;
       }
+      
+      // Handle the transition for the final sleep branching layer
+      if (["fallingAsleepReason", "wakingUpReason", "earlyWakingReason", "unrefreshedFeeling", "irregularScheduleReason", "mostCommonDiscomfort"].includes(currentStepData.key)) {
+          setSubStep(1);
+          return;
+      }
 
       const isSkippingFollowUps = (() => {
         if (currentStepData.key === "sex") {
@@ -795,6 +863,10 @@ export default function Questionnaire() {
           sleepDisorderDiagnosis === "No"
         )
           return true;
+          
+        if (currentStepData.key === "sleepChallenge") {
+            return !answers.sleepChallenge; 
+        }
 
         if (currentStepData.key === "activityLevel") {
           return (
@@ -838,7 +910,7 @@ export default function Questionnaire() {
         if (currentStepData.key === "mh_rootCauses") {
           return !isAnyKeySelected(mhRootCauses);
         }
-
+        
         return false;
       })();
 
@@ -919,8 +991,6 @@ export default function Questionnaire() {
           if (subKey) {
             const followUpAnswers = prevAnswers.followUps || {};
             const subAnswer = followUpAnswers[subKey] || {};
-
-            // We assume the value being changed is the 'otherText' for the selected 'Other' option
             return {
               ...prevAnswers,
               followUps: {
@@ -1030,7 +1100,7 @@ export default function Questionnaire() {
       ? currentAnswer.selectedOption
       : currentAnswer;
     const otherTextValue = isAnswerObject ? currentAnswer.otherText : "";
-    const questionKey = currentStepData.key;
+    const questionKey = currentStepData?.key || subKey; 
     const isRadioOtherSelected = mainAnswer === "Other";
 
     const handleRadioClick = (option) => {
@@ -1087,7 +1157,7 @@ export default function Questionnaire() {
                     type="text"
                     value={otherTextValue || ""}
                     onChange={(e) =>
-                      handleInputChange("otherText", e.target.value)
+                      handleInputChange("otherText", e.target.value, subKey)
                     }
                     placeholder="Please specify"
                     className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
@@ -1168,9 +1238,10 @@ export default function Questionnaire() {
                 <div className="pl-4 pt-1">
                   <input
                     type="text"
-                    value={otherTextValue}
+                    // If subKey exists, use generic 'otherText' key for followUps object structure
+                    value={subKey ? currentAnswer.otherText || "" : otherTextValue}
                     onChange={(e) =>
-                      handleInputChange("otherText", e.target.value)
+                      handleInputChange("otherText", e.target.value, subKey)
                     }
                     placeholder="Please specify your other choice"
                     className="w-full p-3 border-2 border-gray-300 rounded-lg text-lg focus:border-[#C263F2] focus:ring-0 transition text-black"
@@ -1208,18 +1279,20 @@ export default function Questionnaire() {
         const freqAnswer = followUpAnswers.alcoholFrequencyGoal;
         return freqAnswer && freqAnswer !== "Rarely (special occasions only)";
       }
+      
+      // Third Layer Sleep Logic: Only show the specific discomfort questions if the user selected the main key
+      if (["Pain", "Noise", "Heat", "Hunger"].includes(q.subKey)) {
+        return followUpAnswers.mostCommonDiscomfort === q.subKey;
+      }
+      
+      // If the question is about a specific discomfort but it's not the current one, hide it
+      if (q.subTitle.includes("Which discomfort is most common?")) {
+        return followUpAnswers.fallingAsleepReason === "Physical discomfort (pain, heat, noise, hunger)";
+      }
+
 
       return true;
     });
-
-    if (visibleFollowUpQuestions.length === 0 && followUpQuestions.length > 0) {
-      return (
-        <p className="text-gray-500 italic">
-          No further details required based on your answer. Click 'Next' to
-          proceed.
-        </p>
-      );
-    }
 
     if (visibleFollowUpQuestions.length === 0) {
       return (
@@ -1488,7 +1561,8 @@ export default function Questionnaire() {
         ) {
           return renderConditionalFollowUps();
         }
-
+        
+        // Render current answers if they are multi-select or radio
         if (currentStepData.type === "radio")
           return renderRadioButtons(
             currentStepData.options,
@@ -1650,7 +1724,7 @@ export default function Questionnaire() {
       id="questionnaire"
       className="w-full min-h-screen bg-gray-50 flex flex-col"
     >
-      {/* Fixed Navbar */}
+      {/* Navbar */}
       <div className="w-full bg-white shadow-sm fixed top-0 z-50">
         <div className="max-w-3xl mx-auto py-5 px-4 flex justify-between items-center">
           <button
