@@ -1735,7 +1735,13 @@ export default function Questionnaire() {
             <span className="hidden sm:inline">Back</span>
           </button>
 
-          <div className="text-xl font-bold text-[#C263F2]">{APP_NAME}</div>
+          <div
+            className="text-xl font-bold text-[#C263F2] cursor-pointer hover:opacity-80 transition"
+            onClick={() => router.push("/")}
+          >
+            {APP_NAME}
+          </div>
+
           <div className="flex-1 mx-4 h-2 bg-gray-200 rounded-full">
             <div
               className="h-2 bg-[#C263F2] rounded-full transition-all duration-500"
