@@ -1,12 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 
-
-const PRIMARY_COLOR_HEX = "#C263F2"; 
-const SECONDARY_COLOR_HOVER_HEX = "#E6E6FA"; 
-
+const PRIMARY_COLOR_HEX = "#C263F2";
+const SECONDARY_COLOR_HOVER_HEX = "#E6E6FA";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -14,7 +11,12 @@ export default function Header() {
 
   useEffect(() => {
     const hero = document.querySelector("#hero");
-    if (!hero) return;
+
+    if (!hero) {
+      // No hero section on this page → always use solid navbar
+      setScrolled(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -44,46 +46,40 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         <Link
           href="/"
-          className={`text-2xl sm:text-3xl font-extrabold transition-colors tracking-tight`}
+          className={`text-2xl sm:text-3xl font-extrabold tracking-tight`}
           style={{ color: PRIMARY_COLOR_HEX }}
         >
           LIFESHIFT
         </Link>
 
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          {/* <Link
-            href="#learn"
-            className={`font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105`}
-          >
-            Features
-          </Link> */}
           <Link
             href="/about"
-            className={`font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105`}
+            className="font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105"
           >
             About
           </Link>
           <Link
             href="/contact"
-            className={`font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105`}
+            className="font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105"
           >
             Contact
           </Link>
-          
+
           <Link
             href="/try"
             style={{
               backgroundColor: PRIMARY_COLOR_HEX,
               color: "white",
             }}
-            
-            className={`px-5 py-2 rounded-xl font-bold transition duration-300 shadow-lg hover:shadow-xl hover:bg-opacity-90 active:scale-95`}
+            className="px-5 py-2 rounded-xl font-bold transition duration-300 shadow-lg hover:shadow-xl hover:bg-opacity-90 active:scale-95"
           >
             Try Lifeshift
           </Link>
         </nav>
 
-        
+        {/* Mobile Menu Button */}
         <button
           className="md:hidden p-2 rounded text-2xl transition duration-300 text-gray-900 active:scale-95"
           onClick={() => setOpen(!open)}
@@ -92,21 +88,13 @@ export default function Header() {
         </button>
       </div>
 
-      
+      {/* Mobile Dropdown */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${
           open ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
         } bg-white border-t border-gray-100`}
       >
         <nav className="flex flex-col p-4 gap-2">
-          {/* <Link
-            href="#learn"
-            className={`px-3 py-3 font-medium text-gray-700 rounded-lg transition duration-300 hover:text-white hover:font-semibold`}
-            style={{ backgroundColor: open ? PRIMARY_COLOR_HEX : "" }}
-            onClick={handleLinkClick}
-          >
-            Features
-          </Link> */}
           <Link
             href="/about"
             className={`px-3 py-3 font-medium text-gray-700 rounded-lg transition duration-300 hover:text-white hover:font-semibold`}
@@ -123,15 +111,14 @@ export default function Header() {
           >
             Contact
           </Link>
-          
+
           <Link
             href="/try"
             style={{
               backgroundColor: PRIMARY_COLOR_HEX,
               color: "white",
             }}
-            
-            className={`mt-4 px-4 py-3 rounded-xl font-bold text-center transition duration-300 shadow-md hover:bg-opacity-90 active:scale-95`}
+            className="mt-4 px-4 py-3 rounded-xl font-bold text-center transition duration-300 shadow-md hover:bg-opacity-90 active:scale-95"
             onClick={handleLinkClick}
           >
             Try Lifeshift
