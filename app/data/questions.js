@@ -993,13 +993,13 @@ const conditionalFollowUps = {
       required: true,
     },
   ],
-  otherCondition_details: {
-    subKey: "otherConditionDetails",
-    subTitle: "Please specify the other health condition(s):",
-    subType: "text",
-    placeholder: "e.g., Asthma, Multiple Sclerosis, Chronic Migraines",
-    required: true,
-  },
+  // otherCondition_details: {
+  //   subKey: "otherConditionDetails",
+  //   subTitle: "Please specify the other health condition(s):",
+  //   subType: "text",
+  //   placeholder: "e.g., Asthma, Multiple Sclerosis, Chronic Migraines",
+  //   required: true,
+  // },
 
   disease_control: {
     subKey: "diseaseControlLevel",
