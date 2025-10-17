@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-
+import { useRouter } from 'next/navigation';
 const APP_NAME = "Lifeshift";
 const PRIMARY_COLOR = "#C263F2";
 
@@ -23,23 +23,16 @@ const CheckCircleSVG = ({ size, color, className }) => (
 );
 
 export default function ThankYou() {
+  const router = useRouter();
+
   const handleProceed = () => {
-    console.log("Proceeding to dashboard/results... Navigation simulated.");
-    const messageElement = document.getElementById('status-message');
-    if (messageElement) {
-      messageElement.textContent = "Thank you page completed. You would now proceed to your personalized results dashboard!";
-      messageElement.classList.remove('hidden');
-      setTimeout(() => {
-        messageElement.classList.add('hidden');
-      }, 3000);
-    }
+    
+    router.push('/login');
   };
+
 
   return (
     <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div id="status-message" className="hidden fixed top-4 z-50 p-3 rounded-lg bg-green-500 text-white shadow-xl transition-all duration-300">
-        Message placeholder
-      </div>
 
       <div className="text-3xl font-extrabold text-gray-900 mb-8">
         <span style={{ color: PRIMARY_COLOR }}>{APP_NAME}</span>
@@ -74,7 +67,7 @@ export default function ThankYou() {
         <button
           onClick={handleProceed}
           className="w-full py-4 rounded-xl font-bold text-lg transition duration-300 transform 
-                     bg-[#C263F2] text-white hover:bg-[#9E47CC] shadow-lg hover:shadow-xl hover:scale-[1.01]"
+                     bg-[#C263F2] text-white hover:bg-[#9E47CC] shadow-lg hover:shadow-xl hover:scale-[1.01] cursor-pointer"
         >
           View My Personalized Plan
         </button>
