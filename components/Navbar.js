@@ -1,7 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+
+const PRIMARY_COLOR_HEX = "#C263F2";
+const SECONDARY_COLOR_HOVER_HEX = "#E6E6FA";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -9,7 +11,12 @@ export default function Header() {
 
   useEffect(() => {
     const hero = document.querySelector("#hero");
-    if (!hero) return;
+
+    if (!hero) {
+      // No hero section on this page → always use solid navbar
+      setScrolled(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -31,98 +38,90 @@ export default function Header() {
   return (
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
-    scrolled 
-      ? "bg-white/80 backdrop-blur shadow-md translate-y-0" 
-      : "bg-transparent"
-  }`}
+        scrolled
+          ? "bg-white/95 backdrop-blur-md shadow-xl translate-y-0"
+          : "bg-transparent"
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         <Link
           href="/"
-          className={`text-2xl sm:text-3xl font-bold transition-colors ${
-            scrolled ? "text-gray-900" : "text-gray-900"
-          }`}
+          className={`text-2xl sm:text-3xl font-extrabold tracking-tight`}
+          style={{ color: PRIMARY_COLOR_HEX }}
         >
-          Ayubo.Ai
+          LIFESHIFT
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex gap-8">
-          <Link 
-            href="#learn" 
-            className={`font-semibold transition ${
-              scrolled ? "text-gray-700 hover:text-[#e72638]" : "text-gray-700 hover:text-[#e72638]"
-            }`}
-          >
-            Features
-          </Link>
-          <Link 
-            href="/about" 
-            className={`font-semibold transition ${
-              scrolled ? "text-gray-700 hover:text-[#e72638]" : "text-gray-700 hover:text-[#e72638]"
-            }`}
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-8">
+          <Link
+            href="/about"
+            className="font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105"
           >
             About
           </Link>
-          <Link 
-            href="/contact" 
-            className={`font-semibold transition ${
-              scrolled ? "text-gray-700 hover:text-[#e72638]" : "text-gray-700 hover:text-[#e72638]"
-            }`}
+          <Link
+            href="/contact"
+            className="font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105"
           >
             Contact
           </Link>
+
           <Link
             href="/try"
-            className="bg-[#e72638] text-white px-4 py-1 rounded-lg font-semibold hover:bg-[#c71f40] transition"
+            style={{
+              backgroundColor: PRIMARY_COLOR_HEX,
+              color: "white",
+            }}
+            className="px-5 py-2 rounded-xl font-bold transition duration-300 shadow-lg hover:shadow-xl hover:bg-opacity-90 active:scale-95"
           >
-            Try Ayubo
+            Try Lifeshift
           </Link>
         </nav>
 
-        {/* Hamburger/X Button - Always visible on mobile */}
+        {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 rounded text-2xl transition text-gray-900"
+          className="md:hidden p-2 rounded text-2xl transition duration-300 text-gray-900 active:scale-95"
           onClick={() => setOpen(!open)}
         >
-          {open ? '✕' : '☰'}
+          {open ? "✕" : "☰"}
         </button>
       </div>
 
-      {/* Mobile Menu Dropdown Container */}
+      {/* Mobile Dropdown */}
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          open ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${
+          open ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+        } bg-white border-t border-gray-100`}
       >
-        <nav className="flex flex-col p-4 gap-2 bg-white border-t border-gray-100">
-          <Link
-            href="#learn"
-            className="px-2 py-2 font-medium text-gray-700 hover:text-white hover:bg-[#e72638] rounded-md transition"
-            onClick={handleLinkClick}
-          >
-            Features
-          </Link>
+        <nav className="flex flex-col p-4 gap-2">
           <Link
             href="/about"
-            className="px-2 py-2 font-medium text-gray-700 hover:text-white hover:bg-[#e72638] rounded-md transition"
+            className={`px-3 py-3 font-medium text-gray-700 rounded-lg transition duration-300 hover:text-white hover:font-semibold`}
+            style={{ backgroundColor: open ? PRIMARY_COLOR_HEX : "" }}
             onClick={handleLinkClick}
           >
             About
           </Link>
           <Link
             href="/contact"
-            className="px-2 py-2 font-medium text-gray-700 hover:text-white hover:bg-[#e72638] rounded-md transition"
+            className={`px-3 py-3 font-medium text-gray-700 rounded-lg transition duration-300 hover:text-white hover:font-semibold`}
+            style={{ backgroundColor: open ? PRIMARY_COLOR_HEX : "" }}
             onClick={handleLinkClick}
           >
             Contact
           </Link>
+
           <Link
             href="/try"
-            className="mt-2 bg-[#e72638] text-white px-4 py-2 rounded-lg font-semibold text-center hover:bg-white hover:text-[#e72638] transition"
+            style={{
+              backgroundColor: PRIMARY_COLOR_HEX,
+              color: "white",
+            }}
+            className="mt-4 px-4 py-3 rounded-xl font-bold text-center transition duration-300 shadow-md hover:bg-opacity-90 active:scale-95"
             onClick={handleLinkClick}
           >
-            Try Ayubo
+            Try Lifeshift
           </Link>
         </nav>
       </div>
