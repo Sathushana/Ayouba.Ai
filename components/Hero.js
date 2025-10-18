@@ -67,7 +67,8 @@ export default function Hero() {
         </div>
       </section>
 
-      {/* Section 2 */}
+      {/* Section 2 */} 
+      {/* new part */}
       {/* <section id="section2" className="w-full py-10 md:py-16 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col items-center space-y-10 md:space-y-16 px-4 md:px-0">
           <div className="w-full flex flex-col md:flex-row gap-8">
