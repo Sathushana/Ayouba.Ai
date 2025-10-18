@@ -1,6 +1,6 @@
 // data/questions.js
 
-//BASE QUESTIONS 
+//BASE QUESTIONS Section
 const baseQuestions = [
   {
     id: 1,
