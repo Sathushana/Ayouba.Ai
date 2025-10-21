@@ -1297,7 +1297,8 @@ export default function Questionnaire() {
     if (visibleFollowUpQuestions.length === 0) {
       return (
         <p className="text-gray-500 italic">
-          No further details required based on your answer. Click 'Next' to
+          {/* No further details required based on your answer. Click 'Next' to */}
+          No further details required based on your answer. Click &apos;Next&apos; to proceed.
           proceed.
         </p>
       );
