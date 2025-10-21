@@ -1,23 +1,58 @@
 'use client';
 import React, { useState } from 'react';
+import { useAuth } from '../../(app)/context/auth';
+import { toast } from 'react-hot-toast';
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
+
 
 const PRIMARY_COLOR_HEX = "#C263F2";
 const SECONDARY_COLOR_HEX = "#E6E6FA";
 
 const LoginPage = () => {
+
+  const { login } = useAuth(); // ✅ get login function from context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e) => {
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      console.log('Attempting login with:', { email, password });
-      setLoading(false);
-    }, 1500);
-  };
 
+    try {
+      const formData = new URLSearchParams();
+      formData.append("username", email);  // FastAPI expects `username`
+      formData.append("password", password);
+
+      const response = await fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        login(data.access_token); // ✅ Use AuthContext login
+      } else {
+        toast.error(data.detail || "Invalid email or password", {
+          style: { fontWeight: 'bold' },
+        });
+      }
+    } catch (err) {
+      console.error("Error during login:", err);
+      toast.error("Something went wrong. Please try again.", {
+        style: { fontWeight: 'bold' },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   const newGradientStyle = {
     background: `linear-gradient(135deg, white, ${SECONDARY_COLOR_HEX})`,
   };
@@ -91,49 +126,34 @@ const LoginPage = () => {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <input
-                type="email"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition duration-300 ease-in-out"
-                style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition duration-300 ease-in-out"
-                style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
-              />
-            </div>
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition duration-300 ease-in-out"
+              style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
+            />
+        <div className="relative w-full">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition duration-300 ease-in-out"
+            style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl"
+          >
+            {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+          </button>
+        </div>
 
-            <div className="flex justify-between items-center text-sm">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="remember-me"
-                  className="h-4 w-4 rounded border-gray-300"
-                  style={{ accentColor: PRIMARY_COLOR_HEX }}
-                />
-                <label htmlFor="remember-me" className="ml-2 text-gray-700">
-                  Remember me
-                </label>
-              </div>
-              <a
-                href="#"
-                className="font-medium hover:underline transition duration-200"
-                style={{ color: PRIMARY_COLOR_HEX }}
-              >
-                Forgot Password?
-              </a>
-            </div>
 
             <button
               type="submit"
@@ -143,34 +163,7 @@ const LoginPage = () => {
                 loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-[1.01] hover:shadow-xl'
               }`}
             >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0
-                      c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Logging In...
-                </span>
-              ) : (
-                'Log In'
-              )}
+              {loading ? 'Logging In...' : 'Log In'}
             </button>
           </form>
 
