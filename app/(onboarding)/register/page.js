@@ -1,31 +1,69 @@
 'use client';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
 
 const PRIMARY_COLOR_HEX = "#C263F2";
 const SECONDARY_COLOR_HEX = "#E6E6FA";
 
 const RegisterApp = () => {
+  
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleRegister = (e) => {
+
+
+  const handleRegister = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
-      console.error("Registration failed: Passwords do not match.");
       return;
     }
 
     setLoading(true);
-    setTimeout(() => {
-      console.log('Attempting registration with:', { name, email, password });
-      setLoading(false);
-    }, 2000);
-  };
 
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          full_name: name,
+          email: email,
+          password:password,
+        }),
+      });
+
+      const data = await response.json();
+
+
+      if (response.ok) {
+        toast.success("Registration successful! Redirecting...", {
+          style: { fontWeight: 'bold' },
+        });
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000); // small delay to show toast
+      } else {
+        toast.error(data.detail || "Registration failed");
+      }
+  } catch (err) {
+    console.error("Error during registration:", err);
+    toast.error("Something went wrong. Please try again.", {
+      style: { fontWeight: 'bold' },
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const newGradientStyle = {
     background: `linear-gradient(135deg, white, ${SECONDARY_COLOR_HEX})`,
   };
@@ -121,26 +159,43 @@ const RegisterApp = () => {
               style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
             />
 
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-offset-2 transition duration-300 ease-in-out focus:ring-offset-white"
-              style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
-            />
+        <div className="relative w-full">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-offset-2 transition duration-300 ease-in-out focus:ring-offset-white"
+            style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl"
+          >
+            {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+          </button>
+        </div>
 
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-offset-2 transition duration-300 ease-in-out focus:ring-offset-white"
-              style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
-            />
-
+      <div className="relative w-full">
+        <input
+          type={showConfirmPassword ? "text" : "password"}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          className="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-offset-2 transition duration-300 ease-in-out focus:ring-offset-white"
+          style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
+        />
+        <button
+          type="button"
+          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xl"
+        >
+          {showConfirmPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+        </button>
+      </div>
             <button
               type="submit"
               disabled={loading}
