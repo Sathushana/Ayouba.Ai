@@ -1442,7 +1442,7 @@ const healthConditionFollowUps = {
   other: ["otherCondition_details", "disease_control"],
 };
 
-// Map substance keys to their quantity/details follow-up
+
 const substanceQuantityFollowUps = {
   alcohol: "alcohol_frequency",
   cigarettes: "cigarettes_quantity",
@@ -1459,9 +1459,14 @@ const getBaseQuestions = (currentAnswers = {}, age = 0, sex = "") => {
     const pregnantQuestion = conditionalFollowUps["pregnantQuestion"];
     if (pregnantQuestion && !base.some(q => q.key === "isPregnant")) {
       const insertionIndex = base.findIndex(q => q.key === "sex") + 1;
+      
+      // Find the next available integer ID
+      const existingIds = base.map(q => q.id);
+      let newId = Math.max(...existingIds) + 1;
+      
       base.splice(insertionIndex, 0, {
         ...pregnantQuestion,
-        id: 3.5, 
+        id: newId,  // Use proper integer ID
         type: pregnantQuestion.subType,
         title: pregnantQuestion.subTitle,
         description: pregnantQuestion.description,

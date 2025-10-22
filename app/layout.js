@@ -2,7 +2,11 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import Navbar from "@/components/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  preload: true, // ensures local copy used
+});
 
 export const metadata = {
   title: "Ayubo.AI",
@@ -19,4 +23,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-
