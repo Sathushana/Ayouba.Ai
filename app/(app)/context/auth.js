@@ -12,11 +12,12 @@ export const AuthProvider = ({ children }) => {
 
   // ✅ Load token when app starts (safe for SSR)
   useEffect(() => {
-    // Prevent hydration mismatch (run only in browser)
     if (typeof window !== 'undefined') {
       const storedToken =
         localStorage.getItem('token') || sessionStorage.getItem('token');
-      if (storedToken) setToken(storedToken);
+      if (storedToken) {
+        setToken(storedToken);
+      }
       setLoading(false);
     }
   }, []);
@@ -74,6 +75,9 @@ export const AuthProvider = ({ children }) => {
 
     return response;
   };
+
+  // ✅ Wait until token is loaded before rendering
+  if (loading) return null;
 
   return (
     <AuthContext.Provider
