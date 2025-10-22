@@ -148,10 +148,11 @@ const LoginPage = () => {
           </label>
 
           <a
-            href="/forgot-password"
+            href="/login/forgot-password"
             className="text-purple-600 hover:underline font-medium"
           >
             Forgot password?
+            
           </a>
         </div>
 
