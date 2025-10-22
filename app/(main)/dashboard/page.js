@@ -4,12 +4,18 @@ import { useAuth } from '../../(app)/context/auth';
 import { toast } from 'react-hot-toast';
 
 export default function DashboardPage() {
-  const { token, logout, authFetch, loading } = useAuth(); // ✅ include loading
+  const { token, logout, authFetch, loading } = useAuth();
   const [username, setUsername] = useState('');
   const [message, setMessage] = useState('Loading...');
+  const [mounted, setMounted] = useState(false); // ✅ Fix for hydration issue
+
+  // ✅ Ensure client-only rendering
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
-    if (loading) return; // ✅ wait until auth finishes initializing
+    if (!mounted || loading) return; // ✅ only run after mount and when auth is ready
 
     if (!token) {
       setMessage("No token found. Please log in.");
@@ -31,11 +37,18 @@ export default function DashboardPage() {
         });
         setTimeout(() => (window.location.href = "/login"), 1500);
       });
-  }, [token, loading]); // ✅ depend on loading and token
+  }, [token, loading, mounted]);
 
-  const handleLogout = () => {
-    logout();
-  };
+  const handleLogout = () => logout();
+
+  // ✅ Prevent SSR mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-center">
+        <h1 className="text-3xl font-bold">Loading...</h1>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center">
