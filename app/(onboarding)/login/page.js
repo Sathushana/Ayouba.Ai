@@ -17,6 +17,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  
 
 
   const handleLogin = async (e) => {
@@ -27,6 +28,7 @@ const LoginPage = () => {
       const formData = new URLSearchParams();
       formData.append("username", email);  // FastAPI expects `username`
       formData.append("password", password);
+      formData.append("remember_me", rememberMe);
 
       const response = await fetch("http://127.0.0.1:8000/api/login", {
         method: "POST",
