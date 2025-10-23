@@ -1453,9 +1453,13 @@ const substanceQuantityFollowUps = {
 
 const getBaseQuestions = (currentAnswers = {}, age = 0, sex = "") => {
   let base = [...baseQuestions];
+  console.log("🧩 currentAnswers received:", currentAnswers);
+
   
-  
-  if (sex === "Female" && age > 18 && currentAnswers.isPregnant === undefined) {
+  if (sex === "Female" && age > 18 && (
+    !currentAnswers.followUps ||
+    currentAnswers.followUps.isPregnant === undefined
+  )) {
     const pregnantQuestion = conditionalFollowUps["pregnantQuestion"];
     if (pregnantQuestion && !base.some(q => q.key === "isPregnant")) {
       const insertionIndex = base.findIndex(q => q.key === "sex") + 1;
