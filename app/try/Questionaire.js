@@ -47,7 +47,196 @@ export default function Questionnaire() {
   const [subStep, setSubStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [questions, setQuestions] = useState([]);
+  const [guestId, setGuestId] = useState(null);
   const router = useRouter();
+//   // ---------------- CREATE GUEST USER ----------------
+// useEffect(() => {
+//   console.log("useEffect running for guest user creation");
+  
+//   async function createGuest() {
+//     console.log("Creating guest user...");
+//     try {
+//       const response = await fetch("http://localhost:8000/api/guest-user", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//       });
+//       const data = await response.json();
+//       setGuestId(data.user_id);
+//       localStorage.setItem("guestId", data.user_id);
+//       console.log("Guest user created via API:", data.user_id);
+//     } catch (err) {
+//       console.error("Failed to create guest user:", err);
+//     }
+//   }
+
+//   const storedId = localStorage.getItem("guestId");
+//   if (!storedId) createGuest();
+//   else {
+//     setGuestId(storedId);
+//     console.log("Guest ID loaded from localStorage:", storedId);
+//   }
+// }, []);
+useEffect(() => {
+  console.log("useEffect running for guest user creation");
+
+  async function createGuest() {
+    try {
+      console.log("Creating guest user...");
+      const response = await fetch("http://localhost:8000/api/guest-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) throw new Error("Failed to create guest user");
+
+      const data = await response.json();
+      setGuestId(data.user_id);
+      localStorage.setItem("guestId", data.user_id);
+      console.log("Guest user created via API:", data.user_id);
+    } catch (err) {
+      console.error("Failed to create guest user:", err);
+    }
+  }
+
+  async function initGuestUser() {
+    const storedId = localStorage.getItem("guestId");
+
+    if (!storedId) {
+      // No guestId, create a new guest
+      await createGuest();
+    } else {
+      // Guest exists in localStorage
+      setGuestId(parseInt(storedId, 10));
+      console.log("Guest ID loaded from localStorage:", storedId);
+
+      // Optional: Check if profile exists (for display purposes)
+      try {
+        const res = await fetch(
+          `http://localhost:8000/api/onboarding-profile/${storedId}`
+        );
+        if (res.status === 404) {
+          console.log("No profile yet — this is expected for a new guest.");
+        } else {
+          const profile = await res.json();
+          console.log("Profile exists:", profile);
+        }
+      } catch (err) {
+        console.warn("Error fetching guest profile:", err);
+      }
+    }
+  }
+
+  initGuestUser();
+}, []);
+
+
+// Normalize enums to match backend
+const normalizeSex = (sex) => {
+  if (!sex) return null;
+  return sex.toLowerCase(); // "Male" -> "male", "Female" -> "female"
+};
+
+console.log("Raw lifestyle answer:", answers.lifestyle);
+
+// Frontend normalization
+const normalizeLifestyle = (lifestyle) => {
+  if (!lifestyle) return null;
+
+  // Replace en-dash or em-dash with normal hyphen
+  const cleaned = lifestyle.replace(/[–—]/g, "-").toLowerCase();
+
+  const mapping = {
+    "student / studying": "student/studying",
+    "employed - office-based (mostly sitting)": "employed-office-based(mostly sitting)",
+    "employed - active work (standing, moving around)": "employed-active work(standing, moving around)",
+    "employed - shift work / irregular hours": "employed-shift work/irregular hours",
+    "self-employed / business owner": "self-employed/business owner",
+    "homemaker / caregiver": "homemaker/caregiver",
+    "retired": "retired",
+    "other": "other",
+  };
+
+   return mapping[cleaned] || null;
+};
+
+
+
+// ---------------- HANDLE QUIZ SUBMISSION ----------------
+
+const handleSubmit = async () => {
+  const user_id = parseInt(guestId || localStorage.getItem("guestId"), 10);
+  if (!user_id) return alert("Guest user not created yet.");
+  
+
+  // Convert measurements and calculate BMI
+  const { heightCm, weightKg } = convertToMetric(answers.measurements);
+  const bmi = parseFloat(calculateBMI(answers.measurements)) || 0;
+
+    // Normalize lifestyle and log if it fails
+  const normalizedLifestyle = normalizeLifestyle(answers.lifestyle);
+  if (!normalizedLifestyle) {
+    console.warn("❌ Failed to normalize lifestyle:", answers.lifestyle);
+  } else {
+    console.log("✅ Normalized lifestyle:", normalizedLifestyle);
+  }
+
+
+  // Build the payload to match backend
+  const payload = {
+    user_id,
+    firstName: answers.firstName,
+    age: answers.age,
+    sex: normalizeSex(answers.sex),
+     is_pregnant: answers.is_pregnant === "Yes" ? true : false,
+    height_cm: heightCm,
+    weight_kg: weightKg,
+    bmi,
+    // lifestyle: answers.lifestyle,
+    lifestyle: normalizedLifestyle,
+  };
+
+  console.log("Submitting quiz payload:", payload);
+
+  try {
+    const response = await fetch("http://localhost:8000/api/onboarding-profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    console.log("Quiz submitted:", data);
+    router.push("/thank-you"); // optional redirect
+  } catch (err) {
+    console.error("Failed to submit quiz:", err);
+  }
+};
+
+
+ 
+
+  // // ---------------- HANDLE QUIZ SUBMISSION ----------------
+  // const handleSubmit = async () => {
+  //   const user_id = guestId || localStorage.getItem("guestId");
+  //   if (!user_id) return alert("Guest user not created yet.");
+
+
+  //   // ✅ Log the payload
+  //   console.log("Submitting quiz payload:", { user_id, ...answers });
+
+  //   try {
+  //     const response = await fetch("http://localhost:8000/api/onboarding-profile", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ user_id, ...answers }),
+  //     });
+  //     const data = await response.json();
+  //     console.log("Quiz submitted:", data);
+  //     router.push("/thank-you"); // optional redirect
+  //   } catch (err) {
+  //     console.error("Failed to submit quiz:", err);
+  //   }
+  // };
+
 
   const currentStepData = useMemo(
     () => questions.find((step) => step.id === currentStep),
@@ -792,6 +981,8 @@ export default function Questionnaire() {
           return;
       }
 
+      
+
       const isSkippingFollowUps = (() => {
         if (currentStepData.key === "sex") {
           return !(currentSex === "Female" && currentAge > 18);
@@ -933,6 +1124,7 @@ export default function Questionnaire() {
     } else if (currentStep === totalSteps) {
       console.log("Questionnaire Complete! Final Answers:", answers);
       alert("Questionnaire Complete! Check console for final answers.");
+      handleSubmit();
       router.push("/thank-you");
     } else if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
