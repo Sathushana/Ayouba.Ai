@@ -48,38 +48,20 @@ export default function Questionnaire() {
   const [answers, setAnswers] = useState({});
   const [questions, setQuestions] = useState([]);
   const [guestId, setGuestId] = useState(null);
+  const [guestReady, setGuestReady] = useState(false);
   const router = useRouter();
-//   // ---------------- CREATE GUEST USER ----------------
-// useEffect(() => {
-//   console.log("useEffect running for guest user creation");
-  
-//   async function createGuest() {
-//     console.log("Creating guest user...");
-//     try {
-//       const response = await fetch("http://localhost:8000/api/guest-user", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//       });
-//       const data = await response.json();
-//       setGuestId(data.user_id);
-//       localStorage.setItem("guestId", data.user_id);
-//       console.log("Guest user created via API:", data.user_id);
-//     } catch (err) {
-//       console.error("Failed to create guest user:", err);
-//     }
-//   }
 
-//   const storedId = localStorage.getItem("guestId");
-//   if (!storedId) createGuest();
-//   else {
-//     setGuestId(storedId);
-//     console.log("Guest ID loaded from localStorage:", storedId);
-//   }
-// }, []);
+
 useEffect(() => {
   console.log("useEffect running for guest user creation");
 
+  // Lock to prevent double creation
+  let isCreatingGuest = false;
+
   async function createGuest() {
+    if (isCreatingGuest) return null; // Already creating, skip
+    isCreatingGuest = true;
+
     try {
       console.log("Creating guest user...");
       const response = await fetch("http://localhost:8000/api/guest-user", {
@@ -93,36 +75,43 @@ useEffect(() => {
       setGuestId(data.user_id);
       localStorage.setItem("guestId", data.user_id);
       console.log("Guest user created via API:", data.user_id);
+      setGuestReady(true);
+      return data.user_id;
     } catch (err) {
       console.error("Failed to create guest user:", err);
+      setGuestReady(false);
+      return null;
+    } finally {
+      isCreatingGuest = false;
     }
   }
 
   async function initGuestUser() {
     const storedId = localStorage.getItem("guestId");
 
-    if (!storedId) {
-      // No guestId, create a new guest
-      await createGuest();
-    } else {
-      // Guest exists in localStorage
-      setGuestId(parseInt(storedId, 10));
-      console.log("Guest ID loaded from localStorage:", storedId);
+    if (storedId) {
+      const parsedId = parseInt(storedId, 10);
 
-      // Optional: Check if profile exists (for display purposes)
       try {
         const res = await fetch(
-          `http://localhost:8000/api/onboarding-profile/${storedId}`
+          `http://localhost:8000/api/onboarding-profile/${parsedId}`
         );
+
         if (res.status === 404) {
-          console.log("No profile yet — this is expected for a new guest.");
+          console.log("Guest ID invalid or profile not found, creating new guest");
+          localStorage.removeItem("guestId");
+          await createGuest();
         } else {
-          const profile = await res.json();
-          console.log("Profile exists:", profile);
+          console.log("Existing guest profile found:", res.status);
+          setGuestId(parsedId);
+          setGuestReady(true);
         }
       } catch (err) {
-        console.warn("Error fetching guest profile:", err);
+        console.warn("Error validating guest profile:", err);
+        if (!localStorage.getItem("guestId")) await createGuest();
       }
+    } else {
+      await createGuest();
     }
   }
 
@@ -130,69 +119,36 @@ useEffect(() => {
 }, []);
 
 
-// Normalize enums to match backend
-const normalizeSex = (sex) => {
-  if (!sex) return null;
-  return sex.toLowerCase(); // "Male" -> "male", "Female" -> "female"
-};
-
-console.log("Raw lifestyle answer:", answers.lifestyle);
-
-// Frontend normalization
-const normalizeLifestyle = (lifestyle) => {
-  if (!lifestyle) return null;
-
-  // Replace en-dash or em-dash with normal hyphen
-  const cleaned = lifestyle.replace(/[–—]/g, "-").toLowerCase();
-
-  const mapping = {
-    "student / studying": "student/studying",
-    "employed - office-based (mostly sitting)": "employed-office-based(mostly sitting)",
-    "employed - active work (standing, moving around)": "employed-active work(standing, moving around)",
-    "employed - shift work / irregular hours": "employed-shift work/irregular hours",
-    "self-employed / business owner": "self-employed/business owner",
-    "homemaker / caregiver": "homemaker/caregiver",
-    "retired": "retired",
-    "other": "other",
-  };
-
-   return mapping[cleaned] || null;
-};
-
-
-
 // ---------------- HANDLE QUIZ SUBMISSION ----------------
-
 const handleSubmit = async () => {
-  const user_id = parseInt(guestId || localStorage.getItem("guestId"), 10);
+  if (!guestReady) return alert("Guest user not ready yet. Please wait.");
+
+  const user_id = guestId;
   if (!user_id) return alert("Guest user not created yet.");
-  
 
   // Convert measurements and calculate BMI
   const { heightCm, weightKg } = convertToMetric(answers.measurements);
   const bmi = parseFloat(calculateBMI(answers.measurements)) || 0;
 
-    // Normalize lifestyle and log if it fails
-  const normalizedLifestyle = normalizeLifestyle(answers.lifestyle);
-  if (!normalizedLifestyle) {
-    console.warn("❌ Failed to normalize lifestyle:", answers.lifestyle);
-  } else {
-    console.log("✅ Normalized lifestyle:", normalizedLifestyle);
+  // Flatten lifestyle if "Other" is selected
+  let lifestyleValue = answers.lifestyle;
+  if (
+    typeof answers.lifestyle === "object" &&
+    answers.lifestyle.selectedOption === "Other"
+  ) {
+    lifestyleValue = answers.lifestyle.otherText; // use the text input
   }
 
-
-  // Build the payload to match backend
   const payload = {
     user_id,
     firstName: answers.firstName,
     age: answers.age,
-    sex: normalizeSex(answers.sex),
-     is_pregnant: answers.is_pregnant === "Yes" ? true : false,
+    sex: answers.sex,
+    is_pregnant: answers.is_pregnant === "Yes" ? true : false,
     height_cm: heightCm,
     weight_kg: weightKg,
     bmi,
-    // lifestyle: answers.lifestyle,
-    lifestyle: normalizedLifestyle,
+    lifestyle: lifestyleValue, // send as plain string
   };
 
   console.log("Submitting quiz payload:", payload);
@@ -203,13 +159,23 @@ const handleSubmit = async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      console.error("Quiz submission error:", errData);
+      return alert("Failed to submit quiz: " + errData.detail || "Unknown error");
+    }
+
     const data = await response.json();
     console.log("Quiz submitted:", data);
     router.push("/thank-you"); // optional redirect
   } catch (err) {
     console.error("Failed to submit quiz:", err);
+    alert("Failed to submit quiz. Please try again.");
   }
 };
+
+
 
 
  
