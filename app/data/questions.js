@@ -1516,4 +1516,5 @@ export {
   conditionalFollowUps,
   healthConditionFollowUps,
   substanceQuantityFollowUps,
+  goalSpecificQuestions
 };

@@ -6,6 +6,7 @@ import {
   conditionalFollowUps,
   healthConditionFollowUps,
   substanceQuantityFollowUps,
+  goalSpecificQuestions,
 } from "../data/questions";
 
 const BRANCHING_KEYS = [
@@ -129,6 +130,99 @@ const handleSubmit = async () => {
   // Convert measurements and calculate BMI
   const { heightCm, weightKg } = convertToMetric(answers.measurements);
   const bmi = parseFloat(calculateBMI(answers.measurements)) || 0;
+  
+
+  // ✅ Step 2: Prepare diagnosedConditionsPayload here
+  const diagnosedConditionsPayload = {
+    heartDisease: answers.followUps?.heartDiseaseType || null,
+    stroke: answers.followUps?.strokeType || null,
+    diabetes: answers.followUps?.diabetesType || null,
+    jointMobility: diagnosedConditions.jointMobility ? "yes" : null,
+    respiratory: answers.followUps?.respiratoryType || null,
+    anemia: diagnosedConditions.anemia ? "yes" : null,
+    osteoarthritis: diagnosedConditions.osteoarthritis ? "yes" : null,
+    cancer: answers.followUps?.cancerType || null,
+    mentalHealthDisorders: answers.followUps?.mentalHealthDisordersType || null,
+    obesity: diagnosedConditions.obesity ? "yes" : null,
+    ckd: answers.followUps?.ckdType || null,
+    cld: answers.followUps?.cldType || null,
+    thyroid: answers.followUps?.thyroidType || null,
+    pcos: diagnosedConditions.pcos ? "yes" : null,
+    other: answers.followUps?.otherConditionDetails || null,
+    none: diagnosedConditions.none || false,
+    diseaseControl: answers.followUps?.diseaseControlLevel || null,
+    recentSurgery: diagnosedConditions.recentSurgery
+      ? {
+          type: answers.followUps?.surgeryInjuryType || null,
+          timing: answers.followUps?.surgeryInjuryTiming || null,
+          recovery: answers.followUps?.surgeryRecovery || null,
+          currentSymptoms: answers.followUps?.surgeryCurrentSymptoms || [],
+        }
+      : null,
+  };
+
+  const selectedGoals = Object.keys(answers.primaryGoals || {}).filter(
+    (key) => answers.primaryGoals[key] && key !== "none"
+  );
+
+    // 1️⃣ Build goalAnswers object dynamically
+  const buildGoalAnswersPayload = () => {
+    const goalAnswers = {};
+
+    if (answers.primaryGoals.nutrition) {
+      goalAnswers.nutrition = {};
+
+      // Iterate over all nutrition questions
+      goalSpecificQuestions.nutrition.forEach((q) => {
+        const key = q.key;
+        if (answers[key] !== undefined) {
+          goalAnswers.nutrition[key] = answers[key];
+        }
+      });
+
+      // Include conditional/follow-up answers
+      Object.keys(conditionalFollowUps).forEach((followUpKey) => {
+        const subAnswer = followUpAnswers[conditionalFollowUps[followUpKey]?.subKey];
+        if (subAnswer !== undefined) {
+          goalAnswers.nutrition[conditionalFollowUps[followUpKey].subKey] = subAnswer;
+        }
+      });
+    }
+
+
+    // --- Physical Activity ---
+    if (answers.primaryGoals.activity) {
+      goalAnswers.activity = {};
+      
+      // Loop through all activity questions
+      goalSpecificQuestions.activity.forEach((q) => {
+        const key = q.key;
+        if (answers[key] !== undefined) {
+          goalAnswers.activity[key] = answers[key];
+        }
+      });
+
+      // Optional: include conditional follow-ups for activity
+      Object.keys(conditionalFollowUps).forEach((followUpKey) => {
+        const subAnswer = followUpAnswers[conditionalFollowUps[followUpKey]?.subKey];
+        if (subAnswer !== undefined) {
+          goalAnswers.activity[conditionalFollowUps[followUpKey].subKey] = subAnswer;
+        }
+      });
+    }
+
+    // // Add other goals similarly:
+    // if (answers.primaryGoals.activity) {
+    //   goalAnswers.activity = {
+    //     // populate activity-specific answers
+    //   };
+    // }
+
+    return goalAnswers;
+  };
+
+
+
 
   // Flatten lifestyle if "Other" is selected
   let lifestyleValue = answers.lifestyle;
@@ -144,11 +238,14 @@ const handleSubmit = async () => {
     firstName: answers.firstName,
     age: answers.age,
     sex: answers.sex,
-    is_pregnant: answers.is_pregnant === "Yes" ? true : false,
+    is_pregnant: answers.followUps?.isPregnant || "No", 
     height_cm: heightCm,
     weight_kg: weightKg,
     bmi,
-    lifestyle: lifestyleValue, // send as plain string
+    lifestyle: lifestyleValue, 
+    diagnosedConditions: diagnosedConditionsPayload,
+    goals:  selectedGoals,
+    goalAnswers: buildGoalAnswersPayload(),
   };
 
   console.log("Submitting quiz payload:", payload);
@@ -174,6 +271,67 @@ const handleSubmit = async () => {
     alert("Failed to submit quiz. Please try again.");
   }
 };
+
+
+
+
+
+// // ---------------- HANDLE QUIZ SUBMISSION ----------------
+// const handleSubmit = async () => {
+//   if (!guestReady) return alert("Guest user not ready yet. Please wait.");
+
+//   const user_id = guestId;
+//   if (!user_id) return alert("Guest user not created yet.");
+
+//   // Convert measurements and calculate BMI
+//   const { heightCm, weightKg } = convertToMetric(answers.measurements);
+//   const bmi = parseFloat(calculateBMI(answers.measurements)) || 0;
+
+//   // Flatten lifestyle if "Other" is selected
+//   let lifestyleValue = answers.lifestyle;
+//   if (
+//     typeof answers.lifestyle === "object" &&
+//     answers.lifestyle.selectedOption === "Other"
+//   ) {
+//     lifestyleValue = answers.lifestyle.otherText; // use the text input
+//   }
+
+//   const payload = {
+//     user_id,
+//     firstName: answers.firstName,
+//     age: answers.age,
+//     sex: answers.sex,
+//     is_pregnant: answers.is_pregnant === "Yes" ? true : false,
+//     height_cm: heightCm,
+//     weight_kg: weightKg,
+//     bmi,
+//     lifestyle: lifestyleValue, 
+//     diagnosedConditions: answers.diagnosedConditions
+//   };
+
+//   console.log("Submitting quiz payload:", payload);
+
+//   try {
+//     const response = await fetch("http://localhost:8000/api/onboarding-profile", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(payload),
+//     });
+
+//     if (!response.ok) {
+//       const errData = await response.json();
+//       console.error("Quiz submission error:", errData);
+//       return alert("Failed to submit quiz: " + errData.detail || "Unknown error");
+//     }
+
+//     const data = await response.json();
+//     console.log("Quiz submitted:", data);
+//     router.push("/thank-you"); // optional redirect
+//   } catch (err) {
+//     console.error("Failed to submit quiz:", err);
+//     alert("Failed to submit quiz. Please try again.");
+//   }
+// };
 
 
 
@@ -298,6 +456,7 @@ const handleSubmit = async () => {
       return;
     }
 
+
     const key = currentStepData.key;
     const baseAnswer = answers[key];
     const newFollowUps = [];
@@ -331,6 +490,8 @@ const handleSubmit = async () => {
         });
       }
     }
+
+    
 
     // NUTRITION LOGIC 
     if (key === "dietType" && baseAnswer && conditionalFollowUps[baseAnswer]) {
