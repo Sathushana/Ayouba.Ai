@@ -130,6 +130,11 @@ const handleSubmit = async () => {
   // Convert measurements and calculate BMI
   const { heightCm, weightKg } = convertToMetric(answers.measurements);
   const bmi = parseFloat(calculateBMI(answers.measurements)) || 0;
+
+  // data.diagnosedConditions.recentSurgery.currentSymptoms =
+  // Object.keys(data.diagnosedConditions.recentSurgery.currentSymptoms)
+  //   .filter((key) => data.diagnosedConditions.recentSurgery.currentSymptoms[key]);
+  
   
 
   // Step 2: Prepare diagnosedConditionsPayload here
@@ -156,243 +161,444 @@ const handleSubmit = async () => {
           type: answers.followUps?.surgeryInjuryType || null,
           timing: answers.followUps?.surgeryInjuryTiming || null,
           recovery: answers.followUps?.surgeryRecovery || null,
-          currentSymptoms: answers.followUps?.surgeryCurrentSymptoms || [],
+          currentSymptoms: answers.followUps?.surgeryCurrentSymptoms
+            ? Object.keys(answers.followUps.surgeryCurrentSymptoms).filter(
+                (key) => answers.followUps.surgeryCurrentSymptoms[key]
+              )
+            : [],
         }
       : null,
+
   };
 
   const selectedGoals = Object.keys(answers.primaryGoals || {}).filter(
     (key) => answers.primaryGoals[key] && key !== "none"
   );
-//
   const buildGoalAnswersPayload = () => {
-    const goalAnswers = {};
+  const goalAnswers = {};
 
-    if (answers.primaryGoals.nutrition) {
-      goalAnswers.nutrition = {};
-
-      // 1. Include all base nutrition questions
-      goalSpecificQuestions.nutrition.forEach((q) => {
-        const key = q.key;
-        if (answers[key] !== undefined && answers[key] !== null) {
-          goalAnswers.nutrition[key] = answers[key];
-        }
-      });
-
-      //2. Include all follow-up (conditional) nutrition answers safely
-      Object.entries(conditionalFollowUps || {})
-        .filter(([_, followUpDef]) => followUpDef && typeof followUpDef === "object")
-        .forEach(([followUpKey, followUpDef]) => {
-          const subKey = followUpDef.subKey || followUpKey;
-
-          // Check both answers and followUpAnswers
-          const subAnswer =
-            followUpAnswers[subKey] !== undefined
-              ? followUpAnswers[subKey]
-              : answers[subKey];
-
-          if (subAnswer !== undefined && subAnswer !== null && !goalAnswers.nutrition[subKey]) {
-            goalAnswers.nutrition[subKey] = subAnswer;
-          }
-        });
-      }
-
-    // --- Physical Activity ---
-    if (answers.primaryGoals.activity) {
-      goalAnswers.activity = {};
-
-      // 1️⃣ Include all base activity questions
-      goalSpecificQuestions.activity.forEach((q) => {
-        const key = q.key;
-        if (answers[key] !== undefined && answers[key] !== null) {
-          goalAnswers.activity[key] = answers[key];
-        }
-      });
-
-      // 2️⃣ Include follow-up (conditional) activity answers safely
-      Object.entries(conditionalFollowUps || {})
-        .filter(([_, followUpDef]) => followUpDef && typeof followUpDef === "object")
-        .forEach(([followUpKey, followUpDef]) => {
-          // Only include activity-related follow-ups
-          if (!followUpDef.subKey) return; // skip non-subKey entries
-
-          const subKey = followUpDef.subKey || followUpKey;
-
-          // Check both followUpAnswers and main answers
-          const subAnswer =
-            followUpAnswers[subKey] !== undefined
-              ? followUpAnswers[subKey]
-              : answers[subKey];
-
-          if (subAnswer !== undefined && subAnswer !== null && !goalAnswers.activity[subKey]) {
-            goalAnswers.activity[subKey] = subAnswer;
-          }
-        });
-    }
-
-    // --- Weight Loss ---
-    if (answers.primaryGoals.weight) {
-      goalAnswers.weightLoss = {};
-
-      // Pick all keys that start with "wl_"
-      Object.keys(answers).forEach((key) => {
-        if (key.startsWith("wl_")) {
-          const cleanKey = key.replace(/^wl_/, "");
-          goalAnswers.weightLoss[cleanKey] = answers[key];
-        }
-      });
-
-      // Also include any conditional follow-ups from followUpAnswers
-      Object.entries(conditionalFollowUps || {})
-        .filter(([_, f]) => f && typeof f === "object" && f.subKey)
-        .forEach(([_, f]) => {
-          const subKey = f.subKey;
-          const subAnswer = followUpAnswers[subKey] ?? answers[subKey];
-          if (subAnswer !== undefined && !(subKey in goalAnswers.weightLoss)) {
-            goalAnswers.weightLoss[subKey] = subAnswer;
-          }
-        });
-    }
-
-      // --- Substance Use ---
-    if (answers.primaryGoals.substanceUse) {
-      goalAnswers.substanceUse = {};
-
-      // Map base substance answers
-      if (answers.substanceType) {
-        Object.keys(answers.substanceType).forEach((sub) => {
-          goalAnswers.substanceUse[sub] = answers.substanceType[sub];
-        });
-      }
-
-      // Include conditional/follow-up answers for substances
-      Object.keys(substanceQuantityFollowUps || {}).forEach((sub) => {
-        const quantityKey = substanceQuantityFollowUps[sub];
-        const subAnswer =
-          followUpAnswers[quantityKey] ?? answers[quantityKey];
-
-        if (subAnswer !== undefined && subAnswer !== null) {
-          goalAnswers.substanceUse[quantityKey] = subAnswer;
-        }
-      });
-
-      // Alcohol-specific follow-ups
-      if (
-        answers.substanceType?.alcohol &&
-        followUpAnswers.alcoholFrequencyGoal &&
-        followUpAnswers.alcoholFrequencyGoal !== "Rarely (special occasions only)"
-      ) {
-        const freqKey = followUpAnswers.alcoholFrequencyGoal;
-        const quantityQ =
-          conditionalFollowUps[`${freqKey}_goal`] ||
-          conditionalFollowUps["Sometimes (1–2 times a week)_goal"];
-
-        if (quantityQ) {
-          const subKey = "alcohol_quantity";
-          goalAnswers.substanceUse[subKey] =
-            followUpAnswers[subKey] ?? answers[subKey];
-        }
-      }
-
-      // Substance situations
-      if (followUpAnswers.substanceSituations) {
-        Object.keys(followUpAnswers.substanceSituations)
-          .filter((s) => followUpAnswers.substanceSituations[s])
-          .forEach((situationId) => {
-            goalAnswers.substanceUse[situationId] =
-              followUpAnswers.substanceSituations[situationId];
-          });
-      }
-
-      // Substance consequences
-      if (followUpAnswers.substanceConsequences) {
-        Object.keys(followUpAnswers.substanceConsequences)
-          .filter(
-            (c) =>
-              followUpAnswers.substanceConsequences[c] &&
-              c !== "noNoticeableIssues"
-          )
-          .forEach((consequenceId) => {
-            goalAnswers.substanceUse[consequenceId] =
-              followUpAnswers.substanceConsequences[consequenceId];
-          });
-      }
-    }
-
-        // --- Mental Health ---
-    if (answers.primaryGoals.mental) {
-      goalAnswers.mental = {};
-      Object.keys(answers).forEach((key) => {
-        if (key.startsWith("mh_") && answers[key] !== undefined) {
-          goalAnswers.mental[key] = answers[key];
-        }
-      });
-    }
-
-    // --- Sleep ---
-    if (answers.primaryGoals.sleep) {
-      goalAnswers.sleep = {};
-
-      // Include base/top-level sleep answers
-      const baseSleepQuestions = [
-        "sleepDisorderDiagnosis",
-        "sleepChallenge",
-        "fallingAsleepReason",
-        "wakingUpReason",
-        "earlyWakingReason",
-        "unrefreshedFeeling",
-        "irregularScheduleReason",
-        "mostCommonDiscomfort",
-        "sleepSchedule",
-        "sleepGoals",
-        "lastMealTimingSleep"
-      ];
-
-      baseSleepQuestions.forEach((key) => {
-        if (answers[key] !== undefined) {
-          goalAnswers.sleep[key] = answers[key];
-        } else if (followUpAnswers[key] !== undefined) {
-          goalAnswers.sleep[key] = followUpAnswers[key];
-        }
-      });
-
-      // Recursively include follow-up answers
-      const addFollowUps = (trigger) => {
-        if (!trigger) return;
-        const followUps = conditionalFollowUps[trigger];
-        if (!followUps) return;
-
-        if (Array.isArray(followUps)) {
-          followUps.forEach((q) => {
-            if (q.subKey && followUpAnswers[q.subKey] !== undefined) {
-              goalAnswers.sleep[q.subKey] = followUpAnswers[q.subKey];
-              // Recursive check in case this answer triggers more
-              addFollowUps(followUpAnswers[q.subKey]);
-            }
-          });
-        } else if (typeof followUps === "object") {
-          const subKey = followUps.subKey;
-          if (subKey && followUpAnswers[subKey] !== undefined) {
-            goalAnswers.sleep[subKey] = followUpAnswers[subKey];
-            addFollowUps(followUpAnswers[subKey]);
-          }
-        }
-      };
-
-      // Trigger recursion for all first-level sleep keys
-      [
-        followUpAnswers.fallingAsleepReason,
-        followUpAnswers.wakingUpReason,
-        followUpAnswers.earlyWakingReason,
-        followUpAnswers.unrefreshedFeeling,
-        followUpAnswers.irregularScheduleReason,
-        followUpAnswers.mostCommonDiscomfort
-      ].filter(Boolean).forEach(addFollowUps);
-    }
-
-
-    return goalAnswers;
+  // Helper 1: Add key-value safely from answers or followUpAnswers
+  const getAnswer = (key) => {
+    if (followUpAnswers[key] !== undefined) return followUpAnswers[key];
+    if (answers[key] !== undefined) return answers[key];
+    return undefined;
   };
+
+  //  Helper 2: Add base keys for a given goal
+  const addBaseAnswers = (goalName, baseKeys) => {
+    goalAnswers[goalName] = goalAnswers[goalName] || {};
+    baseKeys.forEach((key) => {
+      const val = getAnswer(key);
+      if (val !== undefined) goalAnswers[goalName][key] = val;
+    });
+  };
+
+  //  Helper 3: Add conditional follow-ups recursively
+  const addFollowUpsRecursive = (goalName, trigger) => {
+    if (!trigger) return;
+    const followUps = conditionalFollowUps[trigger];
+    if (!followUps) return;
+
+    if (Array.isArray(followUps)) {
+      followUps.forEach((q) => {
+        const val = getAnswer(q.subKey);
+        if (val !== undefined) {
+          goalAnswers[goalName][q.subKey] = val;
+          addFollowUpsRecursive(goalName, val); // recursion for deeper layers
+        }
+      });
+    } else if (typeof followUps === "object" && followUps.subKey) {
+      const val = getAnswer(followUps.subKey);
+      if (val !== undefined) {
+        goalAnswers[goalName][followUps.subKey] = val;
+        addFollowUpsRecursive(goalName, val);
+      }
+    }
+  };
+
+  // Helper 4: Add conditionals (non-recursive) — used by other goals
+  const addConditionalAnswers = (goalName) => {
+    Object.entries(conditionalFollowUps || {})
+      .filter(([_, def]) => def && typeof def === "object" && def.subKey)
+      .forEach(([_, def]) => {
+        const subKey = def.subKey;
+        const val = getAnswer(subKey);
+        if (val !== undefined && !(subKey in goalAnswers[goalName])) {
+          goalAnswers[goalName][subKey] = val;
+        }
+      });
+  };
+
+  // NUTRITION
+  if (answers.primaryGoals.nutrition) {
+    goalAnswers.nutrition = {};
+    goalSpecificQuestions.nutrition.forEach((q) => {
+      const val = getAnswer(q.key);
+      if (val !== undefined) goalAnswers.nutrition[q.key] = val;
+    });
+    addConditionalAnswers("nutrition");
+  }
+
+  // PHYSICAL ACTIVITY
+  if (answers.primaryGoals.activity) {
+    goalAnswers.activity = {};
+    goalSpecificQuestions.activity.forEach((q) => {
+      const val = getAnswer(q.key);
+      if (val !== undefined) goalAnswers.activity[q.key] = val;
+    });
+    addConditionalAnswers("activity");
+  }
+
+  // WEIGHT LOSS
+  if (answers.primaryGoals.weight) {
+    goalAnswers.weightLoss = {};
+    Object.keys(answers).forEach((key) => {
+      if (key.startsWith("wl_")) {
+        const cleanKey = key.replace(/^wl_/, "");
+        goalAnswers.weightLoss[cleanKey] = answers[key];
+      }
+    });
+    addConditionalAnswers("weightLoss");
+  }
+
+  // // SUBSTANCE USE
+  // if (answers.primaryGoals.substanceUse) {
+  //   goalAnswers.substanceUse = {};
+
+  //   // Base substances
+  //   if (answers.substanceType) {
+  //     Object.keys(answers.substanceType).forEach((sub) => {
+  //       goalAnswers.substanceUse[sub] = answers.substanceType[sub];
+  //     });
+  //   }
+
+  //   // Quantity follow-ups
+  //   Object.keys(substanceQuantityFollowUps || {}).forEach((sub) => {
+  //     const quantityKey = substanceQuantityFollowUps[sub];
+  //     const val = getAnswer(quantityKey);
+  //     if (val !== undefined) goalAnswers.substanceUse[quantityKey] = val;
+  //   });
+
+  //   // Alcohol-specific logic
+  //   if (
+  //     answers.substanceType?.alcohol &&
+  //     followUpAnswers.alcoholFrequencyGoal &&
+  //     followUpAnswers.alcoholFrequencyGoal !== "Rarely (special occasions only)"
+  //   ) {
+  //     const freqKey = followUpAnswers.alcoholFrequencyGoal;
+  //     const subKey = "alcohol_quantity";
+  //     const val = getAnswer(subKey);
+  //     if (val !== undefined) goalAnswers.substanceUse[subKey] = val;
+  //   }
+
+  //   // Situations
+  //   if (followUpAnswers.substanceSituations) {
+  //     Object.entries(followUpAnswers.substanceSituations).forEach(([k, v]) => {
+  //       if (v) goalAnswers.substanceUse[k] = v;
+  //     });
+  //   }
+
+  //   // Consequences
+  //   if (followUpAnswers.substanceConsequences) {
+  //     Object.entries(followUpAnswers.substanceConsequences).forEach(([k, v]) => {
+  //       if (v && k !== "noNoticeableIssues") goalAnswers.substanceUse[k] = v;
+  //     });
+  //   }
+  // }
+  // MENTAL HEALTH
+  if (answers.primaryGoals.mental) {
+    goalAnswers.mental = {};
+
+    // Include base answers
+    Object.keys(answers).forEach((key) => {
+      if (key.startsWith("mh_") && answers[key] !== undefined) {
+        goalAnswers.mental[key] = answers[key];
+      }
+    });
+
+    // Include all follow-up answers (e.g. mh_rootCauses, mh_recentFeelings)
+    Object.keys(followUpAnswers).forEach((key) => {
+      if (key.startsWith("mh_") || key.includes("_impact")) {
+        goalAnswers.mental[key] = followUpAnswers[key];
+      }
+    });
+
+    // Trigger recursive discovery for *every follow-up answer*
+    Object.keys(followUpAnswers)
+      .filter((key) => key.startsWith("mh_") || key.includes("_impact"))
+      .forEach((key) => {
+        const answerKey = key;
+        const answerValue = followUpAnswers[key];
+        // Run recursion for both the question key and its selected value
+        addFollowUpsRecursive("mental", answerKey);
+        if (typeof answerValue === "string" && conditionalFollowUps[answerValue]) {
+          addFollowUpsRecursive("mental", answerValue);
+        }
+      });
+  }
+
+
+  // SLEEP (Recursive)
+  if (answers.primaryGoals.sleep) {
+    goalAnswers.sleep = {};
+    const baseKeys = [
+      "sleepDisorderDiagnosis",
+      "sleepChallenge",
+      "fallingAsleepReason",
+      "wakingUpReason",
+      "earlyWakingReason",
+      "unrefreshedFeeling",
+      "irregularScheduleReason",
+      "mostCommonDiscomfort",
+      "sleepSchedule",
+      "sleepGoals",
+      "lastMealTimingSleep",
+    ];
+    addBaseAnswers("sleep", baseKeys);
+
+    // Trigger recursive follow-ups for all first-level reasons
+    [
+      followUpAnswers.fallingAsleepReason,
+      followUpAnswers.wakingUpReason,
+      followUpAnswers.earlyWakingReason,
+      followUpAnswers.unrefreshedFeeling,
+      followUpAnswers.irregularScheduleReason,
+      followUpAnswers.mostCommonDiscomfort,
+    ].filter(Boolean).forEach((trigger) => addFollowUpsRecursive("sleep", trigger));
+  }
+
+  return goalAnswers;
+};
+
+
+  // const buildGoalAnswersPayload = () => {
+  //   const goalAnswers = {};
+
+  //   if (answers.primaryGoals.nutrition) {
+  //     goalAnswers.nutrition = {};
+
+  //     // 1. Include all base nutrition questions
+  //     goalSpecificQuestions.nutrition.forEach((q) => {
+  //       const key = q.key;
+  //       if (answers[key] !== undefined && answers[key] !== null) {
+  //         goalAnswers.nutrition[key] = answers[key];
+  //       }
+  //     });
+
+  //     //2. Include all follow-up (conditional) nutrition answers safely
+  //     Object.entries(conditionalFollowUps || {})
+  //       .filter(([_, followUpDef]) => followUpDef && typeof followUpDef === "object")
+  //       .forEach(([followUpKey, followUpDef]) => {
+  //         const subKey = followUpDef.subKey || followUpKey;
+
+  //         // Check both answers and followUpAnswers
+  //         const subAnswer =
+  //           followUpAnswers[subKey] !== undefined
+  //             ? followUpAnswers[subKey]
+  //             : answers[subKey];
+
+  //         if (subAnswer !== undefined && subAnswer !== null && !goalAnswers.nutrition[subKey]) {
+  //           goalAnswers.nutrition[subKey] = subAnswer;
+  //         }
+  //       });
+  //     }
+
+  //   // --- Physical Activity ---
+  //   if (answers.primaryGoals.activity) {
+  //     goalAnswers.activity = {};
+
+  //     // 1️⃣ Include all base activity questions
+  //     goalSpecificQuestions.activity.forEach((q) => {
+  //       const key = q.key;
+  //       if (answers[key] !== undefined && answers[key] !== null) {
+  //         goalAnswers.activity[key] = answers[key];
+  //       }
+  //     });
+
+  //     // 2️⃣ Include follow-up (conditional) activity answers safely
+  //     Object.entries(conditionalFollowUps || {})
+  //       .filter(([_, followUpDef]) => followUpDef && typeof followUpDef === "object")
+  //       .forEach(([followUpKey, followUpDef]) => {
+  //         // Only include activity-related follow-ups
+  //         if (!followUpDef.subKey) return; // skip non-subKey entries
+
+  //         const subKey = followUpDef.subKey || followUpKey;
+
+  //         // Check both followUpAnswers and main answers
+  //         const subAnswer =
+  //           followUpAnswers[subKey] !== undefined
+  //             ? followUpAnswers[subKey]
+  //             : answers[subKey];
+
+  //         if (subAnswer !== undefined && subAnswer !== null && !goalAnswers.activity[subKey]) {
+  //           goalAnswers.activity[subKey] = subAnswer;
+  //         }
+  //       });
+  //   }
+
+  //   // --- Weight Loss ---
+  //   if (answers.primaryGoals.weight) {
+  //     goalAnswers.weightLoss = {};
+
+  //     // Pick all keys that start with "wl_"
+  //     Object.keys(answers).forEach((key) => {
+  //       if (key.startsWith("wl_")) {
+  //         const cleanKey = key.replace(/^wl_/, "");
+  //         goalAnswers.weightLoss[cleanKey] = answers[key];
+  //       }
+  //     });
+
+  //     // Also include any conditional follow-ups from followUpAnswers
+  //     Object.entries(conditionalFollowUps || {})
+  //       .filter(([_, f]) => f && typeof f === "object" && f.subKey)
+  //       .forEach(([_, f]) => {
+  //         const subKey = f.subKey;
+  //         const subAnswer = followUpAnswers[subKey] ?? answers[subKey];
+  //         if (subAnswer !== undefined && !(subKey in goalAnswers.weightLoss)) {
+  //           goalAnswers.weightLoss[subKey] = subAnswer;
+  //         }
+  //       });
+  //   }
+
+  //     // --- Substance Use ---
+  //   if (answers.primaryGoals.substanceUse) {
+  //     goalAnswers.substanceUse = {};
+
+  //     // Map base substance answers
+  //     if (answers.substanceType) {
+  //       Object.keys(answers.substanceType).forEach((sub) => {
+  //         goalAnswers.substanceUse[sub] = answers.substanceType[sub];
+  //       });
+  //     }
+
+  //     // Include conditional/follow-up answers for substances
+  //     Object.keys(substanceQuantityFollowUps || {}).forEach((sub) => {
+  //       const quantityKey = substanceQuantityFollowUps[sub];
+  //       const subAnswer =
+  //         followUpAnswers[quantityKey] ?? answers[quantityKey];
+
+  //       if (subAnswer !== undefined && subAnswer !== null) {
+  //         goalAnswers.substanceUse[quantityKey] = subAnswer;
+  //       }
+  //     });
+
+  //     // Alcohol-specific follow-ups
+  //     if (
+  //       answers.substanceType?.alcohol &&
+  //       followUpAnswers.alcoholFrequencyGoal &&
+  //       followUpAnswers.alcoholFrequencyGoal !== "Rarely (special occasions only)"
+  //     ) {
+  //       const freqKey = followUpAnswers.alcoholFrequencyGoal;
+  //       const quantityQ =
+  //         conditionalFollowUps[`${freqKey}_goal`] ||
+  //         conditionalFollowUps["Sometimes (1–2 times a week)_goal"];
+
+  //       if (quantityQ) {
+  //         const subKey = "alcohol_quantity";
+  //         goalAnswers.substanceUse[subKey] =
+  //           followUpAnswers[subKey] ?? answers[subKey];
+  //       }
+  //     }
+
+  //     // Substance situations
+  //     if (followUpAnswers.substanceSituations) {
+  //       Object.keys(followUpAnswers.substanceSituations)
+  //         .filter((s) => followUpAnswers.substanceSituations[s])
+  //         .forEach((situationId) => {
+  //           goalAnswers.substanceUse[situationId] =
+  //             followUpAnswers.substanceSituations[situationId];
+  //         });
+  //     }
+
+  //     // Substance consequences
+  //     if (followUpAnswers.substanceConsequences) {
+  //       Object.keys(followUpAnswers.substanceConsequences)
+  //         .filter(
+  //           (c) =>
+  //             followUpAnswers.substanceConsequences[c] &&
+  //             c !== "noNoticeableIssues"
+  //         )
+  //         .forEach((consequenceId) => {
+  //           goalAnswers.substanceUse[consequenceId] =
+  //             followUpAnswers.substanceConsequences[consequenceId];
+  //         });
+  //     }
+  //   }
+
+  //       // --- Mental Health ---
+  //   if (answers.primaryGoals.mental) {
+  //     goalAnswers.mental = {};
+  //     Object.keys(answers).forEach((key) => {
+  //       if (key.startsWith("mh_") && answers[key] !== undefined) {
+  //         goalAnswers.mental[key] = answers[key];
+  //       }
+  //     });
+  //   }
+
+  //   // --- Sleep ---
+  //   if (answers.primaryGoals.sleep) {
+  //     goalAnswers.sleep = {};
+
+  //     // Include base/top-level sleep answers
+  //     const baseSleepQuestions = [
+  //       "sleepDisorderDiagnosis",
+  //       "sleepChallenge",
+  //       "fallingAsleepReason",
+  //       "wakingUpReason",
+  //       "earlyWakingReason",
+  //       "unrefreshedFeeling",
+  //       "irregularScheduleReason",
+  //       "mostCommonDiscomfort",
+  //       "sleepSchedule",
+  //       "sleepGoals",
+  //       "lastMealTimingSleep"
+  //     ];
+
+  //     baseSleepQuestions.forEach((key) => {
+  //       if (answers[key] !== undefined) {
+  //         goalAnswers.sleep[key] = answers[key];
+  //       } else if (followUpAnswers[key] !== undefined) {
+  //         goalAnswers.sleep[key] = followUpAnswers[key];
+  //       }
+  //     });
+
+  //     // Recursively include follow-up answers
+  //     const addFollowUps = (trigger) => {
+  //       if (!trigger) return;
+  //       const followUps = conditionalFollowUps[trigger];
+  //       if (!followUps) return;
+
+  //       if (Array.isArray(followUps)) {
+  //         followUps.forEach((q) => {
+  //           if (q.subKey && followUpAnswers[q.subKey] !== undefined) {
+  //             goalAnswers.sleep[q.subKey] = followUpAnswers[q.subKey];
+  //             // Recursive check in case this answer triggers more
+  //             addFollowUps(followUpAnswers[q.subKey]);
+  //           }
+  //         });
+  //       } else if (typeof followUps === "object") {
+  //         const subKey = followUps.subKey;
+  //         if (subKey && followUpAnswers[subKey] !== undefined) {
+  //           goalAnswers.sleep[subKey] = followUpAnswers[subKey];
+  //           addFollowUps(followUpAnswers[subKey]);
+  //         }
+  //       }
+  //     };
+
+  //     // Trigger recursion for all first-level sleep keys
+  //     [
+  //       followUpAnswers.fallingAsleepReason,
+  //       followUpAnswers.wakingUpReason,
+  //       followUpAnswers.earlyWakingReason,
+  //       followUpAnswers.unrefreshedFeeling,
+  //       followUpAnswers.irregularScheduleReason,
+  //       followUpAnswers.mostCommonDiscomfort
+  //     ].filter(Boolean).forEach(addFollowUps);
+  //   }
+
+
+  //   return goalAnswers;
+  // };
 
 
 
@@ -507,33 +713,6 @@ const handleSubmit = async () => {
 //   }
 // };
 
-
-
-
- 
-
-  // // ---------------- HANDLE QUIZ SUBMISSION ----------------
-  // const handleSubmit = async () => {
-  //   const user_id = guestId || localStorage.getItem("guestId");
-  //   if (!user_id) return alert("Guest user not created yet.");
-
-
-  //   // ✅ Log the payload
-  //   console.log("Submitting quiz payload:", { user_id, ...answers });
-
-  //   try {
-  //     const response = await fetch("http://localhost:8000/api/onboarding-profile", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ user_id, ...answers }),
-  //     });
-  //     const data = await response.json();
-  //     console.log("Quiz submitted:", data);
-  //     router.push("/thank-you"); // optional redirect
-  //   } catch (err) {
-  //     console.error("Failed to submit quiz:", err);
-  //   }
-  // };
 
 
   const currentStepData = useMemo(
@@ -917,6 +1096,8 @@ const handleSubmit = async () => {
           }
         });
     }
+    // ✅ Add console.log here to debug
+    console.log("NEW FOLLOW-UPS for key:", key, newFollowUps);
 
     //  MENTAL HEALTH LOGIC
     if (key === "mh_lifeSituation" && currentLifestyle) {
