@@ -262,49 +262,210 @@ const handleSubmit = async () => {
   }
 
   // // SUBSTANCE USE
-  // if (answers.primaryGoals.substanceUse) {
+  // if (answers.primaryGoals.substance) {
   //   goalAnswers.substanceUse = {};
 
-  //   // Base substances
+  //   // 1️⃣ Base info
+  //   addBaseAnswers("substanceUse", ["substanceFrequency", "substanceDuration", "targetDuration"]);
+
+  //   // 2️⃣ Substance types (nested under "substanceType")
   //   if (answers.substanceType) {
-  //     Object.keys(answers.substanceType).forEach((sub) => {
-  //       goalAnswers.substanceUse[sub] = answers.substanceType[sub];
+  //     goalAnswers.substanceUse.substanceType = {};
+  //     Object.entries(answers.substanceType).forEach(([substance, val]) => {
+  //       goalAnswers.substanceUse.substanceType[substance] = val;
   //     });
   //   }
 
-  //   // Quantity follow-ups
-  //   Object.keys(substanceQuantityFollowUps || {}).forEach((sub) => {
-  //     const quantityKey = substanceQuantityFollowUps[sub];
-  //     const val = getAnswer(quantityKey);
-  //     if (val !== undefined) goalAnswers.substanceUse[quantityKey] = val;
+  //   // 3️⃣ Initialize grouped objects
+  //   const groupedKeys = ["substanceReasons", "substanceSituations", "substanceConsequences"];
+  //   groupedKeys.forEach((key) => {
+  //     goalAnswers.substanceUse[key] = {};
   //   });
 
-  //   // Alcohol-specific logic
-  //   if (
-  //     answers.substanceType?.alcohol &&
-  //     followUpAnswers.alcoholFrequencyGoal &&
-  //     followUpAnswers.alcoholFrequencyGoal !== "Rarely (special occasions only)"
-  //   ) {
-  //     const freqKey = followUpAnswers.alcoholFrequencyGoal;
-  //     const subKey = "alcohol_quantity";
-  //     const val = getAnswer(subKey);
-  //     if (val !== undefined) goalAnswers.substanceUse[subKey] = val;
+  //   // 4️⃣ Populate groups from followUpAnswers
+  //   groupedKeys.forEach((key) => {
+  //     const data = followUpAnswers[key] || answers[key];
+  //     if (data && typeof data === "object") {
+  //       Object.entries(data).forEach(([k, v]) => {
+  //         if (v && k !== "noNoticeableIssues") {
+  //           // Use subKey mapping if available
+  //           const followUpDef = conditionalFollowUps[k];
+  //           const subKey = Array.isArray(followUpDef)
+  //             ? followUpDef[0]?.subKey || k
+  //             : followUpDef?.subKey || k;
+
+  //           goalAnswers.substanceUse[key][subKey] = v;
+  //         }
+  //       });
+
+  //       // Remove empty group
+  //       if (Object.keys(goalAnswers.substanceUse[key]).length === 0) {
+  //         delete goalAnswers.substanceUse[key];
+  //       }
+  //     }
+  //   });
+
+  //   // 5️⃣ Alcohol & other substance-specific follow-ups grouped under "details"
+  //   goalAnswers.substanceUse.details = {};
+  //   if (answers.substanceType?.alcohol && followUpAnswers.alcoholFrequencyGoal) {
+  //     goalAnswers.substanceUse.details.alcoholFrequencyGoal = followUpAnswers.alcoholFrequencyGoal;
+  //     const alcoholQty = getAnswer("alcohol_quantity");
+  //     if (alcoholQty !== undefined) goalAnswers.substanceUse.details.alcoholQuantityGoal = alcoholQty;
   //   }
 
-  //   // Situations
-  //   if (followUpAnswers.substanceSituations) {
-  //     Object.entries(followUpAnswers.substanceSituations).forEach(([k, v]) => {
-  //       if (v) goalAnswers.substanceUse[k] = v;
-  //     });
+  //   if (answers.substanceType?.cigarettes) {
+  //     const val = getAnswer("cigarettesQuantityGoal");
+  //     if (val !== undefined) goalAnswers.substanceUse.details.cigarettesQuantityGoal = val;
   //   }
+  //   if (answers.substanceType?.beedi) {
+  //     const val = getAnswer("beediQuantityGoal");
+  //     if (val !== undefined) goalAnswers.substanceUse.details.beediQuantityGoal = val;
+  //   }
+  //   if (answers.substanceType?.chewingTobacco) {
+  //     const val = getAnswer("chewingQuantityGoal");
+  //     if (val !== undefined) goalAnswers.substanceUse.details.chewingQuantityGoal = val;
+  //   }
+  //   if (answers.substanceType?.otherDrugs && answers.otherText) {
+  //     goalAnswers.substanceUse.details.otherDrugsFrequencyGoal = answers.otherText;
+  //   }
+  //   // Remove empty details
+  //   if (Object.keys(goalAnswers.substanceUse.details).length === 0) delete goalAnswers.substanceUse.details;
 
-  //   // Consequences
-  //   if (followUpAnswers.substanceConsequences) {
-  //     Object.entries(followUpAnswers.substanceConsequences).forEach(([k, v]) => {
-  //       if (v && k !== "noNoticeableIssues") goalAnswers.substanceUse[k] = v;
-  //     });
-  //   }
+  //   // 6️⃣ Recursive follow-ups merged into groups
+  //   const triggers = [
+  //     "substanceFrequency",
+  //     "substanceDetailsPlaceholder",
+  //     "substanceReasons",
+  //     "substanceSituations",
+  //     "substanceConsequences"
+  //   ];
+
+  //   const addRecursiveToGroup = (groupKey, subKey) => {
+  //     const followUp = conditionalFollowUps[subKey];
+  //     if (!followUp) return;
+
+  //     if (!goalAnswers.substanceUse[groupKey]) goalAnswers.substanceUse[groupKey] = {};
+
+  //     if (Array.isArray(followUp)) {
+  //       followUp.forEach((q) => {
+  //         const val = getAnswer(q.subKey);
+  //         if (val !== undefined) goalAnswers.substanceUse[groupKey][q.subKey] = val;
+  //       });
+  //     } else if (typeof followUp === "object" && followUp.subKey) {
+  //       const val = getAnswer(followUp.subKey);
+  //       if (val !== undefined) goalAnswers.substanceUse[groupKey][followUp.subKey] = val;
+  //     }
+  //   };
+
+  //   triggers.forEach((triggerKey) => {
+  //     const val = followUpAnswers[triggerKey] || answers[triggerKey];
+  //     if (!val) return;
+
+  //     if (typeof val === "object") {
+  //       Object.keys(val).forEach((subKey) => {
+  //         if (groupedKeys.includes(triggerKey)) addRecursiveToGroup(triggerKey, subKey);
+  //       });
+  //     } else if (typeof val === "string") {
+  //       groupedKeys.forEach((grp) => addRecursiveToGroup(grp, val));
+  //     }
+  //   });
   // }
+
+
+  // SUBSTANCE USE
+  if (answers.primaryGoals.substance) {
+    goalAnswers.substanceUse = {};
+
+    // Base info
+    addBaseAnswers("substanceUse", ["substanceFrequency", "substanceDuration", "targetDuration"]);
+
+        // ✅ 2️⃣ Substance types (nested under "substanceType")
+    if (answers.substanceType) {
+      goalAnswers.substanceUse.substanceType = {};
+      Object.entries(answers.substanceType).forEach(([substance, val]) => {
+        goalAnswers.substanceUse.substanceType[substance] = val;
+      });
+    }
+
+
+    // Initialize grouped objects
+    const groupedKeys = ["substanceReasons", "substanceSituations", "substanceConsequences"];
+    groupedKeys.forEach((key) => {
+      goalAnswers.substanceUse[key] = {};
+    });
+
+    //  Populate groups from followUpAnswers
+    groupedKeys.forEach((key) => {
+      const data = followUpAnswers[key] || answers[key];
+      if (data && typeof data === "object") {
+        Object.entries(data).forEach(([k, v]) => {
+          if (v && k !== "noNoticeableIssues") {
+            goalAnswers.substanceUse[key][k] = v;
+          }
+        });
+        // Remove group if empty
+        if (Object.keys(goalAnswers.substanceUse[key]).length === 0) {
+          delete goalAnswers.substanceUse[key];
+        }
+      }
+    });
+
+    // Alcohol-specific follow-ups
+    if (
+      answers.substanceType?.alcohol &&
+      followUpAnswers.alcoholFrequencyGoal &&
+      followUpAnswers.alcoholFrequencyGoal !== "Rarely (special occasions only)"
+    ) {
+      const val = getAnswer("alcohol_quantity");
+      if (val !== undefined) goalAnswers.substanceUse.alcohol_quantity = val;
+    }
+
+    // Other drugs text
+    if (answers.substanceType?.otherDrugs && answers.otherText) {
+      goalAnswers.substanceUse.otherText = answers.otherText;
+    }
+
+    // Recursive follow-ups merged into groups
+    const triggers = [
+      "substanceFrequency",
+      "substanceDetailsPlaceholder",
+      "substanceReasons",
+      "substanceSituations",
+      "substanceConsequences"
+    ];
+
+    const addRecursiveToGroup = (groupKey, subKey) => {
+      const followUp = conditionalFollowUps[subKey];
+      if (!followUp) return;
+
+      if (!goalAnswers.substanceUse[groupKey]) goalAnswers.substanceUse[groupKey] = {};
+
+      if (Array.isArray(followUp)) {
+        followUp.forEach((q) => {
+          const val = getAnswer(q.subKey);
+          if (val !== undefined) goalAnswers.substanceUse[groupKey][q.subKey] = val;
+        });
+      } else if (typeof followUp === "object" && followUp.subKey) {
+        const val = getAnswer(followUp.subKey);
+        if (val !== undefined) goalAnswers.substanceUse[groupKey][followUp.subKey] = val;
+      }
+    };
+
+    triggers.forEach((triggerKey) => {
+      const val = followUpAnswers[triggerKey] || answers[triggerKey];
+      if (!val) return;
+
+      if (typeof val === "object") {
+        Object.keys(val).forEach((subKey) => {
+          if (groupedKeys.includes(triggerKey)) addRecursiveToGroup(triggerKey, subKey);
+        });
+      } else if (typeof val === "string") {
+        groupedKeys.forEach((grp) => addRecursiveToGroup(grp, val));
+      }
+    });
+  }
+
+
   // MENTAL HEALTH
   if (answers.primaryGoals.mental) {
     goalAnswers.mental = {};
@@ -1096,8 +1257,7 @@ const handleSubmit = async () => {
           }
         });
     }
-    // ✅ Add console.log here to debug
-    console.log("NEW FOLLOW-UPS for key:", key, newFollowUps);
+
 
     //  MENTAL HEALTH LOGIC
     if (key === "mh_lifeSituation" && currentLifestyle) {
