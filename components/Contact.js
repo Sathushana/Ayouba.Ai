@@ -11,7 +11,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="w-full pt-16 md:pt-40 lg:pt-57 bg-white "
+      className="w-full pt-16 md:pt-40 lg:pt-57 bg-white mt-12"
     >
       <div className="max-w-4xl mx-auto px-4 md:px-8">
         <div className="text-center mb-10 md:mb-12 space-y-3">

@@ -11,10 +11,10 @@ export default function Hero() {
 
   return (
     <>
-      <section id="hero" className="w-full bg-white pt-20 py-12 md:py-16">
-        <div className="flex flex-col md:flex-row max-w-7xl mx-auto relative px-4 md:px-0">
+      <section id="hero" className="w-full bg-white pt-20 py-12 md:py-28 ">
+        <div className="flex flex-col md:flex-row max-w-7xl mx-auto relative px-4 md:px-0 mt-10">
           <div
-            className="md:flex-2 w-full h-[250px] md:h-[600px] bg-[#e0e4ef] bg-no-repeat bg-cover relative"
+            className="md:flex-2 w-full h-[250px] md:h-[600px] bg-[#e0e4ef] bg-no-repeat bg-cover relative "
             style={{
               backgroundImage: 'url("/hero_img_4.png")',
               backgroundPosition: "center 15%",
