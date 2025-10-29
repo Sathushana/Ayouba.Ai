@@ -110,13 +110,13 @@ const GoalSection = ({ mainGoal, subGoals, onToggle }) => {
       className="bg-white rounded-2xl shadow-xl overflow-hidden"
     >
       <header
-        className="flex justify-between items-center p-4 cursor-pointer bg-white border-b border-gray-100"
+        className="flex justify-between items-center p-4 cursor-pointer bg-[#C263F2] border-b border-gray-100"
         onClick={() => setIsExpanded(!isExpanded)}
         aria-expanded={isExpanded}
         aria-controls={`goals-${mainGoal.replace(/\s/g, "-")}`}
       >
-        <h2 className="text-lg font-bold text-[#C263F2]">{mainGoal}</h2>
-        <span className="text-sm font-semibold text-gray-500">
+        <h2 className="text-lg font-bold text-white">{mainGoal}</h2>
+        <span className="text-sm font-semibold text-white-500">
           {incompleteGoals.length} left
         </span>
       </header>
@@ -127,7 +127,7 @@ const GoalSection = ({ mainGoal, subGoals, onToggle }) => {
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <div className="p-4 space-y-3">
+        <div className="p-4 space-y-3 text-black">
           {incompleteGoals.length > 0 ? (
             incompleteGoals.map((goal) => (
               <SubGoalItem key={goal.id} goal={goal} onToggle={onToggle} />
@@ -236,13 +236,9 @@ const TodoPage = () => {
       )}
 
       <main className="p-4 flex-1 overflow-y-auto space-y-6 pb-24 max-w-xl mx-auto w-full">
-        <div className="bg-[#f5f0fb] p-4 rounded-xl shadow-md border-l-4 border-[#C263F2]">
-          <h2 className="text-xl font-bold text-[#C263F2] mb-1">
-            Today's To-do List for you
-          </h2>
-          <p className="text-gray-700">
-            You've completed <b>{completedTasks}</b> of <b>{totalTasks}</b> tasks! Keep up the great work!
-          </p>
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Today's To-do List for you</h2>
+          <p className="text-gray-600"> You've completed <b>{completedTasks}</b> of <b>{totalTasks}</b> tasks! Keep up the great work!</p>
         </div>
 
         {goals.map((goal) => (
