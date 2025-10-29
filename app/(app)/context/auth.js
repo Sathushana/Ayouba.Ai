@@ -76,6 +76,39 @@ export const AuthProvider = ({ children }) => {
     return response;
   };
 
+
+  // Convert guest account to full user
+  const convertGuestToUser = async ({ user_id, full_name, email, password }) => {
+    try {
+      const response = await fetch(
+        'http://localhost:8000/api/convert-guest-to-user',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id, full_name, email, password }),
+        }
+      );
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.detail || 'Failed to convert guest account');
+      }
+
+      const data = await response.json();
+      toast.success('Guest account converted successfully!', {
+        style: { fontWeight: 'bold' },
+      });
+
+      localStorage.removeItem('guestId'); // remove guestId
+      return data;
+    } catch (err) {
+      toast.error(err.message || 'Conversion failed', {
+        style: { fontWeight: 'bold' },
+      });
+      throw err;
+    }
+  };
+
   // ✅ Wait until token is loaded before rendering
   if (loading) return null;
 
@@ -86,6 +119,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         authFetch,
+        convertGuestToUser,
         loading,
       }}
     >

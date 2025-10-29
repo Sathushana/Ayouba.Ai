@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   getQuestions,
@@ -41,6 +41,83 @@ const BRANCHING_KEYS = [
   "mostCommonDiscomfort", 
 ];
 
+// const APP_NAME = "Lifeshift";
+
+// export default function Questionnaire() {
+//   const [currentStep, setCurrentStep] = useState(1);
+//   const [subStep, setSubStep] = useState(0);
+//   const [answers, setAnswers] = useState({});
+//   const [questions, setQuestions] = useState([]);
+//   const [guestId, setGuestId] = useState(null);
+//   const [guestReady, setGuestReady] = useState(false);
+//   const router = useRouter();
+
+
+// useEffect(() => {
+//   console.log("useEffect running for guest user creation");
+
+//   // Lock to prevent double creation
+//   let isCreatingGuest = false;
+
+//   async function createGuest() {
+//     if (isCreatingGuest) return null; // Already creating, skip
+//     isCreatingGuest = true;
+
+//     try {
+//       console.log("Creating guest user...");
+//       const response = await fetch("http://localhost:8000/api/guest-user", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//       });
+
+//       if (!response.ok) throw new Error("Failed to create guest user");
+
+//       const data = await response.json();
+//       setGuestId(data.user_id);
+//       localStorage.setItem("guestId", data.user_id);
+//       console.log("Guest user created via API:", data.user_id);
+//       setGuestReady(true);
+//       return data.user_id;
+//     } catch (err) {
+//       console.error("Failed to create guest user:", err);
+//       setGuestReady(false);
+//       return null;
+//     } finally {
+//       isCreatingGuest = false;
+//     }
+//   }
+
+//   async function initGuestUser() {
+//     const storedId = localStorage.getItem("guestId");
+
+//     if (storedId) {
+//       const parsedId = parseInt(storedId, 10);
+
+//       try {
+//         const res = await fetch(
+//           `http://localhost:8000/api/onboarding-profile/${parsedId}`
+//         );
+
+//         if (res.status === 404) {
+//           console.log("Guest ID invalid or profile not found, creating new guest");
+//           localStorage.removeItem("guestId");
+//           await createGuest();
+//         } else {
+//           console.log("Existing guest profile found:", res.status);
+//           setGuestId(parsedId);
+//           setGuestReady(true);
+//         }
+//       } catch (err) {
+//         console.warn("Error validating guest profile:", err);
+//         if (!localStorage.getItem("guestId")) await createGuest();
+//       }
+//     } else {
+//       await createGuest();
+//     }
+//   }
+
+//   initGuestUser();
+// }, []);
 const APP_NAME = "Lifeshift";
 
 export default function Questionnaire() {
@@ -52,72 +129,70 @@ export default function Questionnaire() {
   const [guestReady, setGuestReady] = useState(false);
   const router = useRouter();
 
+  const creatingGuestRef = useRef(false); // persistent lock
 
-useEffect(() => {
-  console.log("useEffect running for guest user creation");
+  useEffect(() => {
+    console.log("useEffect running for guest user creation");
 
-  // Lock to prevent double creation
-  let isCreatingGuest = false;
-
-  async function createGuest() {
-    if (isCreatingGuest) return null; // Already creating, skip
-    isCreatingGuest = true;
-
-    try {
-      console.log("Creating guest user...");
-      const response = await fetch("http://localhost:8000/api/guest-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (!response.ok) throw new Error("Failed to create guest user");
-
-      const data = await response.json();
-      setGuestId(data.user_id);
-      localStorage.setItem("guestId", data.user_id);
-      console.log("Guest user created via API:", data.user_id);
-      setGuestReady(true);
-      return data.user_id;
-    } catch (err) {
-      console.error("Failed to create guest user:", err);
-      setGuestReady(false);
-      return null;
-    } finally {
-      isCreatingGuest = false;
-    }
-  }
-
-  async function initGuestUser() {
-    const storedId = localStorage.getItem("guestId");
-
-    if (storedId) {
-      const parsedId = parseInt(storedId, 10);
+    async function createGuest() {
+      if (creatingGuestRef.current) return null; // Already creating, skip
+      creatingGuestRef.current = true;
 
       try {
-        const res = await fetch(
-          `http://localhost:8000/api/onboarding-profile/${parsedId}`
-        );
+        console.log("Creating guest user...");
+        const response = await fetch("http://localhost:8000/api/guest-user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
 
-        if (res.status === 404) {
-          console.log("Guest ID invalid or profile not found, creating new guest");
-          localStorage.removeItem("guestId");
-          await createGuest();
-        } else {
-          console.log("Existing guest profile found:", res.status);
-          setGuestId(parsedId);
-          setGuestReady(true);
-        }
+        if (!response.ok) throw new Error("Failed to create guest user");
+
+        const data = await response.json();
+        setGuestId(data.user_id);
+        localStorage.setItem("guestId", data.user_id);
+        console.log("Guest user created via API:", data.user_id);
+        setGuestReady(true);
+        return data.user_id;
       } catch (err) {
-        console.warn("Error validating guest profile:", err);
-        if (!localStorage.getItem("guestId")) await createGuest();
+        console.error("Failed to create guest user:", err);
+        setGuestReady(false);
+        return null;
+      } finally {
+        creatingGuestRef.current = false;
       }
-    } else {
-      await createGuest();
     }
-  }
 
-  initGuestUser();
-}, []);
+    async function initGuestUser() {
+      const storedId = localStorage.getItem("guestId");
+
+      if (storedId) {
+        const parsedId = parseInt(storedId, 10);
+
+        try {
+          const res = await fetch(
+            `http://localhost:8000/api/onboarding-profile/${parsedId}`
+          );
+
+          if (res.status === 404) {
+            console.log("Guest ID invalid or profile not found, creating new guest");
+            localStorage.removeItem("guestId");
+            await createGuest();
+          } else {
+            console.log("Existing guest profile found:", res.status);
+            setGuestId(parsedId);
+            setGuestReady(true);
+          }
+        } catch (err) {
+          console.warn("Error validating guest profile:", err);
+          if (!localStorage.getItem("guestId")) await createGuest();
+        }
+      } else {
+        await createGuest();
+      }
+    }
+
+    initGuestUser();
+  }, []);
 
 
 // ---------------- HANDLE QUIZ SUBMISSION ----------------
@@ -261,115 +336,6 @@ const handleSubmit = async () => {
     addConditionalAnswers("weightLoss");
   }
 
-  // // SUBSTANCE USE
-  // if (answers.primaryGoals.substance) {
-  //   goalAnswers.substanceUse = {};
-
-  //   // 1️⃣ Base info
-  //   addBaseAnswers("substanceUse", ["substanceFrequency", "substanceDuration", "targetDuration"]);
-
-  //   // 2️⃣ Substance types (nested under "substanceType")
-  //   if (answers.substanceType) {
-  //     goalAnswers.substanceUse.substanceType = {};
-  //     Object.entries(answers.substanceType).forEach(([substance, val]) => {
-  //       goalAnswers.substanceUse.substanceType[substance] = val;
-  //     });
-  //   }
-
-  //   // 3️⃣ Initialize grouped objects
-  //   const groupedKeys = ["substanceReasons", "substanceSituations", "substanceConsequences"];
-  //   groupedKeys.forEach((key) => {
-  //     goalAnswers.substanceUse[key] = {};
-  //   });
-
-  //   // 4️⃣ Populate groups from followUpAnswers
-  //   groupedKeys.forEach((key) => {
-  //     const data = followUpAnswers[key] || answers[key];
-  //     if (data && typeof data === "object") {
-  //       Object.entries(data).forEach(([k, v]) => {
-  //         if (v && k !== "noNoticeableIssues") {
-  //           // Use subKey mapping if available
-  //           const followUpDef = conditionalFollowUps[k];
-  //           const subKey = Array.isArray(followUpDef)
-  //             ? followUpDef[0]?.subKey || k
-  //             : followUpDef?.subKey || k;
-
-  //           goalAnswers.substanceUse[key][subKey] = v;
-  //         }
-  //       });
-
-  //       // Remove empty group
-  //       if (Object.keys(goalAnswers.substanceUse[key]).length === 0) {
-  //         delete goalAnswers.substanceUse[key];
-  //       }
-  //     }
-  //   });
-
-  //   // 5️⃣ Alcohol & other substance-specific follow-ups grouped under "details"
-  //   goalAnswers.substanceUse.details = {};
-  //   if (answers.substanceType?.alcohol && followUpAnswers.alcoholFrequencyGoal) {
-  //     goalAnswers.substanceUse.details.alcoholFrequencyGoal = followUpAnswers.alcoholFrequencyGoal;
-  //     const alcoholQty = getAnswer("alcohol_quantity");
-  //     if (alcoholQty !== undefined) goalAnswers.substanceUse.details.alcoholQuantityGoal = alcoholQty;
-  //   }
-
-  //   if (answers.substanceType?.cigarettes) {
-  //     const val = getAnswer("cigarettesQuantityGoal");
-  //     if (val !== undefined) goalAnswers.substanceUse.details.cigarettesQuantityGoal = val;
-  //   }
-  //   if (answers.substanceType?.beedi) {
-  //     const val = getAnswer("beediQuantityGoal");
-  //     if (val !== undefined) goalAnswers.substanceUse.details.beediQuantityGoal = val;
-  //   }
-  //   if (answers.substanceType?.chewingTobacco) {
-  //     const val = getAnswer("chewingQuantityGoal");
-  //     if (val !== undefined) goalAnswers.substanceUse.details.chewingQuantityGoal = val;
-  //   }
-  //   if (answers.substanceType?.otherDrugs && answers.otherText) {
-  //     goalAnswers.substanceUse.details.otherDrugsFrequencyGoal = answers.otherText;
-  //   }
-  //   // Remove empty details
-  //   if (Object.keys(goalAnswers.substanceUse.details).length === 0) delete goalAnswers.substanceUse.details;
-
-  //   // 6️⃣ Recursive follow-ups merged into groups
-  //   const triggers = [
-  //     "substanceFrequency",
-  //     "substanceDetailsPlaceholder",
-  //     "substanceReasons",
-  //     "substanceSituations",
-  //     "substanceConsequences"
-  //   ];
-
-  //   const addRecursiveToGroup = (groupKey, subKey) => {
-  //     const followUp = conditionalFollowUps[subKey];
-  //     if (!followUp) return;
-
-  //     if (!goalAnswers.substanceUse[groupKey]) goalAnswers.substanceUse[groupKey] = {};
-
-  //     if (Array.isArray(followUp)) {
-  //       followUp.forEach((q) => {
-  //         const val = getAnswer(q.subKey);
-  //         if (val !== undefined) goalAnswers.substanceUse[groupKey][q.subKey] = val;
-  //       });
-  //     } else if (typeof followUp === "object" && followUp.subKey) {
-  //       const val = getAnswer(followUp.subKey);
-  //       if (val !== undefined) goalAnswers.substanceUse[groupKey][followUp.subKey] = val;
-  //     }
-  //   };
-
-  //   triggers.forEach((triggerKey) => {
-  //     const val = followUpAnswers[triggerKey] || answers[triggerKey];
-  //     if (!val) return;
-
-  //     if (typeof val === "object") {
-  //       Object.keys(val).forEach((subKey) => {
-  //         if (groupedKeys.includes(triggerKey)) addRecursiveToGroup(triggerKey, subKey);
-  //       });
-  //     } else if (typeof val === "string") {
-  //       groupedKeys.forEach((grp) => addRecursiveToGroup(grp, val));
-  //     }
-  //   });
-  // }
 
 
   // SUBSTANCE USE
@@ -377,7 +343,7 @@ const handleSubmit = async () => {
     goalAnswers.substanceUse = {};
 
     // Base info
-    addBaseAnswers("substanceUse", ["substanceFrequency", "substanceDuration", "targetDuration"]);
+    addBaseAnswers("substanceUse", ["substanceFrequency", "substanceDuration"]);
 
         // ✅ 2️⃣ Substance types (nested under "substanceType")
     if (answers.substanceType) {
@@ -526,6 +492,13 @@ const handleSubmit = async () => {
       followUpAnswers.irregularScheduleReason,
       followUpAnswers.mostCommonDiscomfort,
     ].filter(Boolean).forEach((trigger) => addFollowUpsRecursive("sleep", trigger));
+  }
+  //Add targetDuration to all active goals
+  const targetDuration = getAnswer("targetDuration");
+  if (targetDuration !== undefined) {
+    Object.keys(goalAnswers).forEach((goalKey) => {
+      goalAnswers[goalKey].targetDuration = targetDuration;
+    });
   }
 
   return goalAnswers;
