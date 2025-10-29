@@ -37,14 +37,9 @@ export default function Hero() {
               
               <a
                 href="/try"
-                style={{
-                  backgroundColor: PRIMARY_COLOR_HEX,
-                  color: "white",
-                  border: `2px solid ${PRIMARY_COLOR_HEX}`, 
-                  transition: "all 0.3s ease",
-                }}
+               
                 
-                className={`px-6 py-3 rounded-xl font-semibold text-center hover:bg-[${SECONDARY_COLOR_HEX}] hover:text-[${PRIMARY_COLOR_HEX}] hover:border-[${PRIMARY_COLOR_HEX}]`}
+                className="px-6 py-3 rounded-xl font-semibold text-center bg-[#C263F2] hover:bg-white hover:text-[#C263F2] hover:border-[#C263F2] border-2"
               >
                 Try Lifeshift
               </a>
@@ -52,13 +47,9 @@ export default function Hero() {
               
               <a
                 href="/about"
-                style={{
-                  border: `2px solid ${PRIMARY_COLOR_HEX}`,
-                  color: PRIMARY_COLOR_HEX,
-                  transition: "all 0.3s ease",
-                }}
+               
                 
-                className={`px-6 py-3 rounded-xl font-semibold text-center hover:bg-[${SECONDARY_COLOR_HEX}] hover:text-[${PRIMARY_COLOR_HEX}]`}
+                className="px-6 py-3 rounded-xl font-semibold text-center bg-white hover:bg-[#C263F2] hover:border-[#C263F2] border-2 text-[#C263F2] hover:text-white"
               >
                 Learn More
               </a>
