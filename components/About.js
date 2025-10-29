@@ -13,7 +13,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="w-full py-16 md:py-20 bg-white pt-20 md:pt-24"
+      className="w-full py-16 md:pt-30 bg-white pt-20 md:pt-24"
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-12 md:space-y-16">
         <div className="text-center space-y-4">

@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
+
 
 const PRIMARY_COLOR_HEX = "#C263F2";
 const SECONDARY_COLOR_HOVER_HEX = "#E6E6FA";
@@ -44,12 +46,8 @@ export default function Header() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
-        <Link
-          href="/"
-          className={`text-2xl sm:text-3xl font-extrabold tracking-tight`}
-          style={{ color: PRIMARY_COLOR_HEX }}
-        >
-          LIFESHIFT
+        <Link href="/">
+          <Image src="/images/lifeshift-logo.jpeg" alt="Lifeshift Logo" width={80} height={20} />
         </Link>
 
         {/* Desktop Navigation */}
@@ -69,9 +67,8 @@ export default function Header() {
 
           <Link
             href="/try"
-            
             className="px-5 py-2 rounded-xl font-bold transition duration-300 shadow-lg active:scale-95 border-2 bg-[#C263F2]
-              hover:bg-white hover:text-[#C263F2] hover:shadow-xl" 
+              hover:bg-white hover:text-[#C263F2] hover:shadow-xl"
           >
             Try Lifeshift
           </Link>
