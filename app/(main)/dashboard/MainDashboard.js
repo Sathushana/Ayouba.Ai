@@ -184,32 +184,37 @@ const App = () => {
         )}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl flex justify-around items-center h-16 md:h-20 border-t border-gray-100 z-50 p-2 md:p-0">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl flex justify-around items-center h-16 md:h-20 border-t border-gray-100 z-50 p-2 md:p-0 ">
         <NavButton
+          className="cursor-pointer"
           icon={FaHome}
           label="Home"
           active={activeNav === "Home"}
           onClick={() => setActiveNav("Home")}
         />
         <NavButton
+          className="cursor-pointer"
           icon={FaTasks}
           label="To-do"
           active={activeNav === "To-do"}
           onClick={() => setActiveNav("To-do")}
         />
         <NavButton
+          className="cursor-pointer"
           icon={FaBullseye}
           label="Plan"
           active={activeNav === "Plan"}
           onClick={() => setActiveNav("Plan")}
         />
         <NavButton
+          className="cursor-pointer"
           icon={FaChartLine}
           label="Progress"
           active={activeNav === "Progress"}
           onClick={() => setActiveNav("Progress")}
         />
         <NavButton
+          className="cursor-pointer"
           icon={FaGift}
           label="Rewards"
           active={activeNav === "Rewards"}
