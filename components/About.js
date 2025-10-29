@@ -4,6 +4,7 @@ const PRIMARY_COLOR_HEX = "#C263F2";
 const SECONDARY_COLOR_HOVER_HEX = "#E6E6FA"; 
 
 
+
 export default function About() {
   const APP_NAME = "Lifeshift";
   const PRIMARY_COLOR_TEXT = `text-[${PRIMARY_COLOR_HEX}]`;
@@ -90,16 +91,13 @@ export default function About() {
           </h3>
           <a
             href="/try"
-            style={{
-              backgroundColor: PRIMARY_COLOR_HEX,
-              color: "white",
-            }}
-            className={`inline-block px-10 py-3 rounded-xl font-bold shadow-lg transition duration-300 hover:shadow-xl hover:bg-opacity-90 active:scale-95`}
+            className="px-6 py-3 rounded-xl font-semibold text-center bg-[#C263F2] hover:bg-white hover:text-[#C263F2] hover:border-[#C263F2] border-2"
           >
             Try {APP_NAME.replace(".AI", "")}
           </a>
         </div>
       </div>
+   
     </section>
   );
 }

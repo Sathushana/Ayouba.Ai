@@ -1,11 +1,17 @@
+import Header from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import Contact from "@/components/Contact";
-import Header from "@/components/Navbar"; 
 
-export default function ContactPage() {
+export default function AboutPage() {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <Contact />
-    </>
+
+      <main className="flex-grow">
+        <Contact />
+      </main>
+
+      <Footer/>
+    </div>
   );
 }

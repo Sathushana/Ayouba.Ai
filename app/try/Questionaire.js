@@ -2491,8 +2491,8 @@ const handleSubmit = async () => {
       <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
         <div className="flex space-x-3 mb-6">
           <div className="w-4 h-4 bg-[#C263F2] rounded-full animate-pulse-slow-1"></div>
-          <div className="w-4 h-4 bg-[#63F2C2] rounded-full animate-pulse-slow-2"></div>
-          <div className="w-4 h-4 bg-[#F263C2] rounded-full animate-pulse-slow-3"></div>
+          <div className="w-4 h-4 bg-[#C263F2] rounded-full animate-pulse-slow-2"></div>
+          <div className="w-4 h-4 bg-[#C263F2] rounded-full animate-pulse-slow-3"></div>
         </div>
 
         <div className="text-3xl font-extrabold text-gray-900 mb-2">

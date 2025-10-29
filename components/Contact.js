@@ -11,7 +11,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="w-full py-16 md:py-20 bg-gray-50 pt-20 md:pt-24"
+      className="w-full pt-16 md:pt-40 lg:pt-57 bg-white "
     >
       <div className="max-w-4xl mx-auto px-4 md:px-8">
         <div className="text-center mb-10 md:mb-12 space-y-3">
@@ -68,11 +68,8 @@ export default function Contact() {
               
               <button
                 type="submit"
-                style={{
-                  backgroundColor: PRIMARY_COLOR_HEX,
-                  color: "white",
-                }}
-                className={`w-full py-3 rounded-xl font-bold shadow-lg transition duration-300 hover:shadow-xl hover:bg-opacity-90 active:scale-95`}
+                
+                className=" cursor-pointer w-full py-3 bg-[#C263F2] text-white rounded-xl font-bold shadow-lg transition duration-300 hover:shadow-xl hover:bg-opacity-90 active:scale-95 hover:bg-white border-2 hover:text-[#C263F2]"
               >
                 Send Message
               </button>

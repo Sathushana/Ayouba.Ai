@@ -140,7 +140,7 @@ export default function Hero() {
                 className="flex flex-col justify-start items-center text-center space-y-4 p-6 bg-white rounded-2xl shadow-xl w-full max-w-xs mx-auto"
               >
                 <div
-                  className="text-white p-4 rounded-full text-2xl"
+                  className="text-white p-4 rounded-lg text-2xl"
                   style={{ backgroundColor: PRIMARY_COLOR_HEX }} 
                 >
                   {num}
@@ -183,12 +183,8 @@ export default function Hero() {
               
               <a
                 href="/try"
-                style={{
-                  backgroundColor: PRIMARY_COLOR_HEX,
-                  color: "white",
-                }}
                 
-                className={`px-8 py-3 rounded-xl font-bold transition duration-300 shadow-lg hover:shadow-xl hover:bg-opacity-90 active:scale-95`}
+                className="px-6 py-3 rounded-xl font-semibold text-center bg-[#C263F2] hover:bg-white hover:text-[#C263F2] hover:border-[#C263F2] border-2"
               >
                 Join the Movement
               </a>
