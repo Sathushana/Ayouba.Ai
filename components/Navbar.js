@@ -56,24 +56,22 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-8">
           <Link
             href="/about"
-            className="font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105"
+            className="font-semibold text-gray-700 transition duration-300 hover:scale-105 hover:text-[#C263F2]"
           >
             About
           </Link>
           <Link
             href="/contact"
-            className="font-semibold text-gray-700 transition duration-300 hover:text-black hover:scale-105"
+            className="font-semibold text-gray-700 transition duration-300 hover:text-[#C263F2] hover:scale-105"
           >
             Contact
           </Link>
 
           <Link
             href="/try"
-            style={{
-              backgroundColor: PRIMARY_COLOR_HEX,
-              color: "white",
-            }}
-            className="px-5 py-2 rounded-xl font-bold transition duration-300 shadow-lg hover:shadow-xl hover:bg-opacity-90 active:scale-95"
+            
+            className="px-5 py-2 rounded-xl font-bold transition duration-300 shadow-lg active:scale-95 border-2 bg-[#C263F2]
+              hover:bg-white hover:text-[#C263F2] hover:shadow-xl" 
           >
             Try Lifeshift
           </Link>
