@@ -1453,9 +1453,13 @@ const substanceQuantityFollowUps = {
 
 const getBaseQuestions = (currentAnswers = {}, age = 0, sex = "") => {
   let base = [...baseQuestions];
+  console.log("🧩 currentAnswers received:", currentAnswers);
+
   
-  
-  if (sex === "Female" && age > 18 && currentAnswers.isPregnant === undefined) {
+  if (sex === "Female" && age > 18 && (
+    !currentAnswers.followUps ||
+    currentAnswers.followUps.isPregnant === undefined
+  )) {
     const pregnantQuestion = conditionalFollowUps["pregnantQuestion"];
     if (pregnantQuestion && !base.some(q => q.key === "isPregnant")) {
       const insertionIndex = base.findIndex(q => q.key === "sex") + 1;
@@ -1503,13 +1507,37 @@ const getQuestions = (primaryGoals = [], currentAnswers = {}, age = 0, sex = "")
       });
     }
   });
+  // ✅ ADD FINAL QUESTION(S) HERE
+  finalQuestions.forEach(q => {
+    currentId++;
+    allQuestions.push({ ...q, id: currentId });
+  });
 
   return allQuestions.sort((a, b) => a.id - b.id);
 };
+
+// Add a Final Question for asked duration
+const finalQuestions = [
+  {
+    id: 999,
+    type: "radio",
+    title: "⏱️ How long do you want to follow your plan or see results?",
+    description: "This helps us personalise your milestones and track your progress effectively.",
+    key: "targetDuration",
+    options: [
+      "1 month",
+      "3 months",
+      "6 months",
+      "1 year",
+    ],
+    required: true,
+  },
+];
 
 export {
   getQuestions,
   conditionalFollowUps,
   healthConditionFollowUps,
   substanceQuantityFollowUps,
+  goalSpecificQuestions
 };

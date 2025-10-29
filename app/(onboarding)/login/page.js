@@ -16,6 +16,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  
 
 
   const handleLogin = async (e) => {
@@ -26,6 +28,7 @@ const LoginPage = () => {
       const formData = new URLSearchParams();
       formData.append("username", email);  // FastAPI expects `username`
       formData.append("password", password);
+      formData.append("remember_me", rememberMe);
 
       const response = await fetch("http://127.0.0.1:8000/api/login", {
         method: "POST",
@@ -38,7 +41,7 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        login(data.access_token); // ✅ Use AuthContext login
+        login(data.access_token, rememberMe); // ✅ Use AuthContext login
       } else {
         toast.error(data.detail || "Invalid email or password", {
           style: { fontWeight: 'bold' },
@@ -135,6 +138,26 @@ const LoginPage = () => {
               className="w-full p-4 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition duration-300 ease-in-out"
               style={{ outline: 'none', '--tw-ring-color': PRIMARY_COLOR_HEX }}
             />
+        <div className="flex items-center justify-between text-sm">
+          <label className="flex items-center space-x-2 text-gray-600">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 accent-purple-500"
+            />
+            <span>Remember me</span>
+          </label>
+
+          <a
+            href="/login/forgot-password"
+            className="text-purple-600 hover:underline font-medium"
+          >
+            Forgot password?
+            
+          </a>
+        </div>
+
         <div className="relative w-full">
           <input
             type={showPassword ? "text" : "password"}
