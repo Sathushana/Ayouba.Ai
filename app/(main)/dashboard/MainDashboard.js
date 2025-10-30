@@ -23,7 +23,10 @@ const DUMMY_DATA = {
     {
       main_goal: "🚭🍺 Cut down or quit smoking, alcohol, or drugs",
       sub_goals: [
-        
+        "Identify why you want to quit or cut down",
+        "Reduce quantity gradually",
+        "Learn stress management techniques",
+        "Set a quit date"
       ],
     },
     {
@@ -242,13 +245,13 @@ const App = () => {
                 Started on {new Date(dashboardData.startDate).toLocaleDateString()}
               </p>
             </motion.div>
-            <div className="flex justify-center">
-              <div className="w-full max-w-7xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+            <div className="flex justify-center ">
+              <div className="w-full max-w-7xl ">
+              <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2  gap-10 ">
                 {dashboardData.goals.map((goal, idx) => (
                   <motion.div
                     key={idx}
-                    className="flex flex-col bg-white p-6 rounded-3xl shadow-2xl cursor-pointer border border-gray-100 transition duration-300 transform hover:shadow-3xl hover:scale-[1.02] "
+                    className="flex flex-col bg-[#C263F2] p-6 rounded-3xl shadow-2xl cursor-pointer border border-gray-100 transition duration-300 transform hover:shadow-3xl hover:scale-[1.02] "
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleGoalClick(goal.main_goal)}
@@ -260,9 +263,9 @@ const App = () => {
                       stiffness: 100,
                     }}
                   >
-                    <div className="flex items-center mb-4 border-b pb-3 border-gray-50">
+                    <div className="flex items-center mb-4 border-b pb-3 border-white  ">
                       <FaStar className="text-yellow-400 mr-3 w-6 h-6 flex-shrink-0" />
-                      <h3 className="font-bold text-gray-800 text-lg truncate leading-snug">
+                      <h3 className="font-bold text-white text-lg truncate leading-snug">
                         {goal.main_goal}
                       </h3>
                     </div>
