@@ -92,7 +92,7 @@ const baseQuestions = [
     options: [
       { id: "nutrition", label: "🥗 Eat healthy & get enough nutrition" },
       { id: "activity", label: "🏃 Be more active & do regular exercise" },
-      { id: "weight", label: "⚖️ Lose weight & stay in good shape" },
+      { id: "weightloss", label: "⚖️ Lose weight & stay in good shape" },
       { id: "substance", label: "🚭🍺 Cut down or quit smoking, alcohol, or drugs" },
       { id: "mental", label: "🧘 Feel calmer & reduce stress" },
       { id: "sleep", label: "😴 Sleep better & wake up fresh" },
@@ -213,7 +213,7 @@ const goalSpecificQuestions = {
       type: "multiselect",
       title: "What's your main nutrition goal?",
       description: "Pick one or more.",
-      key: "nutritionGoals",
+      key: "subgoals",
       options: [
         { id: "boostNutrients", label: "🩸 Boost Essential Nutrients" },
         { id: "balancedDiet", label: "🥗 Eat a Diverse, Balanced Diet" },
@@ -348,7 +348,7 @@ const goalSpecificQuestions = {
       id: 209,
       type: "multiselect",
       title: "Fitness & Health Goals: What do you want to achieve with your workouts?",
-      key: "fitnessHealthGoals",
+      key: "subgoals",
       options: [
         { id: "loseWeight", label: "🏋️ Lose weight / Tone up" },
         { id: "boostStamina", label: "🏃 Boost stamina / Cardio fitness" },
@@ -365,7 +365,7 @@ const goalSpecificQuestions = {
   ],
 
   // Goal: ⚖️ Lose weight & stay in good shape
-  weight: [
+  weightloss: [
     {
       id: 301,
       type: "placeholder",
@@ -542,7 +542,7 @@ const goalSpecificQuestions = {
       type: "multiselect",
       title: " What's your main weight loss goal?",
       description: "Pick one or more.",
-      key: "wl_goals",
+      key: "wl_subgoals",
       options: [
         { id: "safeSustainable", label: "⚖️ Lose weight safely & sustainably" },
         { id: "burnFatTone", label: "🔥 Burn fat & tone up" },
@@ -793,7 +793,7 @@ const goalSpecificQuestions = {
       id: 511,
       type: "multiselect",
       title: "What would you like to achieve?",
-      key: "mh_goals",
+      key: "mh_subgoals",
       options: [
         { id: "feelCalmer", label: "🌈 Feel Calmer & Less Stressed" },
         { id: "improveMood", label: "🙂 Improve mood & emotional balance" },
@@ -865,7 +865,7 @@ const goalSpecificQuestions = {
       type: "multiselect",
       title: " What would you like to improve about your sleep?",
       description: "Choose one or more.",
-      key: "sleepGoals",
+      key: "subgoals",
       options: [
         { id: "fallAsleepFaster", label: "😴 Fall asleep faster" },
         { id: "stayAsleep", label: "🌙 Stay asleep through the night" },
