@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-
 import {
   FaUserCircle,
   FaTimes,
@@ -19,22 +18,30 @@ import {
 const DUMMY_DATA = {
   user_prefer_name: "raya",
   duration: "1 year",
+  startDate: "2025-10-20",
   goals: [
     {
-      "main_goal": "🚭🍺 Cut down or quit smoking, alcohol, or drugs",
-      "sub_goals": []
+      main_goal: "🚭🍺 Cut down or quit smoking, alcohol, or drugs",
+      sub_goals: [
+        
+      ],
     },
     {
-      main_goal: "Level Up Daily Life 🛠️",
-      sub_goals: ["Brush teeth independently 🪥", "Dress independently 👔"],
+      main_goal: "🧘 Feel calmer & reduce stress",
+      sub_goals: [
+        "💬 Improve social connections & relationships",
+        "🧘 Build mindfulness & resilience",
+        "💪 Regain motivation & self-confidence",
+      ],
     },
     {
-      main_goal: "Health & Fitness 💪",
-      sub_goals: ["Drink water regularly", "Daily stretch exercises"],
-    },
-    {
-      main_goal: "Financial Literacy 💰",
-      sub_goals: ["Track daily spending", "Set monthly savings target"],
+      main_goal: "🏃 Be more active & do regular exercise",
+      sub_goals: [
+        "🤸 Get flexible / Move better / Reduce aches",
+        "🧘 Lower stress / Feel mentally better",
+        "🛡️ Stay fit & healthy overall",
+        "⏱️ Fit workouts into a busy schedule",
+      ],
     },
   ],
 };
@@ -58,12 +65,98 @@ const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
   const [activeNav, setActiveNav] = useState("Home");
+  const [remainingTime, setRemainingTime] = useState("");
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
+  const calculateRemainingTime = (startDate, initialDuration) => {
+    const start = new Date(startDate);
+    const now = new Date();
+    
+    const durationMatch = initialDuration.match(/(\d+)\s*(\w+)/);
+    if (!durationMatch) return initialDuration;
+    
+    const amount = parseInt(durationMatch[1]);
+    const unit = durationMatch[2].toLowerCase();
+    
+    let endDate = new Date(start);
+    
+    switch(unit) {
+      case 'day':
+      case 'days':
+        endDate.setDate(start.getDate() + amount);
+        break;
+      case 'month':
+      case 'months':
+        endDate.setMonth(start.getMonth() + amount);
+        break;
+      case 'year':
+      case 'years':
+        endDate.setFullYear(start.getFullYear() + amount);
+        break;
+      default:
+        return initialDuration;
+    }
+    
+    const diffTime = endDate - now;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays <= 0) {
+      return "Plan completed!";
+    }
+    
+    if (diffDays >= 365) {
+      const years = Math.floor(diffDays / 365);
+      const remainingDays = diffDays % 365;
+      const months = Math.floor(remainingDays / 30);
+      return `${years} year${years > 1 ? 's' : ''} ${months} month${months > 1 ? 's' : ''}`;
+    } else if (diffDays >= 30) {
+      const months = Math.floor(diffDays / 30);
+      const remainingDays = diffDays % 30;
+      return `${months} month${months > 1 ? 's' : ''} ${remainingDays} day${remainingDays > 1 ? 's' : ''}`;
+    } else {
+      return `${diffDays} day${diffDays > 1 ? 's' : ''}`;
+    }
+  };
+
   useEffect(() => {
-    setTimeout(() => setDashboardData(DUMMY_DATA), 300);
+    setTimeout(() => {
+      setDashboardData(DUMMY_DATA);
+      const remaining = calculateRemainingTime(DUMMY_DATA.startDate, DUMMY_DATA.duration);
+      setRemainingTime(remaining);
+    }, 300);
   }, []);
+
+  useEffect(() => {
+    if (!dashboardData) return;
+
+    const updateRemainingTime = () => {
+      const remaining = calculateRemainingTime(dashboardData.startDate, dashboardData.duration);
+      setRemainingTime(remaining);
+    };
+
+    updateRemainingTime();
+
+    const intervalId = setInterval(updateRemainingTime, 24 * 60 * 60 * 1000);
+
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    
+    const timeoutUntilMidnight = tomorrow - now;
+    const midnightTimeoutId = setTimeout(() => {
+      updateRemainingTime();
+      clearInterval(intervalId);
+      const dailyIntervalId = setInterval(updateRemainingTime, 24 * 60 * 60 * 1000);
+      return () => clearInterval(dailyIntervalId);
+    }, timeoutUntilMidnight);
+
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(midnightTimeoutId);
+    };
+  }, [dashboardData]);
 
   const handleGoalClick = (goalName) => {
     console.log(`Navigating to Plan details for "${goalName}"`);
@@ -140,51 +233,57 @@ const App = () => {
               transition={{ delay: 0.2 }}
             >
               <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-                Current Plan Duration
+                Remaining Plan Duration
               </p>
               <p className="text-3xl text-[#C263F2] font-extrabold mt-1">
-                {dashboardData.duration}
+                {remainingTime}
+              </p>
+              <p className="text-xs text-gray-400 mt-2">
+                Started on {new Date(dashboardData.startDate).toLocaleDateString()}
               </p>
             </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {dashboardData.goals.map((goal, idx) => (
-                <motion.div
-                  key={idx}
-                  className="flex flex-col bg-white p-6 rounded-3xl shadow-2xl cursor-pointer border border-gray-100 transition duration-300 transform hover:shadow-3xl hover:scale-[1.02]"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleGoalClick(goal.main_goal)}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: 0.3 + idx * 0.1,
-                    type: "spring",
-                    stiffness: 100,
-                  }}
-                >
-                  <div className="flex items-center mb-4 border-b pb-3 border-gray-50">
-                    <FaStar className="text-yellow-400 mr-3 w-6 h-6 flex-shrink-0" />
-                    <h3 className="font-bold text-gray-800 text-lg truncate leading-snug">
-                      {goal.main_goal}
-                    </h3>
-                  </div>
-                  <div className="flex flex-col gap-3 flex-grow">
-                    {goal.sub_goals.map((sub, sidx) => (
-                      <motion.div
-                        key={sidx}
-                        className="bg-gray-50 text-gray-700 px-4 py-2 rounded-xl font-medium shadow-inner flex items-center gap-3 text-sm border-l-4 border-indigo-400"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 + idx * 0.1 + sidx * 0.05 }}
-                      >
-                        <FaLightbulb className="text-[#C263F2] w-4 h-4 flex-shrink-0" />
-                        <span className="truncate">{sub}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
+            <div className="flex justify-center">
+              <div className="w-full max-w-7xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+                {dashboardData.goals.map((goal, idx) => (
+                  <motion.div
+                    key={idx}
+                    className="flex flex-col bg-white p-6 rounded-3xl shadow-2xl cursor-pointer border border-gray-100 transition duration-300 transform hover:shadow-3xl hover:scale-[1.02] "
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleGoalClick(goal.main_goal)}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: 0.3 + idx * 0.1,
+                      type: "spring",
+                      stiffness: 100,
+                    }}
+                  >
+                    <div className="flex items-center mb-4 border-b pb-3 border-gray-50">
+                      <FaStar className="text-yellow-400 mr-3 w-6 h-6 flex-shrink-0" />
+                      <h3 className="font-bold text-gray-800 text-lg truncate leading-snug">
+                        {goal.main_goal}
+                      </h3>
+                    </div>
+                    <div className="flex flex-col gap-3 flex-grow">
+                      {goal.sub_goals.map((sub, sidx) => (
+                        <motion.div
+                          key={sidx}
+                          className="bg-gray-50 text-gray-700 px-4 py-2 rounded-xl font-medium shadow-inner flex items-center gap-3 text-sm border-l-4 border-indigo-400"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.4 + idx * 0.1 + sidx * 0.05 }}
+                        >
+                          <FaLightbulb className="text-[#C263F2] w-4 h-4 flex-shrink-0" />
+                          <span className="truncate">{sub}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              </div>
             </div>
           </>
         ) : (

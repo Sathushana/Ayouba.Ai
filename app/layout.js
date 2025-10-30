@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Ayubo.AI",
+  title: "Lifeshift.lk",
   description: "Live Healthier. Live Happier. Live Ayubo.",
 };
 
