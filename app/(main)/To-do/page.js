@@ -177,10 +177,12 @@ const TodoPage = () => {
     );
   };
 
-  const totalTasks = goals.reduce((count, goal) => count + goal.sub_goals.length, 0);
+  const totalTasks = goals.reduce(
+    (count, goal) => count + goal.sub_goals.length,
+    0
+  );
   const completedTasks = goals.reduce(
-    (count, goal) =>
-      count + goal.sub_goals.filter((sg) => sg.completed).length,
+    (count, goal) => count + goal.sub_goals.filter((sg) => sg.completed).length,
     0
   );
 
@@ -206,21 +208,37 @@ const TodoPage = () => {
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-100">
           <h2 className="font-bold text-lg text-[#C263F2]">Lifeshift</h2>
-          <button onClick={toggleMenu} className="p-1 rounded hover:bg-red-100" aria-label="Close User Menu">
-            <FaTimes className="w-6 h-6 text-red-600" />
+          <button
+            onClick={toggleMenu}
+            className="p-1 rounded hover:bg-red-100"
+            aria-label="Close User Menu"
+          >
+            <FaTimes className="w-6 h-6 text-red-600 cursor-pointer" />
           </button>
         </div>
 
         <nav className="flex flex-col mt-6 space-y-2 px-4">
-          <button className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium">
+          <button
+            onClick={() => router.push("/")}
+            className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium cursor-pointer"
+          >
+            <FaHome className="text-[#C263F2] w-5 h-5" /> Home
+          </button>
+          <button
+            onClick={() => router.push("/contact")}
+            className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium cursor-pointer"
+          >
             <FaPhoneAlt className="text-[#C263F2] w-5 h-5" /> Contact Support
           </button>
-          <button className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium">
+          <button
+            onClick={() => router.push("/about")}
+            className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium cursor-pointer"
+          >
             <FaInfoCircle className="text-[#C263F2] w-5 h-5" /> About App
           </button>
           <button
             onClick={() => console.log("Logout action")}
-            className="flex items-center justify-center mt-6 w-full px-4 py-3 text-white bg-red-600 rounded-xl shadow-lg hover:bg-red-700 transition"
+            className="flex items-center justify-center mt-6 w-full px-4 py-3 text-white bg-red-600 rounded-xl shadow-lg hover:bg-red-700 transition cursor-pointer"
           >
             Logout
           </button>
@@ -237,8 +255,14 @@ const TodoPage = () => {
 
       <main className="p-4 flex-1 overflow-y-auto space-y-6 pb-24 max-w-xl mx-auto w-full">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Today's To-do List for you</h2>
-          <p className="text-gray-600"> You've completed <b>{completedTasks}</b> of <b>{totalTasks}</b> tasks! Keep up the great work!</p>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Today's To-do List for you
+          </h2>
+          <p className="text-gray-600">
+            {" "}
+            You've completed <b>{completedTasks}</b> of <b>{totalTasks}</b>{" "}
+            tasks! Keep up the great work!
+          </p>
         </div>
 
         {goals.map((goal) => (
@@ -258,8 +282,6 @@ const TodoPage = () => {
           <FaBullseye className="w-5 h-5" />
           Go to Personalised Plan
         </motion.button>
-
-       
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl flex justify-around items-center h-16 md:h-20 border-t border-gray-100 z-50 p-2 md:p-0 cursor-pointer">

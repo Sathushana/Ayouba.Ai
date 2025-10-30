@@ -11,10 +11,10 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="w-full pt-16 md:pt-40 lg:pt-57 bg-white mt-12"
+      className="w-full pt-16 md:pt-40 lg:pt-42 bg-white mt-12 "
     >
       <div className="max-w-4xl mx-auto px-4 md:px-8">
-        <div className="text-center mb-10 md:mb-12 space-y-3">
+        <div className="text-center mb-10 md:mb-16 space-y-3">
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
             Get In <span className={PRIMARY_COLOR_TEXT}>Touch</span>
           </h2>

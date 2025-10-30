@@ -17,15 +17,12 @@ import {
 } from "react-icons/fa";
 
 const DUMMY_DATA = {
-  user_prefer_name: "Sathu",
-  duration: "90 Days",
+  user_prefer_name: "raya",
+  duration: "1 year",
   goals: [
     {
-      main_goal: "Social Skills GOALS 💬",
-      sub_goals: [
-        "Initiate conversation with peers",
-        "Maintain eye contact 👀",
-      ],
+      "main_goal": "🚭🍺 Cut down or quit smoking, alcohol, or drugs",
+      "sub_goals": []
     },
     {
       main_goal: "Level Up Daily Life 🛠️",

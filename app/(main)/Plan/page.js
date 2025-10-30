@@ -25,8 +25,8 @@ const PLANS_DATA = [
       "Week 1-2: Basic conversation starters",
       "Week 3-4: Maintaining eye contact practice",
       "Week 5-6: Group interaction exercises",
-      "Week 7-8: Real-world social scenarios"
-    ]
+      "Week 7-8: Real-world social scenarios",
+    ],
   },
   {
     id: 2,
@@ -37,8 +37,8 @@ const PLANS_DATA = [
       "Morning routine establishment",
       "Personal hygiene independence",
       "Meal preparation basics",
-      "Home maintenance skills"
-    ]
+      "Home maintenance skills",
+    ],
   },
   {
     id: 3,
@@ -49,8 +49,8 @@ const PLANS_DATA = [
       "Regular exercise routine",
       "Balanced nutrition plan",
       "Sleep schedule optimization",
-      "Stress management techniques"
-    ]
+      "Stress management techniques",
+    ],
   },
   {
     id: 4,
@@ -61,9 +61,9 @@ const PLANS_DATA = [
       "Basic budgeting skills",
       "Banking and savings",
       "Smart shopping habits",
-      "Financial goal setting"
-    ]
-  }
+      "Financial goal setting",
+    ],
+  },
 ];
 
 const NavButton = ({ icon: Icon, label, active, onClick }) => (
@@ -93,11 +93,13 @@ const PlanCard = ({ plan }) => {
           <span className="text-3xl">{plan.icon}</span>
           <div>
             <h3 className="text-xl font-bold">{plan.title}</h3>
-            <p className="text-white text-opacity-90 mt-1">{plan.description}</p>
+            <p className="text-white text-opacity-90 mt-1">
+              {plan.description}
+            </p>
           </div>
         </div>
       </div>
-      
+
       <div className="p-6">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -119,7 +121,10 @@ const PlanCard = ({ plan }) => {
         >
           <div className="space-y-3">
             {plan.steps.map((step, index) => (
-              <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+              <div
+                key={index}
+                className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg"
+              >
                 <div className="w-6 h-6 bg-[#C263F2] text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">
                   {index + 1}
                 </div>
@@ -147,7 +152,9 @@ const Plan = () => {
           <h1 className="text-xl font-extrabold tracking-tight text-gray-800">
             Personalised Plan
           </h1>
-          <p className="text-sm text-gray-600">Your structured development journey</p>
+          <p className="text-sm text-gray-600">
+            Your structured development journey
+          </p>
         </div>
         <button
           onClick={toggleMenu}
@@ -165,21 +172,37 @@ const Plan = () => {
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-100">
           <h2 className="font-bold text-lg text-[#C263F2]">Lifeshift</h2>
-          <button onClick={toggleMenu} className="p-1 rounded hover:bg-red-100" aria-label="Close User Menu">
-            <FaTimes className="w-6 h-6 text-red-600" />
+          <button
+            onClick={toggleMenu}
+            className="p-1 rounded hover:bg-red-100"
+            aria-label="Close User Menu"
+          >
+            <FaTimes className="w-6 h-6 text-red-600 cursor-pointer" />
           </button>
         </div>
 
         <nav className="flex flex-col mt-6 space-y-2 px-4">
-          <button className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium">
+          <button
+            onClick={() => router.push("/")}
+            className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium cursor-pointer"
+          >
+            <FaHome className="text-[#C263F2] w-5 h-5" /> Home
+          </button>
+          <button
+            onClick={() => router.push("/contact")}
+            className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium cursor-pointer"
+          >
             <FaPhoneAlt className="text-[#C263F2] w-5 h-5" /> Contact Support
           </button>
-          <button className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium">
+          <button
+            onClick={() => router.push("/about")}
+            className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium cursor-pointer"
+          >
             <FaInfoCircle className="text-[#C263F2] w-5 h-5" /> About App
           </button>
           <button
             onClick={() => console.log("Logout action")}
-            className="flex items-center justify-center mt-6 w-full px-4 py-3 text-white bg-red-600 rounded-xl shadow-lg hover:bg-red-700 transition"
+            className="flex items-center justify-center mt-6 w-full px-4 py-3 text-white bg-red-600 rounded-xl shadow-lg hover:bg-red-700 transition cursor-pointer"
           >
             Logout
           </button>
@@ -196,8 +219,12 @@ const Plan = () => {
 
       <main className="p-4 flex-1 overflow-y-auto pb-24 max-w-4xl mx-auto w-full">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Your Development Roadmap</h2>
-          <p className="text-gray-600">Follow this structured plan to achieve your independence goals</p>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Your Development Roadmap
+          </h2>
+          <p className="text-gray-600">
+            Follow this structured plan to achieve your independence goals
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -209,12 +236,14 @@ const Plan = () => {
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 mt-8">
           <h3 className="text-xl font-bold text-gray-800 mb-4">Next Steps</h3>
           <p className="text-gray-600 mb-4">
-            Your personalized plan is designed to help you build skills progressively. 
-            Each area focuses on practical, achievable steps toward greater independence.
+            Your personalized plan is designed to help you build skills
+            progressively. Each area focuses on practical, achievable steps
+            toward greater independence.
           </p>
           <div className="bg-[#f5f0fb] p-4 rounded-lg border-l-4 border-[#C263F2]">
             <p className="text-sm text-gray-700">
-              <strong>Tip:</strong> Focus on one area at a time and celebrate small victories along the way!
+              <strong>Tip:</strong> Focus on one area at a time and celebrate
+              small victories along the way!
             </p>
           </div>
         </div>

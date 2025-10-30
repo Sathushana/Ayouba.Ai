@@ -154,24 +154,36 @@ const Progress = () => {
         <div className="flex justify-between items-center p-4 border-b border-gray-100">
           <h2 className="font-bold text-lg text-[#C263F2]">Lifeshift</h2>
           <button onClick={toggleMenu} className="p-1 rounded hover:bg-red-100">
-            <FaTimes className="w-6 h-6 text-red-600" />
+            <FaTimes className="w-6 h-6 text-red-600 cursor-pointer" />
           </button>
         </div>
 
-        <nav className="flex flex-col mt-6 space-y-2 px-4">
-          <button className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium">
-            <FaPhoneAlt className="text-[#C263F2] w-5 h-5" /> Contact Support
-          </button>
-          <button className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium">
-            <FaInfoCircle className="text-[#C263F2] w-5 h-5" /> About App
-          </button>
-          <button
-            onClick={() => console.log("Logout action")}
-            className="flex items-center justify-center mt-6 w-full px-4 py-3 text-white bg-red-600 rounded-xl shadow-lg hover:bg-red-700 transition"
-          >
-            Logout
-          </button>
-        </nav>
+       <nav className="flex flex-col mt-6 space-y-2 px-4">
+                 <button
+                   onClick={() => router.push("/")}
+                   className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium cursor-pointer"
+                 >
+                   <FaHome className="text-[#C263F2] w-5 h-5" /> Home
+                 </button>
+                 <button
+                   onClick={() => router.push("/contact")}
+                   className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium cursor-pointer"
+                 >
+                   <FaPhoneAlt className="text-[#C263F2] w-5 h-5" /> Contact Support
+                 </button>
+                 <button
+                   onClick={() => router.push("/about")}
+                   className="flex items-center gap-3 text-left hover:bg-gray-50 px-3 py-3 rounded-xl transition-colors text-gray-700 font-medium cursor-pointer"
+                 >
+                   <FaInfoCircle className="text-[#C263F2] w-5 h-5" /> About App
+                 </button>
+                 <button
+                   onClick={() => console.log("Logout action")}
+                   className="flex items-center justify-center mt-6 w-full px-4 py-3 text-white bg-red-600 rounded-xl shadow-lg hover:bg-red-700 transition cursor-pointer"
+                 >
+                   Logout
+                 </button>
+               </nav>
       </div>
 
       {menuOpen && (
