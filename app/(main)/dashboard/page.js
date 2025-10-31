@@ -324,13 +324,13 @@ export default function DashboardPage() {
             </motion.div>
 
             <div className="flex justify-center">
-              <div className="w-full max-w-7xl">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+              <div className="w-full max-w-5xl">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                   {dashboardData.goals.map((goal, idx) => (
                     <motion.div
                       key={idx}
-                      className="flex flex-col bg-white p-6 rounded-3xl shadow-2xl cursor-pointer border-t-8 border-[#C263F2] transition duration-300 transform hover:shadow-3xl hover:scale-[1.02] hover:bg-purple-50"
-                      whileHover={{ scale: 1.02 }}
+                      className="flex flex-col bg-[#C263F2] p-6 rounded-2xl shadow-xl cursor-pointer transition duration-300 transform hover:shadow-[0_8px_30px_rgba(194,99,242,0.6)] hover:scale-[1.03] border-t-4 border-white/50" // Adjusted shadow and border
+                      whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleGoalClick(goal.main_goal)}
                       initial={{ opacity: 0, y: 30 }}
@@ -341,30 +341,30 @@ export default function DashboardPage() {
                         stiffness: 100,
                       }}
                     >
-                      <div className="flex items-center mb-4 border-b pb-3 border-gray-200">
-                        {/* <FaStar className="text-yellow-500 mr-3 w-6 h-6 flex-shrink-0" /> */}
-                        <h3 className="font-bold text-gray-800 text-lg truncate leading-snug">
+                      <div className="flex items-center mb-4 pb-3 border-b border-white/30">
+                        <h3 className="font-extrabold text-white text-xl leading-snug">
                           {goal.main_goal}
                         </h3>
                       </div>
+
                       <div className="flex flex-col gap-3 flex-grow">
                         {goal.sub_goals.length > 0 ? (
                           goal.sub_goals.map((sub, sidx) => (
                             <motion.div
                               key={sidx}
-                              className="bg-gray-50 text-gray-700 px-4 py-2 rounded-xl font-medium shadow-inner flex items-center gap-3 text-sm border-l-4 border-[#C263F2]"
+                              className="bg-white/10 text-white px-4 py-2 rounded-lg font-medium shadow-md flex items-center gap-3 text-sm border-l-4 border-white/80" // Changed sub-goal colors
                               initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{
                                 delay: 0.4 + idx * 0.1 + sidx * 0.05,
                               }}
                             >
-                              <FaLightbulb className="text-indigo-500 w-4 h-4 flex-shrink-0" />
+                              <FaLightbulb className="text-yellow-300 w-4 h-4 flex-shrink-0" />
                               <span className="truncate">{sub}</span>
                             </motion.div>
                           ))
                         ) : (
-                          <p className="text-sm text-gray-500 italic p-2">
+                          <p className="text-sm text-white/70 italic p-2">
                             No specific focus areas defined.
                           </p>
                         )}
@@ -404,12 +404,12 @@ export default function DashboardPage() {
           icon={FaHome}
           label="Home"
           active={activeNav === "Home"}
-           onClick={() => {
+          onClick={() => {
             setActiveNav("Home");
             router.push("/dashboard");
           }}
         />
-       
+
         <NavButton
           icon={FaBullseye}
           label="Plan"
@@ -437,7 +437,7 @@ export default function DashboardPage() {
             router.push("/Progress");
           }}
         />
-         
+
         <NavButton
           icon={FaGift}
           label="Rewards"
