@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -17,8 +18,8 @@ import {
 
 const DUMMY_DATA = {
   user_prefer_name: "raya",
-  duration: "1 year",
-  startDate: "2025-10-20",
+  target_duration: "1 year",
+  plan_start_date: "2025-10-20",
   goals: [
     {
       main_goal: "🚭🍺 Cut down or quit smoking, alcohol, or drugs",
@@ -69,21 +70,18 @@ const App = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [activeNav, setActiveNav] = useState("Home");
   const [remainingTime, setRemainingTime] = useState("");
+  const planStartDate = DUMMY_DATA.plan_start_date;
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  const calculateRemainingTime = (startDate, initialDuration) => {
-    const start = new Date(startDate);
+  const calculateRemainingTime = (initialDuration) => {
+    const start = new Date(planStartDate);
     const now = new Date();
-    
     const durationMatch = initialDuration.match(/(\d+)\s*(\w+)/);
     if (!durationMatch) return initialDuration;
-    
     const amount = parseInt(durationMatch[1]);
     const unit = durationMatch[2].toLowerCase();
-    
     let endDate = new Date(start);
-    
     switch(unit) {
       case 'day':
       case 'days':
@@ -100,14 +98,11 @@ const App = () => {
       default:
         return initialDuration;
     }
-    
     const diffTime = endDate - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
     if (diffDays <= 0) {
       return "Plan completed!";
     }
-    
     if (diffDays >= 365) {
       const years = Math.floor(diffDays / 365);
       const remainingDays = diffDays % 365;
@@ -123,42 +118,23 @@ const App = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setDashboardData(DUMMY_DATA);
-      const remaining = calculateRemainingTime(DUMMY_DATA.startDate, DUMMY_DATA.duration);
+      const remaining = calculateRemainingTime(DUMMY_DATA.target_duration);
       setRemainingTime(remaining);
     }, 300);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    if (!dashboardData) return;
-
+    if (!dashboardData || !dashboardData.target_duration) return;
     const updateRemainingTime = () => {
-      const remaining = calculateRemainingTime(dashboardData.startDate, dashboardData.duration);
+      const remaining = calculateRemainingTime(dashboardData.target_duration);
       setRemainingTime(remaining);
     };
-
-    updateRemainingTime();
-
     const intervalId = setInterval(updateRemainingTime, 24 * 60 * 60 * 1000);
-
-    const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    
-    const timeoutUntilMidnight = tomorrow - now;
-    const midnightTimeoutId = setTimeout(() => {
-      updateRemainingTime();
-      clearInterval(intervalId);
-      const dailyIntervalId = setInterval(updateRemainingTime, 24 * 60 * 60 * 1000);
-      return () => clearInterval(dailyIntervalId);
-    }, timeoutUntilMidnight);
-
-    return () => {
-      clearInterval(intervalId);
-      clearTimeout(midnightTimeoutId);
-    };
+    updateRemainingTime();
+    return () => clearInterval(intervalId);
   }, [dashboardData]);
 
   const handleGoalClick = (goalName) => {
@@ -210,12 +186,12 @@ const App = () => {
           >
             <FaInfoCircle className="text-[#C263F2] w-5 h-5" /> About App
           </button>
-          <button
-            onClick={() => console.log("Logout action")}
-            className="flex items-center justify-center mt-6 w-full px-4 py-3 text-white bg-red-600 rounded-xl shadow-lg hover:bg-red-700 transition cursor-pointer"
+          <a
+            href="/login"
+            className="flex items-center justify-center mt-6 w-full px-4 py-3 text-white bg-red-600 rounded-xl shadow-lg hover:bg-red-700 transition cursor-pointer font-bold"
           >
-            Logout
-          </button>
+            Go to Login
+          </a>
         </nav>
       </div>
 
@@ -239,53 +215,53 @@ const App = () => {
                 Remaining Plan Duration
               </p>
               <p className="text-3xl text-[#C263F2] font-extrabold mt-1">
-                {remainingTime}
+                {remainingTime || dashboardData.target_duration}
               </p>
               <p className="text-xs text-gray-400 mt-2">
-                Started on {new Date(dashboardData.startDate).toLocaleDateString()}
+                Started on {new Date(DUMMY_DATA.plan_start_date).toLocaleDateString()}
               </p>
             </motion.div>
-            <div className="flex justify-center ">
-              <div className="w-full max-w-7xl ">
-              <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2  gap-10 ">
-                {dashboardData.goals.map((goal, idx) => (
-                  <motion.div
-                    key={idx}
-                    className="flex flex-col bg-[#C263F2] p-6 rounded-3xl shadow-2xl cursor-pointer border border-gray-100 transition duration-300 transform hover:shadow-3xl hover:scale-[1.02] "
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleGoalClick(goal.main_goal)}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      delay: 0.3 + idx * 0.1,
-                      type: "spring",
-                      stiffness: 100,
-                    }}
-                  >
-                    <div className="flex items-center mb-4 border-b pb-3 border-white  ">
-                      <FaStar className="text-yellow-400 mr-3 w-6 h-6 flex-shrink-0" />
-                      <h3 className="font-bold text-white text-lg truncate leading-snug">
-                        {goal.main_goal}
-                      </h3>
-                    </div>
-                    <div className="flex flex-col gap-3 flex-grow">
-                      {goal.sub_goals.map((sub, sidx) => (
-                        <motion.div
-                          key={sidx}
-                          className="bg-gray-50 text-gray-700 px-4 py-2 rounded-xl font-medium shadow-inner flex items-center gap-3 text-sm border-l-4 border-indigo-400"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.4 + idx * 0.1 + sidx * 0.05 }}
-                        >
-                          <FaLightbulb className="text-[#C263F2] w-4 h-4 flex-shrink-0" />
-                          <span className="truncate">{sub}</span>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+            <div className="flex justify-center">
+              <div className="w-full max-w-7xl">
+                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-10">
+                  {dashboardData.goals.map((goal, idx) => (
+                    <motion.div
+                      key={idx}
+                      className="flex flex-col bg-[#C263F2] p-6 rounded-3xl shadow-2xl cursor-pointer border border-gray-100 transition duration-300 transform hover:shadow-3xl hover:scale-[1.02]"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleGoalClick(goal.main_goal)}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        delay: 0.3 + idx * 0.1,
+                        type: "spring",
+                        stiffness: 100,
+                      }}
+                    >
+                      <div className="flex items-center mb-4 border-b pb-3 border-white">
+                        <FaStar className="text-yellow-400 mr-3 w-6 h-6 flex-shrink-0" />
+                        <h3 className="font-bold text-white text-lg truncate leading-snug">
+                          {goal.main_goal}
+                        </h3>
+                      </div>
+                      <div className="flex flex-col gap-3 flex-grow">
+                        {goal.sub_goals.map((sub, sidx) => (
+                          <motion.div
+                            key={sidx}
+                            className="bg-gray-50 text-gray-700 px-4 py-2 rounded-xl font-medium shadow-inner flex items-center gap-3 text-sm border-l-4 border-indigo-400"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4 + idx * 0.1 + sidx * 0.05 }}
+                          >
+                            <FaLightbulb className="text-[#C263F2] w-4 h-4 flex-shrink-0" />
+                            <span className="truncate">{sub}</span>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </div>
           </>
