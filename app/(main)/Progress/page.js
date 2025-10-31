@@ -264,7 +264,17 @@ const Progress = () => {
           active={activeNav === "Home"}
           onClick={() => {
             setActiveNav("Home");
-            router.push("/dashboard-preview");
+            router.push("/dashboard");
+          }}
+        />
+        
+        <NavButton
+          icon={FaBullseye}
+          label="Plan"
+          active={activeNav === "Plan"}
+          onClick={() => {
+            setActiveNav("Plan");
+            router.push("/Plan");
           }}
         />
         <NavButton
@@ -274,15 +284,6 @@ const Progress = () => {
           onClick={() => {
             setActiveNav("To-do");
             router.push("/To-do");
-          }}
-        />
-        <NavButton
-          icon={FaBullseye}
-          label="Plan"
-          active={activeNav === "Plan"}
-          onClick={() => {
-            setActiveNav("Plan");
-            router.push("/Plan");
           }}
         />
         <NavButton

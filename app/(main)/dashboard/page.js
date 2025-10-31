@@ -1,6 +1,8 @@
-'use client';
+"use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+
 import {
   FaUserCircle,
   FaTimes,
@@ -14,16 +16,16 @@ import {
   FaStar,
   FaLightbulb,
 } from "react-icons/fa";
-import { useAuth } from '../../(app)/context/auth';
-import { toast } from 'react-hot-toast';
+import { useAuth } from "../../(app)/context/auth";
+import { toast } from "react-hot-toast";
 
 const decodeJWT = (token) => {
   try {
-    const payload = token.split('.')[1];
+    const payload = token.split(".")[1];
     const decoded = JSON.parse(atob(payload));
     return decoded;
   } catch (error) {
-    console.error('Failed to decode JWT:', error);
+    console.error("Failed to decode JWT:", error);
     return null;
   }
 };
@@ -46,15 +48,16 @@ const NavButton = ({ icon: Icon, label, active, onClick }) => (
 
 export default function DashboardPage() {
   const { token, logout, authFetch, loading } = useAuth();
-  
+  const router = useRouter();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
   const [activeNav, setActiveNav] = useState("Home");
   const [remainingTime, setRemainingTime] = useState("");
-  const [message, setMessage] = useState('Loading dashboard data...');
+  const [message, setMessage] = useState("Loading dashboard data...");
   const [mounted, setMounted] = useState(false);
 
-  const planStartDate = PLAN_START_DATE_PLACEHOLDER; 
+  const planStartDate = PLAN_START_DATE_PLACEHOLDER;
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -64,22 +67,22 @@ export default function DashboardPage() {
     const durationMatch = initialDuration?.match(/(\d+)\s*(\w+)/);
 
     if (!durationMatch) return initialDuration || "Duration not set";
-    
+
     const amount = parseInt(durationMatch[1]);
     const unit = durationMatch[2].toLowerCase();
     let endDate = new Date(start);
 
-    switch(unit) {
-      case 'day':
-      case 'days':
+    switch (unit) {
+      case "day":
+      case "days":
         endDate.setDate(start.getDate() + amount);
         break;
-      case 'month':
-      case 'months':
+      case "month":
+      case "months":
         endDate.setMonth(start.getMonth() + amount);
         break;
-      case 'year':
-      case 'years':
+      case "year":
+      case "years":
         endDate.setFullYear(start.getFullYear() + amount);
         break;
       default:
@@ -88,7 +91,7 @@ export default function DashboardPage() {
 
     const diffTime = endDate - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays <= 0) {
       return "Plan completed!";
     }
@@ -97,13 +100,17 @@ export default function DashboardPage() {
       const years = Math.floor(diffDays / 365);
       const remainingDays = diffDays % 365;
       const months = Math.floor(remainingDays / 30);
-      return `${years} year${years > 1 ? 's' : ''} ${months} month${months !== 1 ? 's' : ''}`;
+      return `${years} year${years > 1 ? "s" : ""} ${months} month${
+        months !== 1 ? "s" : ""
+      }`;
     } else if (diffDays >= 30) {
       const months = Math.floor(diffDays / 30);
       const remainingDays = diffDays % 30;
-      return `${months} month${months !== 1 ? 's' : ''} ${remainingDays} day${remainingDays !== 1 ? 's' : ''}`;
+      return `${months} month${months !== 1 ? "s" : ""} ${remainingDays} day${
+        remainingDays !== 1 ? "s" : ""
+      }`;
     } else {
-      return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+      return `${diffDays} day${diffDays !== 1 ? "s" : ""}`;
     }
   };
 
@@ -121,7 +128,7 @@ export default function DashboardPage() {
     }
 
     const decodedToken = decodeJWT(token);
-    const user_id = decodedToken?.sub; 
+    const user_id = decodedToken?.sub;
 
     if (!user_id) {
       setMessage("Authentication error: Unable to identify user.");
@@ -134,44 +141,53 @@ export default function DashboardPage() {
       .then((res) => {
         if (!res.ok) {
           if (res.status === 404) {
-            return res.json().then(errorData => {
-                throw new Error(errorData.detail || 'User profile not found');
+            return res.json().then((errorData) => {
+              throw new Error(errorData.detail || "User profile not found");
             });
           }
-          throw new Error('Failed to fetch dashboard data');
+          throw new Error("Failed to fetch dashboard data");
         }
         return res.json();
       })
       .then((data) => {
-        const dataWithDate = { ...data, plan_start_date: PLAN_START_DATE_PLACEHOLDER };
-        
+        const dataWithDate = {
+          ...data,
+          plan_start_date: PLAN_START_DATE_PLACEHOLDER,
+        };
+
         setDashboardData(dataWithDate);
-        setMessage(''); 
-        
+        setMessage("");
+
         if (data.target_duration) {
-            const remaining = calculateRemainingTime(data.target_duration);
-            setRemainingTime(remaining);
+          const remaining = calculateRemainingTime(data.target_duration);
+          setRemainingTime(remaining);
         }
       })
       .catch((err) => {
-        console.error('Dashboard fetch error:', err.message);
-        if (err.message.includes('User profile not found')) {
-            setMessage("Profile not found. Please complete the onboarding steps.");
+        console.error("Dashboard fetch error:", err.message);
+        if (err.message.includes("User profile not found")) {
+          setMessage(
+            "Profile not found. Please complete the onboarding steps."
+          );
         } else {
-            setMessage("Failed to load dashboard data. Check console for details.");
-            toast.error("Could not load your dashboard.", { style: { fontWeight: 'bold' } });
+          setMessage(
+            "Failed to load dashboard data. Check console for details."
+          );
+          toast.error("Could not load your dashboard.", {
+            style: { fontWeight: "bold" },
+          });
         }
       });
   }, [token, loading, mounted]);
 
   useEffect(() => {
     if (!dashboardData || !dashboardData.target_duration) return;
-    
+
     const updateRemainingTime = () => {
       const remaining = calculateRemainingTime(dashboardData.target_duration);
       setRemainingTime(remaining);
     };
-    
+
     const intervalId = setInterval(updateRemainingTime, 24 * 60 * 60 * 1000);
     updateRemainingTime();
     return () => clearInterval(intervalId);
@@ -179,19 +195,22 @@ export default function DashboardPage() {
 
   const handleGoalClick = (goalName) => {
     console.log(`Navigating to Plan details for "${goalName}"`);
-    toast.success(`Viewing details for: ${goalName.split(' ')[0]}...`, { position: 'bottom-center' });
+    toast.success(`Viewing details for: ${goalName.split(" ")[0]}...`, {
+      position: "bottom-center",
+    });
   };
 
   const handleNavClick = (path, label) => {
     setActiveNav(label);
     console.log(`Simulating navigation to ${label} (${path})`);
-    if (path === '/login') {
+    if (path === "/login") {
       logout();
     }
   };
-  
-  const goalsSet = dashboardData && dashboardData.goals && dashboardData.goals.length > 0;
-  const preferredName = dashboardData?.user_prefer_name || 'User';
+
+  const goalsSet =
+    dashboardData && dashboardData.goals && dashboardData.goals.length > 0;
+  const preferredName = dashboardData?.user_prefer_name || "User";
 
   if (!mounted || loading) {
     return (
@@ -336,7 +355,9 @@ export default function DashboardPage() {
                               className="bg-gray-50 text-gray-700 px-4 py-2 rounded-xl font-medium shadow-inner flex items-center gap-3 text-sm border-l-4 border-[#C263F2]"
                               initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.4 + idx * 0.1 + sidx * 0.05 }}
+                              transition={{
+                                delay: 0.4 + idx * 0.1 + sidx * 0.05,
+                              }}
                             >
                               <FaLightbulb className="text-indigo-500 w-4 h-4 flex-shrink-0" />
                               <span className="truncate">{sub}</span>
@@ -356,12 +377,26 @@ export default function DashboardPage() {
           </>
         ) : (
           <div className="text-center py-12 bg-white rounded-xl shadow-md border-2 border-dashed border-gray-300 mt-4">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">You Haven't Set Your Goals Yet</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              You Haven't Set Your Goals Yet
+            </h2>
             <p className="text-gray-600 max-w-md mx-auto">
-              Start your personalized wellness journey by **completing the onboarding questionnaire** to define your health goals!
+              Start your personalized wellness journey by completing the
+              onboarding questionnaire to define your health goals!
             </p>
           </div>
         )}
+        <motion.button
+          onClick={() => router.push("/Plan")}
+          className="w-full max-w-xs md:max-w-md bg-[#C263F2] text-white px-5 py-4 rounded-xl shadow-xl hover:bg-[#a44ed4] transition cursor-pointer font-bold text-lg flex items-center justify-center gap-2 mx-auto"
+          whileTap={{ scale: 0.98 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <FaBullseye className="w-5 h-5" />
+          Generate your Personalised Plan
+        </motion.button>
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl flex justify-around items-center h-16 md:h-20 border-t border-gray-100 z-50 p-2 md:p-0">
@@ -369,31 +404,48 @@ export default function DashboardPage() {
           icon={FaHome}
           label="Home"
           active={activeNav === "Home"}
-          onClick={() => handleNavClick("/dashboard-preview", "Home")}
+           onClick={() => {
+            setActiveNav("Home");
+            router.push("/dashboard");
+          }}
+        />
+       
+        <NavButton
+          icon={FaBullseye}
+          label="Plan"
+          active={activeNav === "Plan"}
+          onClick={() => {
+            setActiveNav("Plan");
+            router.push("/Plan");
+          }}
         />
         <NavButton
           icon={FaTasks}
           label="To-do"
           active={activeNav === "To-do"}
-          onClick={() => handleNavClick("/To-do", "To-do")}
-        />
-        <NavButton
-          icon={FaBullseye}
-          label="Plan"
-          active={activeNav === "Plan"}
-          onClick={() => handleNavClick("/Plan", "Plan")}
+          onClick={() => {
+            setActiveNav("To-do");
+            router.push("/To-do");
+          }}
         />
         <NavButton
           icon={FaChartLine}
           label="Progress"
           active={activeNav === "Progress"}
-          onClick={() => handleNavClick("/Progress", "Progress")}
+          onClick={() => {
+            setActiveNav("Progress");
+            router.push("/Progress");
+          }}
         />
+         
         <NavButton
           icon={FaGift}
           label="Rewards"
           active={activeNav === "Rewards"}
-          onClick={() => handleNavClick("/Rewards", "Rewards")}
+          onClick={() => {
+            setActiveNav("Rewards");
+            router.push("/Rewards");
+          }}
         />
       </nav>
     </div>

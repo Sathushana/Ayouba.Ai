@@ -265,18 +265,10 @@ const Plan = () => {
           active={activeNav === "Home"}
           onClick={() => {
             setActiveNav("Home");
-            router.push("/dashboard-preview");
+            router.push("/dashboard");
           }}
         />
-        <NavButton
-          icon={FaTasks}
-          label="To-do"
-          active={activeNav === "To-do"}
-          onClick={() => {
-            setActiveNav("To-do");
-            router.push("/To-do");
-          }}
-        />
+       
         <NavButton
           icon={FaBullseye}
           label="Plan"
@@ -284,6 +276,15 @@ const Plan = () => {
           onClick={() => {
             setActiveNav("Plan");
             router.push("/Plan");
+          }}
+        />
+         <NavButton
+          icon={FaTasks}
+          label="To-do"
+          active={activeNav === "To-do"}
+          onClick={() => {
+            setActiveNav("To-do");
+            router.push("/To-do");
           }}
         />
         <NavButton
