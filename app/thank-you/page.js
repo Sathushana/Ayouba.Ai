@@ -27,7 +27,7 @@ export default function ThankYou() {
 
   const handleProceed = () => {
     
-    router.push('/login');
+    router.push('/register');
   };
 
 
