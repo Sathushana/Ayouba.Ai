@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-
 import {
   FaUserCircle,
   FaTimes,
@@ -46,32 +45,69 @@ const NavButton = ({ icon: Icon, label, active, onClick }) => (
   </motion.button>
 );
 
+const GoalCard = ({ icon: Icon, mainGoal, subGoals, onClick, delay }) => (
+  <motion.div
+    className="flex flex-col bg-white p-6 rounded-3xl shadow-2xl border-b-8 border-[#C263F2] cursor-pointer transition duration-300 transform hover:shadow-[0_15px_40px_rgba(194,99,242,0.4)] hover:scale-[1.03]"
+    whileHover={{ scale: 1.03 }}
+    whileTap={{ scale: 0.98 }}
+    onClick={onClick}
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{
+      delay,
+      type: "spring",
+      stiffness: 100,
+    }}
+  >
+    <div className="flex items-center mb-4 pb-3 border-b border-gray-100">
+      <h3 className="font-extrabold text-gray-900 text-xl leading-snug">
+        {mainGoal}
+      </h3>
+    </div>
+    <div className="flex flex-col gap-3 flex-grow">
+      {subGoals.length > 0 ? (
+        subGoals.map((sub, sidx) => (
+          <motion.div
+            key={sidx}
+            className="bg-[#C263F2]/10 text-gray-800 px-4 py-2 rounded-xl font-medium shadow-sm flex items-center gap-3 text-sm border-l-4 border-[#C263F2]"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{
+              delay: delay + 0.1 + sidx * 0.05,
+            }}
+          >
+            <span className="truncate">{sub}</span>
+          </motion.div>
+        ))
+      ) : (
+        <p className="text-sm text-gray-500 italic p-2">
+          No specific focus areas defined.
+        </p>
+      )}
+    </div>
+  </motion.div>
+);
+
 export default function DashboardPage() {
   const { token, logout, authFetch, loading } = useAuth();
   const router = useRouter();
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
   const [activeNav, setActiveNav] = useState("Home");
   const [remainingTime, setRemainingTime] = useState("");
   const [message, setMessage] = useState("Loading dashboard data...");
   const [mounted, setMounted] = useState(false);
-
   const planStartDate = PLAN_START_DATE_PLACEHOLDER;
-
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const calculateRemainingTime = (initialDuration) => {
     const start = new Date(planStartDate);
     const now = new Date();
     const durationMatch = initialDuration?.match(/(\d+)\s*(\w+)/);
-
     if (!durationMatch) return initialDuration || "Duration not set";
-
     const amount = parseInt(durationMatch[1]);
     const unit = durationMatch[2].toLowerCase();
     let endDate = new Date(start);
-
     switch (unit) {
       case "day":
       case "days":
@@ -88,14 +124,11 @@ export default function DashboardPage() {
       default:
         return initialDuration;
     }
-
     const diffTime = endDate - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
     if (diffDays <= 0) {
       return "Plan completed!";
     }
-
     if (diffDays >= 365) {
       const years = Math.floor(diffDays / 365);
       const remainingDays = diffDays % 365;
@@ -120,23 +153,19 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!mounted || loading) return;
-
     if (!token) {
       setMessage("Session expired or no token found. Redirecting to login...");
       setTimeout(() => (window.location.href = "/login"), 1500);
       return;
     }
-
     const decodedToken = decodeJWT(token);
     const user_id = decodedToken?.sub;
-
     if (!user_id) {
       setMessage("Authentication error: Unable to identify user.");
       toast.error("Authentication error. Please log in again.");
       setTimeout(() => (window.location.href = "/login"), 1500);
       return;
     }
-
     authFetch(`http://127.0.0.1:8000/api/dashboard/${user_id}`)
       .then((res) => {
         if (!res.ok) {
@@ -154,10 +183,8 @@ export default function DashboardPage() {
           ...data,
           plan_start_date: PLAN_START_DATE_PLACEHOLDER,
         };
-
         setDashboardData(dataWithDate);
         setMessage("");
-
         if (data.target_duration) {
           const remaining = calculateRemainingTime(data.target_duration);
           setRemainingTime(remaining);
@@ -166,13 +193,9 @@ export default function DashboardPage() {
       .catch((err) => {
         console.error("Dashboard fetch error:", err.message);
         if (err.message.includes("User profile not found")) {
-          setMessage(
-            "Profile not found. Please complete the onboarding steps."
-          );
+          setMessage("Profile not found. Please complete the onboarding steps.");
         } else {
-          setMessage(
-            "Failed to load dashboard data. Check console for details."
-          );
+          setMessage("Failed to load dashboard data. Check console for details.");
           toast.error("Could not load your dashboard.", {
             style: { fontWeight: "bold" },
           });
@@ -182,12 +205,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!dashboardData || !dashboardData.target_duration) return;
-
     const updateRemainingTime = () => {
       const remaining = calculateRemainingTime(dashboardData.target_duration);
       setRemainingTime(remaining);
     };
-
     const intervalId = setInterval(updateRemainingTime, 24 * 60 * 60 * 1000);
     updateRemainingTime();
     return () => clearInterval(intervalId);
@@ -208,8 +229,7 @@ export default function DashboardPage() {
     }
   };
 
-  const goalsSet =
-    dashboardData && dashboardData.goals && dashboardData.goals.length > 0;
+  const goalsSet = dashboardData && dashboardData.goals && dashboardData.goals.length > 0;
   const preferredName = dashboardData?.user_prefer_name || "User";
 
   if (!mounted || loading) {
@@ -234,16 +254,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-100 flex flex-col font-sans">
-      <header className="flex justify-between items-center bg-white text-black p-4 shadow-lg sticky top-0 z-40">
+    <div className="relative min-h-screen bg-gray-50 flex flex-col font-sans">
+      <header className="flex justify-between items-center bg-white text-black p-4 border-b border-gray-100 sticky top-0 z-40 shadow-sm">
         <h1 className="text-xl font-extrabold tracking-tight truncate text-gray-800">
           👋 Hi, {preferredName}!
         </h1>
         <button
           onClick={toggleMenu}
-          className="p-2 text-2xl text-[#C263F2] rounded-full transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#C263F2]"
+          className="p-2 text-2xl text-[#C263F2] rounded-full transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#C263F2]/50"
+          aria-label="User Menu"
         >
-          <FaUserCircle className="w-6 h-6" />
+          <FaUserCircle className="w-7 h-7" />
         </button>
       </header>
 
@@ -254,8 +275,12 @@ export default function DashboardPage() {
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-100">
           <h2 className="font-bold text-lg text-[#C263F2]">Lifeshift</h2>
-          <button onClick={toggleMenu} className="p-1 rounded hover:bg-red-100">
-            <FaTimes className="w-6 h-6 text-red-600 cursor-pointer" />
+          <button
+            onClick={toggleMenu}
+            className="p-1 rounded hover:bg-gray-100"
+            aria-label="Close Menu"
+          >
+            <FaTimes className="w-6 h-6 text-gray-500 cursor-pointer" />
           </button>
         </div>
 
@@ -294,9 +319,9 @@ export default function DashboardPage() {
         ></div>
       )}
 
-      <main className="p-4 flex-1 overflow-y-auto space-y-6 pb-24">
+      <main className="p-4 flex-1 overflow-y-auto space-y-8 pb-24">
         {message ? (
-          <div className="text-center py-12 bg-white rounded-2xl shadow-lg mt-4">
+          <div className="text-center py-12 bg-white rounded-3xl shadow-lg mt-4 border border-gray-100">
             <h2 className="text-xl font-semibold text-gray-700">{message}</h2>
             {message.includes("Profile not found") && (
               <p className="mt-4 text-gray-500">
@@ -307,94 +332,64 @@ export default function DashboardPage() {
         ) : goalsSet ? (
           <>
             <motion.div
-              className="bg-white p-5 rounded-2xl shadow-xl border-l-8 border-[#C263F2] text-center transform transition duration-300"
-              initial={{ opacity: 0, y: -10 }}
+              className="bg-white p-6 rounded-3xl shadow-xl border-t-8 border-[#C263F2] text-center transform transition duration-300 relative overflow-hidden"
+              initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
             >
-              <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-                Remaining Plan Duration
+              <div className="absolute top-0 left-0 w-full h-full bg-[#C263F2]/5 opacity-5 pointer-events-none"></div>
+              <p className="text-sm font-bold text-[#C263F2] uppercase tracking-widest mb-1">
+                Your Wellness Journey
               </p>
-              <p className="text-3xl text-[#C263F2] font-extrabold mt-1">
+              <h2 className="text-4xl text-gray-900 font-extrabold mt-1 leading-tight">
                 {remainingTime || dashboardData.target_duration || "N/A"}
-              </p>
-              <p className="text-xs text-gray-400 mt-2">
-                Started on {new Date(planStartDate).toLocaleDateString()}
+              </h2>
+              <p className="text-sm text-gray-500 mt-2">
+                Remaining Plan Duration • Started on{" "}
+                {new Date(planStartDate).toLocaleDateString()}
               </p>
             </motion.div>
 
             <div className="flex justify-center">
               <div className="w-full max-w-5xl">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 mt-4 text-center">
+                  My Active Goals
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                   {dashboardData.goals.map((goal, idx) => (
-                    <motion.div
+                    <GoalCard
                       key={idx}
-                      className="flex flex-col bg-[#C263F2] p-6 rounded-2xl shadow-xl cursor-pointer transition duration-300 transform hover:shadow-[0_8px_30px_rgba(194,99,242,0.6)] hover:scale-[1.03] border-t-4 border-white/50" // Adjusted shadow and border
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.98 }}
+                      icon={FaBullseye}
+                      mainGoal={goal.main_goal}
+                      subGoals={goal.sub_goals}
                       onClick={() => handleGoalClick(goal.main_goal)}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        delay: 0.3 + idx * 0.1,
-                        type: "spring",
-                        stiffness: 100,
-                      }}
-                    >
-                      <div className="flex items-center mb-4 pb-3 border-b border-white/30">
-                        <h3 className="font-extrabold text-white text-xl leading-snug">
-                          {goal.main_goal}
-                        </h3>
-                      </div>
-
-                      <div className="flex flex-col gap-3 flex-grow">
-                        {goal.sub_goals.length > 0 ? (
-                          goal.sub_goals.map((sub, sidx) => (
-                            <motion.div
-                              key={sidx}
-                              className="bg-white/10 text-white px-4 py-2 rounded-lg font-medium shadow-md flex items-center gap-3 text-sm border-l-4 border-white/80" // Changed sub-goal colors
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{
-                                delay: 0.4 + idx * 0.1 + sidx * 0.05,
-                              }}
-                            >
-                              <FaLightbulb className="text-yellow-300 w-4 h-4 flex-shrink-0" />
-                              <span className="truncate">{sub}</span>
-                            </motion.div>
-                          ))
-                        ) : (
-                          <p className="text-sm text-white/70 italic p-2">
-                            No specific focus areas defined.
-                          </p>
-                        )}
-                      </div>
-                    </motion.div>
+                      delay={0.2 + idx * 0.1}
+                    />
                   ))}
                 </div>
               </div>
             </div>
           </>
         ) : (
-          <div className="text-center py-12 bg-white rounded-xl shadow-md border-2 border-dashed border-gray-300 mt-4">
+          <div className="text-center py-12 bg-white rounded-3xl shadow-lg border-2 border-dashed border-[#C263F2]/50 mt-4">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              You Haven't Set Your Goals Yet
+              <FaLightbulb className="inline-block text-[#C263F2] w-7 h-7 mr-2 -mt-1" />{" "}
+              Define Your Path
             </h2>
-            <p className="text-gray-600 max-w-md mx-auto">
-              Start your personalized wellness journey by completing the
-              onboarding questionnaire to define your health goals!
+            <p className="text-gray-600 max-w-md mx-auto px-4">
+              Start your **personalized wellness journey** by completing the
+              onboarding to define your health goals!
             </p>
           </div>
         )}
         <motion.button
           onClick={() => router.push("/Plan")}
-          className="w-full max-w-xs md:max-w-md bg-[#C263F2] text-white px-5 py-4 rounded-xl shadow-xl hover:bg-[#a44ed4] transition cursor-pointer font-bold text-lg flex items-center justify-center gap-2 mx-auto"
-          whileTap={{ scale: 0.98 }}
+          className="w-full max-w-xs md:max-w-md bg-[#C263F2] text-white px-5 py-4 rounded-full shadow-2xl hover:bg-[#a44ed4] transition cursor-pointer font-extrabold text-lg flex items-center justify-center gap-2 mx-auto uppercase tracking-wider mt-8 ring-4 ring-[#C263F2]/30"
+          whileTap={{ scale: 0.95 }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <FaBullseye className="w-5 h-5" />
           Generate your Personalised Plan
         </motion.button>
       </main>
@@ -409,7 +404,6 @@ export default function DashboardPage() {
             router.push("/dashboard");
           }}
         />
-
         <NavButton
           icon={FaBullseye}
           label="Plan"
@@ -437,7 +431,6 @@ export default function DashboardPage() {
             router.push("/Progress");
           }}
         />
-
         <NavButton
           icon={FaGift}
           label="Rewards"
