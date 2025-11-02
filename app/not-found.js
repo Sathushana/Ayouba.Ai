@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Ghost, ChevronLeft } from 'lucide-react';
 
 const PRIMARY_COLOR = '#C263F2';
@@ -40,13 +41,13 @@ const NotFoundPage = () => {
           Page Vibe Check Failed
         </h2>
         <p className="text-gray-400 text-lg">
-          Looks like the content you're searching for is currently off the grid.
-          It might be chillin' somewhere else or just doesn't exist yet.
+          {`Looks like the content you're searching for is currently off the grid.
+          It might be chillin' somewhere else or just doesn't exist yet.`}
         </p>
       </div>
 
       {/* Call to Action */}
-      <div className="mt-10">
+      {/* <div className="mt-10">
         <a 
           href="/" 
           style={{ backgroundColor: PRIMARY_COLOR, color: 'white' }}
@@ -55,8 +56,18 @@ const NotFoundPage = () => {
           <ChevronLeft className="size-5 mr-2" />
           Back to the Main Hub
         </a>
+      </div> */}
+      {/* Call to Action */}
+      <div className="mt-10">
+        <Link
+          href="/"
+          style={{ backgroundColor: PRIMARY_COLOR, color: 'white' }}
+          className="inline-flex items-center px-8 py-3 rounded-xl font-bold transition duration-300 shadow-lg hover:shadow-violet-500/50 active:scale-95 text-base"
+        >
+          <ChevronLeft className="size-5 mr-2" />
+          Back to the Main Hub
+        </Link>
       </div>
-      
     </div>
   );
 };

@@ -1,7 +1,8 @@
 'use client';
 
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from '../../(app)/context/auth'; // adjust path if needed
+// import { AuthProvider } from '../../(app)/context/auth'; // adjust path if needed
+import { AuthProvider } from './context/auth'; // correct the path
 
 export default function MainLayout({ children }) {
   return (

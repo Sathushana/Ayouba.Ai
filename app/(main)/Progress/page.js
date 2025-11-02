@@ -200,7 +200,7 @@ const Progress = () => {
               <h2 className="text-2xl font-bold text-gray-800">
                 Overall Progress
               </h2>
-              <p className="text-gray-600">You're doing amazing! Keep it up!</p>
+              <p className="text-gray-600">{`You're doing amazing! Keep it up!`}</p>
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold text-[#C263F2]">

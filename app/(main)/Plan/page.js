@@ -352,8 +352,8 @@ const Plan = () => {
             </div>
             <div className="bg-[#f5f0fb] p-4 rounded-lg border-l-4 border-[#C263F2]">
               <p className="text-sm text-gray-700">
-                <strong>Tip:</strong> Complete today's tasks to unlock tomorrow's plan. 
-                Consistency is key to building lasting skills!
+                <strong>Tip:</strong> {`Complete today's tasks to unlock tomorrow's plan. 
+                Consistency is key to building lasting skills!`}
               </p>
             </div>
           </div>

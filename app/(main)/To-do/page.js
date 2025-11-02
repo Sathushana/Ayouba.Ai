@@ -256,11 +256,11 @@ const TodoPage = () => {
       <main className="p-4 flex-1 overflow-y-auto space-y-6 pb-24 max-w-xl mx-auto w-full">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Today's To-do List for you
+            {`Today's To-do List for you`}
           </h2>
           <p className="text-gray-600">
             {" "}
-            You've completed <b>{completedTasks}</b> of <b>{totalTasks}</b>{" "}
+            {`You've completed`} <b>{completedTasks}</b> of <b>{totalTasks}</b>{" "}
             tasks! Keep up the great work!
           </p>
         </div>

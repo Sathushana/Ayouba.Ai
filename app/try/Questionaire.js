@@ -1944,8 +1944,8 @@ const handleSubmit = async () => {
     if (visibleFollowUpQuestions.length === 0) {
       return (
         <p className="text-gray-500 italic">
-          No further details required based on your answer. Click 'Next' to
-          proceed.
+          {`No further details required based on your answer. Click 'Next' to
+          proceed.`}
         </p>
       );
     }

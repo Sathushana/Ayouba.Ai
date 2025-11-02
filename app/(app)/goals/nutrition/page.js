@@ -221,7 +221,7 @@ const NutritionDashboard = () => {
               Current Habit Focus
             </h2>
             <p className="text-sm text-gray-400 mb-4">
-              This week, let's focus on **Eating Regular Meals**.
+              {"This week, let's focus on **Eating Regular Meals**."}
             </p>
             <div className="p-4 rounded-xl border border-gray-700" style={{ backgroundColor: SECONDARY_BG_COLOR, color: '#1f2937' }}>
                 <p className="font-semibold">Tip: Set an alarm for breakfast!</p>
