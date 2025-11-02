@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '../../(app)/context/auth'; // your auth context
+// new version
 
 const PRIMARY_COLOR_HEX = "#C263F2";
 const SECONDARY_COLOR_HEX = "#E6E6FA";
