@@ -92,7 +92,7 @@ const baseQuestions = [
     options: [
       { id: "nutrition", label: "🥗 Eat healthy & get enough nutrition" },
       { id: "activity", label: "🏃 Be more active & do regular exercise" },
-      { id: "weight", label: "⚖️ Lose weight & stay in good shape" },
+      { id: "weightloss", label: "⚖️ Lose weight & stay in good shape" },
       { id: "substance", label: "🚭🍺 Cut down or quit smoking, alcohol, or drugs" },
       { id: "mental", label: "🧘 Feel calmer & reduce stress" },
       { id: "sleep", label: "😴 Sleep better & wake up fresh" },
@@ -213,7 +213,7 @@ const goalSpecificQuestions = {
       type: "multiselect",
       title: "What's your main nutrition goal?",
       description: "Pick one or more.",
-      key: "nutritionGoals",
+      key: "subgoals",
       options: [
         { id: "boostNutrients", label: "🩸 Boost Essential Nutrients" },
         { id: "balancedDiet", label: "🥗 Eat a Diverse, Balanced Diet" },
@@ -348,7 +348,7 @@ const goalSpecificQuestions = {
       id: 209,
       type: "multiselect",
       title: "Fitness & Health Goals: What do you want to achieve with your workouts?",
-      key: "fitnessHealthGoals",
+      key: "subgoals",
       options: [
         { id: "loseWeight", label: "🏋️ Lose weight / Tone up" },
         { id: "boostStamina", label: "🏃 Boost stamina / Cardio fitness" },
@@ -365,7 +365,7 @@ const goalSpecificQuestions = {
   ],
 
   // Goal: ⚖️ Lose weight & stay in good shape
-  weight: [
+  weightloss: [
     {
       id: 301,
       type: "placeholder",
@@ -542,7 +542,7 @@ const goalSpecificQuestions = {
       type: "multiselect",
       title: " What's your main weight loss goal?",
       description: "Pick one or more.",
-      key: "wl_goals",
+      key: "wl_subgoals",
       options: [
         { id: "safeSustainable", label: "⚖️ Lose weight safely & sustainably" },
         { id: "burnFatTone", label: "🔥 Burn fat & tone up" },
@@ -793,7 +793,7 @@ const goalSpecificQuestions = {
       id: 511,
       type: "multiselect",
       title: "What would you like to achieve?",
-      key: "mh_goals",
+      key: "mh_subgoals",
       options: [
         { id: "feelCalmer", label: "🌈 Feel Calmer & Less Stressed" },
         { id: "improveMood", label: "🙂 Improve mood & emotional balance" },
@@ -865,7 +865,7 @@ const goalSpecificQuestions = {
       type: "multiselect",
       title: " What would you like to improve about your sleep?",
       description: "Choose one or more.",
-      key: "sleepGoals",
+      key: "subgoals",
       options: [
         { id: "fallAsleepFaster", label: "😴 Fall asleep faster" },
         { id: "stayAsleep", label: "🌙 Stay asleep through the night" },
@@ -1442,7 +1442,7 @@ const healthConditionFollowUps = {
   other: ["otherCondition_details", "disease_control"],
 };
 
-// Map substance keys to their quantity/details follow-up
+
 const substanceQuantityFollowUps = {
   alcohol: "alcohol_frequency",
   cigarettes: "cigarettes_quantity",
@@ -1453,15 +1453,24 @@ const substanceQuantityFollowUps = {
 
 const getBaseQuestions = (currentAnswers = {}, age = 0, sex = "") => {
   let base = [...baseQuestions];
+  console.log("🧩 currentAnswers received:", currentAnswers);
+
   
-  
-  if (sex === "Female" && age > 18 && currentAnswers.isPregnant === undefined) {
+  if (sex === "Female" && age > 18 && (
+    !currentAnswers.followUps ||
+    currentAnswers.followUps.isPregnant === undefined
+  )) {
     const pregnantQuestion = conditionalFollowUps["pregnantQuestion"];
     if (pregnantQuestion && !base.some(q => q.key === "isPregnant")) {
       const insertionIndex = base.findIndex(q => q.key === "sex") + 1;
+      
+      // Find the next available integer ID
+      const existingIds = base.map(q => q.id);
+      let newId = Math.max(...existingIds) + 1;
+      
       base.splice(insertionIndex, 0, {
         ...pregnantQuestion,
-        id: 3.5, 
+        id: newId,  // Use proper integer ID
         type: pregnantQuestion.subType,
         title: pregnantQuestion.subTitle,
         description: pregnantQuestion.description,
@@ -1498,13 +1507,37 @@ const getQuestions = (primaryGoals = [], currentAnswers = {}, age = 0, sex = "")
       });
     }
   });
+  // ✅ ADD FINAL QUESTION(S) HERE
+  finalQuestions.forEach(q => {
+    currentId++;
+    allQuestions.push({ ...q, id: currentId });
+  });
 
   return allQuestions.sort((a, b) => a.id - b.id);
 };
+
+// Add a Final Question for asked duration
+const finalQuestions = [
+  {
+    id: 999,
+    type: "radio",
+    title: "⏱️ How long do you want to follow your plan or see results?",
+    description: "This helps us personalise your milestones and track your progress effectively.",
+    key: "targetDuration",
+    options: [
+      "1 month",
+      "3 months",
+      "6 months",
+      "1 year",
+    ],
+    required: true,
+  },
+];
 
 export {
   getQuestions,
   conditionalFollowUps,
   healthConditionFollowUps,
   substanceQuantityFollowUps,
+  goalSpecificQuestions
 };

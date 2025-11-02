@@ -11,10 +11,10 @@ export default function Hero() {
 
   return (
     <>
-      <section id="hero" className="w-full bg-white pt-20 py-12 md:py-16">
-        <div className="flex flex-col md:flex-row max-w-7xl mx-auto relative px-4 md:px-0">
+      <section id="hero" className="py-16 md:pt-30 bg-white pt-20">
+        <div className="flex flex-col md:flex-row max-w-7xl mx-auto relative px-4 md:px-0 mt-10">
           <div
-            className="md:flex-2 w-full h-[250px] md:h-[600px] bg-[#e0e4ef] bg-no-repeat bg-cover relative"
+            className="md:flex-2 w-full h-[250px] md:h-[600px] bg-[#e0e4ef] bg-no-repeat bg-cover relative "
             style={{
               backgroundImage: 'url("/hero_img_4.png")',
               backgroundPosition: "center 15%",
@@ -37,14 +37,9 @@ export default function Hero() {
               
               <a
                 href="/try"
-                style={{
-                  backgroundColor: PRIMARY_COLOR_HEX,
-                  color: "white",
-                  border: `2px solid ${PRIMARY_COLOR_HEX}`, 
-                  transition: "all 0.3s ease",
-                }}
+               
                 
-                className={`px-6 py-3 rounded-xl font-semibold text-center hover:bg-[${SECONDARY_COLOR_HEX}] hover:text-[${PRIMARY_COLOR_HEX}] hover:border-[${PRIMARY_COLOR_HEX}]`}
+                className="px-6 py-3 rounded-xl font-semibold text-center bg-[#C263F2] hover:bg-white hover:text-[#C263F2] hover:border-[#C263F2] border-2"
               >
                 Try Lifeshift
               </a>
@@ -52,13 +47,9 @@ export default function Hero() {
               
               <a
                 href="/about"
-                style={{
-                  border: `2px solid ${PRIMARY_COLOR_HEX}`,
-                  color: PRIMARY_COLOR_HEX,
-                  transition: "all 0.3s ease",
-                }}
+               
                 
-                className={`px-6 py-3 rounded-xl font-semibold text-center hover:bg-[${SECONDARY_COLOR_HEX}] hover:text-[${PRIMARY_COLOR_HEX}]`}
+                className="px-6 py-3 rounded-xl font-semibold text-center bg-white hover:bg-[#C263F2] hover:border-[#C263F2] border-2 text-[#C263F2] hover:text-white"
               >
                 Learn More
               </a>
@@ -149,7 +140,7 @@ export default function Hero() {
                 className="flex flex-col justify-start items-center text-center space-y-4 p-6 bg-white rounded-2xl shadow-xl w-full max-w-xs mx-auto"
               >
                 <div
-                  className="text-white p-4 rounded-full text-2xl"
+                  className="text-white p-4 rounded-lg text-2xl"
                   style={{ backgroundColor: PRIMARY_COLOR_HEX }} 
                 >
                   {num}
@@ -192,12 +183,8 @@ export default function Hero() {
               
               <a
                 href="/try"
-                style={{
-                  backgroundColor: PRIMARY_COLOR_HEX,
-                  color: "white",
-                }}
                 
-                className={`px-8 py-3 rounded-xl font-bold transition duration-300 shadow-lg hover:shadow-xl hover:bg-opacity-90 active:scale-95`}
+                className="px-6 py-3 rounded-xl font-semibold text-center bg-[#C263F2] hover:bg-white hover:text-[#C263F2] hover:border-[#C263F2] border-2"
               >
                 Join the Movement
               </a>

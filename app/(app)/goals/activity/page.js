@@ -144,7 +144,7 @@ const ActivityDashboard = () => {
             >
               <div className="text-center sm:text-left space-y-1 mb-4 sm:mb-0">
                 <p className="text-xs font-semibold uppercase opacity-80" style={{ color: PRIMARY_COLOR }}>
-                  Today's AI Recommendation
+                  {"Today's AI Recommendation"}
                 </p>
                 <p className="text-2xl font-extrabold">{mockActivityData.nextWorkout.title}</p>
                 <div className="flex space-x-4 text-sm font-medium">
@@ -220,7 +220,7 @@ const ActivityDashboard = () => {
               Quick Wins (Time Barrier)
             </h2>
             <p className="text-sm text-gray-400 mb-4">
-              Based on your "Lack of Time" barrier, try this micro-challenge.
+              {"Based on your \"Lack of Time\" barrier, try this micro-challenge."}
             </p>
             <div className="p-4 rounded-xl border border-gray-700" style={{ backgroundColor: SECONDARY_BG_COLOR, color: '#1f2937' }}>
                 <p className="font-semibold">5-Min Desk Mobility Flow</p>
