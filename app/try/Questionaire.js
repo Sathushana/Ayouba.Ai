@@ -1,11 +1,12 @@
 "use client";
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   getQuestions,
   conditionalFollowUps,
   healthConditionFollowUps,
   substanceQuantityFollowUps,
+  goalSpecificQuestions,
 } from "../data/questions";
 
 const BRANCHING_KEYS = [
@@ -40,6 +41,7 @@ const BRANCHING_KEYS = [
   "mostCommonDiscomfort", 
 ];
 
+
 const APP_NAME = "Lifeshift";
 
 export default function Questionnaire() {
@@ -47,7 +49,645 @@ export default function Questionnaire() {
   const [subStep, setSubStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [questions, setQuestions] = useState([]);
+  const [guestId, setGuestId] = useState(null);
+  const [guestReady, setGuestReady] = useState(false);
   const router = useRouter();
+
+  const creatingGuestRef = useRef(false); // persistent lock
+
+  useEffect(() => {
+    console.log("useEffect running for guest user creation");
+
+    async function createGuest() {
+      if (creatingGuestRef.current) return null; // Already creating, skip
+      creatingGuestRef.current = true;
+
+      try {
+        console.log("Creating guest user...");
+        const response = await fetch("http://localhost:8000/api/guest-user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) throw new Error("Failed to create guest user");
+
+        const data = await response.json();
+        setGuestId(data.user_id);
+        localStorage.setItem("guestId", data.user_id);
+        console.log("Guest user created via API:", data.user_id);
+        setGuestReady(true);
+        return data.user_id;
+      } catch (err) {
+        console.error("Failed to create guest user:", err);
+        setGuestReady(false);
+        return null;
+      } finally {
+        creatingGuestRef.current = false;
+      }
+    }
+
+    async function initGuestUser() {
+      const storedId = localStorage.getItem("guestId");
+
+      if (storedId) {
+        const parsedId = parseInt(storedId, 10);
+
+        try {
+          const res = await fetch(
+            `http://localhost:8000/api/onboarding-profile/${parsedId}`
+          );
+
+          if (res.status === 404) {
+            console.log("Guest ID invalid or profile not found, creating new guest");
+            localStorage.removeItem("guestId");
+            await createGuest();
+          } else {
+            console.log("Existing guest profile found:", res.status);
+            setGuestId(parsedId);
+            setGuestReady(true);
+          }
+        } catch (err) {
+          console.warn("Error validating guest profile:", err);
+          if (!localStorage.getItem("guestId")) await createGuest();
+        }
+      } else {
+        await createGuest();
+      }
+    }
+
+    initGuestUser();
+  }, []);
+
+
+// ---------------- HANDLE QUIZ SUBMISSION ----------------
+const handleSubmit = async () => {
+  if (!guestReady) return alert("Guest user not ready yet. Please wait.");
+
+  const user_id = guestId;
+  if (!user_id) return alert("Guest user not created yet.");
+
+  // Convert measurements and calculate BMI
+  const { heightCm, weightKg } = convertToMetric(answers.measurements);
+  const bmi = parseFloat(calculateBMI(answers.measurements)) || 0;
+
+  
+
+  // Step 2: Prepare diagnosedConditionsPayload here
+  const diagnosedConditionsPayload = {
+    heartDisease: answers.followUps?.heartDiseaseType || null,
+    stroke: answers.followUps?.strokeType || null,
+    diabetes: answers.followUps?.diabetesType || null,
+    jointMobility: diagnosedConditions.jointMobility ? "yes" : null,
+    respiratory: answers.followUps?.respiratoryType || null,
+    anemia: diagnosedConditions.anemia ? "yes" : null,
+    osteoarthritis: diagnosedConditions.osteoarthritis ? "yes" : null,
+    cancer: answers.followUps?.cancerType || null,
+    mentalHealthDisorders: answers.followUps?.mentalHealthDisordersType || null,
+    obesity: diagnosedConditions.obesity ? "yes" : null,
+    ckd: answers.followUps?.ckdType || null,
+    cld: answers.followUps?.cldType || null,
+    thyroid: answers.followUps?.thyroidType || null,
+    pcos: diagnosedConditions.pcos ? "yes" : null,
+    other: answers.followUps?.otherConditionDetails || null,
+    none: diagnosedConditions.none || false,
+    diseaseControl: answers.followUps?.diseaseControlLevel || null,
+    recentSurgery: diagnosedConditions.recentSurgery
+      ? {
+          type: answers.followUps?.surgeryInjuryType || null,
+          timing: answers.followUps?.surgeryInjuryTiming || null,
+          recovery: answers.followUps?.surgeryRecovery || null,
+          currentSymptoms: answers.followUps?.surgeryCurrentSymptoms
+            ? Object.keys(answers.followUps.surgeryCurrentSymptoms).filter(
+                (key) => answers.followUps.surgeryCurrentSymptoms[key]
+              )
+            : [],
+        }
+      : null,
+
+  };
+
+  const selectedGoals = Object.keys(answers.primaryGoals || {}).filter(
+    (key) => answers.primaryGoals[key] && key !== "none"
+  );
+
+  //   // 🧩 Helper: map answer keys to human-readable labels
+  // const mapAnswerKeysToLabels = (key, value, followUpDefinitions, questionDefinitions = []) => {
+  //   if (!value) return value;
+
+  //   // 1️⃣ Find matching question definition
+  //   let questionDef =
+  //     questionDefinitions.find(q => q.key === key) ||
+  //     followUpDefinitions[key] ||
+  //     Object.values(followUpDefinitions).find(
+  //       def => Array.isArray(def) && def.some(q => q.subKey === key)
+  //     );
+
+  //   if (!questionDef) return value;
+
+  //   if (Array.isArray(questionDef)) {
+  //     const match = questionDef.find(q => q.subKey === key);
+  //     if (match) questionDef = match;
+  //   }
+
+  //   const options = questionDef.options || [];
+
+  //   // 2️⃣ Handle multi-select (object of true/false)
+  //   if (typeof value === "object" && !Array.isArray(value)) {
+  //     const mapped = {};
+  //     Object.entries(value).forEach(([k, v]) => {
+  //       if (v) {
+  //         const opt = options.find(o => o.id === k);
+  //         mapped[k] = opt ? opt.label : k;
+  //       }
+  //     });
+  //     return mapped;
+  //   }
+
+  //   // 3️⃣ Handle single-select (string)
+  //   if (typeof value === "string") {
+  //     const opt = options.find(o => o.id === value || o.label === value);
+  //     return opt ? opt.label || opt : value;
+  //   }
+
+  //   return value;
+  // };
+  
+  // //Current
+  //   // 🧩 Recursive Helper: map keys to human-readable labels
+  // const mapAnswerKeysToLabels = (key, value, followUpDefinitions, questionDefinitions = []) => {
+  //   if (!value) return value;
+
+  //   // 🚫 Skip mapping for the 'substanceUse' goal (preserve original keys)
+  //   if (key === "substanceUse" || key === "substanceType" || key === "substanceReasons" || key === "substanceSituations" || key === "substanceConsequences") {
+  //     return value;
+  //   }
+
+  //   // 1️⃣ Find matching question definition
+  //   let questionDef =
+  //     questionDefinitions.find(q => q.key === key) ||
+  //     followUpDefinitions[key] ||
+  //     Object.values(followUpDefinitions).find(
+  //       def => Array.isArray(def) && def.some(q => q.subKey === key)
+  //     );
+
+  //   if (Array.isArray(questionDef)) {
+  //     const match = questionDef.find(q => q.subKey === key);
+  //     if (match) questionDef = match;
+  //   }
+
+  //   const options = questionDef?.options || [];
+
+  //   // 2️⃣ Handle multi-select (object of true/false)
+  //   if (typeof value === "object" && !Array.isArray(value)) {
+  //     const mapped = {};
+  //     Object.entries(value).forEach(([k, v]) => {
+  //       if (typeof v === "object") {
+  //         // recursively map nested group (ex: mh_recentFeelings inside mh_rootCauses)
+  //         mapped[k] = mapAnswerKeysToLabels(k, v, followUpDefinitions, questionDefinitions);
+  //       } else if (v) {
+  //         const opt = options.find(o => o.id === k);
+  //         mapped[k] = opt ? opt.label : k;
+  //       }
+  //     });
+  //     return mapped;
+  //   }
+
+  //   // 3️⃣ Handle single-select (string)
+  //   if (typeof value === "string") {
+  //     const opt = options.find(o => o.id === value || o.label === value);
+  //     return opt ? opt.label || opt : value;
+  //   }
+  // };
+
+
+
+  //   // 🧩 Recursive Helper: map keys to human-readable labels
+  // const mapAnswerKeysToLabels = (key, value, followUpDefinitions, questionDefinitions = []) => {
+  //   if (!value) return value;
+
+  //   // 1️⃣ Find matching question definition
+  //   let questionDef =
+  //     questionDefinitions.find(q => q.key === key) ||
+  //     followUpDefinitions[key] ||
+  //     Object.values(followUpDefinitions).find(
+  //       def => Array.isArray(def) && def.some(q => q.subKey === key)
+  //     );
+
+  //   if (Array.isArray(questionDef)) {
+  //     const match = questionDef.find(q => q.subKey === key);
+  //     if (match) questionDef = match;
+  //   }
+
+  //   const options = questionDef?.options || [];
+
+  //   // 2️⃣ Handle multi-select (object of true/false)
+  //   if (typeof value === "object" && !Array.isArray(value)) {
+  //     const mapped = {};
+  //     Object.entries(value).forEach(([k, v]) => {
+  //       if (typeof v === "object") {
+  //         // recursively map nested group (ex: mh_recentFeelings inside mh_rootCauses)
+  //         mapped[k] = mapAnswerKeysToLabels(k, v, followUpDefinitions, questionDefinitions);
+  //       } else if (v) {
+  //         const opt = options.find(o => o.id === k);
+  //         mapped[k] = opt ? opt.label : k;
+  //       }
+  //     });
+  //     return mapped;
+  //   }
+
+  //   // 3️⃣ Handle single-select (string)
+  //   if (typeof value === "string") {
+  //     const opt = options.find(o => o.id === value || o.label === value);
+  //     return opt ? opt.label || opt : value;
+  //   }
+
+  //   return value;
+  // };
+
+
+  const buildGoalAnswersPayload = () => {
+  const goalAnswers = {};
+
+  // Helper 1: Add key-value safely from answers or followUpAnswers
+  const getAnswer = (key) => {
+    if (followUpAnswers[key] !== undefined) return followUpAnswers[key];
+    if (answers[key] !== undefined) return answers[key];
+    return undefined;
+  };
+
+  //  Helper 2: Add base keys for a given goal
+  const addBaseAnswers = (goalName, baseKeys) => {
+    goalAnswers[goalName] = goalAnswers[goalName] || {};
+    baseKeys.forEach((key) => {
+      const val = getAnswer(key);
+      if (val !== undefined) goalAnswers[goalName][key] = val;
+    });
+  };
+
+  //  Helper 3: Add conditional follow-ups recursively
+  const addFollowUpsRecursive = (goalName, trigger) => {
+    if (!trigger) return;
+    const followUps = conditionalFollowUps[trigger];
+    if (!followUps) return;
+
+    if (Array.isArray(followUps)) {
+      followUps.forEach((q) => {
+        const val = getAnswer(q.subKey);
+        if (val !== undefined) {
+          goalAnswers[goalName][q.subKey] = val;
+          addFollowUpsRecursive(goalName, val); // recursion for deeper layers
+        }
+      });
+    } else if (typeof followUps === "object" && followUps.subKey) {
+      const val = getAnswer(followUps.subKey);
+      if (val !== undefined) {
+        goalAnswers[goalName][followUps.subKey] = val;
+        addFollowUpsRecursive(goalName, val);
+      }
+    }
+  };
+
+  // Helper 4: Add conditionals (non-recursive) — used by other goals
+  const addConditionalAnswers = (goalName) => {
+    Object.entries(conditionalFollowUps || {})
+      .filter(([_, def]) => def && typeof def === "object" && def.subKey)
+      .forEach(([_, def]) => {
+        const subKey = def.subKey;
+        const val = getAnswer(subKey);
+        if (val !== undefined && !(subKey in goalAnswers[goalName])) {
+          goalAnswers[goalName][subKey] = val;
+        }
+      });
+  };
+
+  // NUTRITION
+  if (answers.primaryGoals.nutrition) {
+    goalAnswers.nutrition = {};
+    goalSpecificQuestions.nutrition.forEach((q) => {
+      const val = getAnswer(q.key);
+      if (val !== undefined) goalAnswers.nutrition[q.key] = val;
+    });
+    addConditionalAnswers("nutrition");
+  }
+
+  // PHYSICAL ACTIVITY
+  if (answers.primaryGoals.activity) {
+    goalAnswers.activity = {};
+    goalSpecificQuestions.activity.forEach((q) => {
+      const val = getAnswer(q.key);
+      if (val !== undefined) goalAnswers.activity[q.key] = val;
+    });
+    addConditionalAnswers("activity");
+  }
+
+  // WEIGHT LOSS
+  if (answers.primaryGoals.weightloss) {
+    goalAnswers.weightLoss = {};
+    Object.keys(answers).forEach((key) => {
+      if (key.startsWith("wl_")) {
+        const cleanKey = key.replace(/^wl_/, "");
+        goalAnswers.weightLoss[cleanKey] = answers[key];
+      }
+    });
+    addConditionalAnswers("weightLoss");
+  }
+
+
+
+  // SUBSTANCE USE
+  if (answers.primaryGoals.substance) {
+    goalAnswers.substanceUse = {};
+
+    // Base info
+    addBaseAnswers("substanceUse", ["substanceFrequency", "substanceDuration"]);
+
+        // ✅ 2️⃣ Substance types (nested under "substanceType")
+    if (answers.substanceType) {
+      goalAnswers.substanceUse.substanceType = {};
+      Object.entries(answers.substanceType).forEach(([substance, val]) => {
+        goalAnswers.substanceUse.substanceType[substance] = val;
+      });
+    }
+
+
+    // Initialize grouped objects
+    const groupedKeys = ["substanceReasons", "substanceSituations", "substanceConsequences"];
+    groupedKeys.forEach((key) => {
+      goalAnswers.substanceUse[key] = {};
+    });
+
+    //  Populate groups from followUpAnswers
+    groupedKeys.forEach((key) => {
+      const data = followUpAnswers[key] || answers[key];
+      if (data && typeof data === "object") {
+        Object.entries(data).forEach(([k, v]) => {
+          if (v && k !== "noNoticeableIssues") {
+            goalAnswers.substanceUse[key][k] = v;
+          }
+        });
+        // Remove group if empty
+        if (Object.keys(goalAnswers.substanceUse[key]).length === 0) {
+          delete goalAnswers.substanceUse[key];
+        }
+      }
+    });
+
+    // Alcohol-specific follow-ups
+    if (
+      answers.substanceType?.alcohol &&
+      followUpAnswers.alcoholFrequencyGoal &&
+      followUpAnswers.alcoholFrequencyGoal !== "Rarely (special occasions only)"
+    ) {
+      const val = getAnswer("alcohol_quantity");
+      if (val !== undefined) goalAnswers.substanceUse.alcohol_quantity = val;
+    }
+
+    // Other drugs text
+    if (answers.substanceType?.otherDrugs && answers.otherText) {
+      goalAnswers.substanceUse.otherText = answers.otherText;
+    }
+
+    // Recursive follow-ups merged into groups
+    const triggers = [
+      "substanceFrequency",
+      "substanceDetailsPlaceholder",
+      "substanceReasons",
+      "substanceSituations",
+      "substanceConsequences"
+    ];
+
+    const addRecursiveToGroup = (groupKey, subKey) => {
+      const followUp = conditionalFollowUps[subKey];
+      if (!followUp) return;
+
+      if (!goalAnswers.substanceUse[groupKey]) goalAnswers.substanceUse[groupKey] = {};
+
+      if (Array.isArray(followUp)) {
+        followUp.forEach((q) => {
+          const val = getAnswer(q.subKey);
+          if (val !== undefined) goalAnswers.substanceUse[groupKey][q.subKey] = val;
+        });
+      } else if (typeof followUp === "object" && followUp.subKey) {
+        const val = getAnswer(followUp.subKey);
+        if (val !== undefined) goalAnswers.substanceUse[groupKey][followUp.subKey] = val;
+      }
+    };
+
+    triggers.forEach((triggerKey) => {
+      const val = followUpAnswers[triggerKey] || answers[triggerKey];
+      if (!val) return;
+
+      if (typeof val === "object") {
+        Object.keys(val).forEach((subKey) => {
+          if (groupedKeys.includes(triggerKey)) addRecursiveToGroup(triggerKey, subKey);
+        });
+      } else if (typeof val === "string") {
+        groupedKeys.forEach((grp) => addRecursiveToGroup(grp, val));
+      }
+    });
+  }
+
+
+  // MENTAL HEALTH
+  if (answers.primaryGoals.mental) {
+    goalAnswers.mental = {};
+
+    // Include base answers
+    Object.keys(answers).forEach((key) => {
+      if (key.startsWith("mh_") && answers[key] !== undefined) {
+        goalAnswers.mental[key] = answers[key];
+      }
+    });
+
+    // Include all follow-up answers (e.g. mh_rootCauses, mh_recentFeelings)
+    Object.keys(followUpAnswers).forEach((key) => {
+      if (key.startsWith("mh_") || key.includes("_impact")) {
+        goalAnswers.mental[key] = followUpAnswers[key];
+      }
+    });
+
+    // Trigger recursive discovery for *every follow-up answer*
+    Object.keys(followUpAnswers)
+      .filter((key) => key.startsWith("mh_") || key.includes("_impact"))
+      .forEach((key) => {
+        const answerKey = key;
+        const answerValue = followUpAnswers[key];
+        // Run recursion for both the question key and its selected value
+        addFollowUpsRecursive("mental", answerKey);
+        if (typeof answerValue === "string" && conditionalFollowUps[answerValue]) {
+          addFollowUpsRecursive("mental", answerValue);
+        }
+      });
+  }
+
+
+  // SLEEP (Recursive)
+  if (answers.primaryGoals.sleep) {
+    goalAnswers.sleep = {};
+    const baseKeys = [
+      "sleepDisorderDiagnosis",
+      "sleepChallenge",
+      "fallingAsleepReason",
+      "wakingUpReason",
+      "earlyWakingReason",
+      "unrefreshedFeeling",
+      "irregularScheduleReason",
+      "mostCommonDiscomfort",
+      "sleepSchedule",
+      "sleepGoals",
+      "lastMealTimingSleep",
+    ];
+    addBaseAnswers("sleep", baseKeys);
+
+    // Trigger recursive follow-ups for all first-level reasons
+    [
+      followUpAnswers.fallingAsleepReason,
+      followUpAnswers.wakingUpReason,
+      followUpAnswers.earlyWakingReason,
+      followUpAnswers.unrefreshedFeeling,
+      followUpAnswers.irregularScheduleReason,
+      followUpAnswers.mostCommonDiscomfort,
+    ].filter(Boolean).forEach((trigger) => addFollowUpsRecursive("sleep", trigger));
+  }
+  //Add targetDuration to all active goals
+  const targetDuration = getAnswer("targetDuration");
+  if (targetDuration !== undefined) {
+    Object.keys(goalAnswers).forEach((goalKey) => {
+      goalAnswers[goalKey].targetDuration = targetDuration;
+    });
+  }
+
+  //   // 🪄 Map all answer keys to their human-readable labels
+  // Object.entries(goalAnswers).forEach(([goalKey, goalObj]) => {
+  //   Object.entries(goalObj).forEach(([subKey, val]) => {
+  //     goalAnswers[goalKey][subKey] = mapAnswerKeysToLabels(
+  //       subKey,
+  //       val,
+  //       conditionalFollowUps,
+  //       goalSpecificQuestions[goalKey] || []
+  //     );
+  //   });
+  // });
+
+
+  return goalAnswers;
+};
+
+
+
+
+
+  // Flatten lifestyle if "Other" is selected
+  let lifestyleValue = answers.lifestyle;
+  if (
+    typeof answers.lifestyle === "object" &&
+    answers.lifestyle.selectedOption === "Other"
+  ) {
+    lifestyleValue = answers.lifestyle.otherText; // use the text input
+  }
+
+  const payload = {
+    user_id,
+    firstName: answers.firstName,
+    age: answers.age,
+    sex: answers.sex,
+    is_pregnant: answers.followUps?.isPregnant || "No", 
+    height_cm: heightCm,
+    weight_kg: weightKg,
+    bmi,
+    lifestyle: lifestyleValue, 
+    diagnosedConditions: diagnosedConditionsPayload,
+    goals:  selectedGoals,
+    goalAnswers: buildGoalAnswersPayload(),
+  };
+
+  console.log("Submitting quiz payload:", payload);
+
+  try {
+    const response = await fetch("http://localhost:8000/api/onboarding-profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      console.error("Quiz submission error:", errData);
+      return alert("Failed to submit quiz: " + errData.detail || "Unknown error");
+    }
+
+    const data = await response.json();
+    console.log("Quiz submitted:", data);
+    router.push("/thank-you"); // optional redirect
+  } catch (err) {
+    console.log("Submitting quiz payload of nutrition:", payload.goalAnswers.nutrition);
+    console.error("Failed to submit quiz:", err);
+    alert("Failed to submit quiz. Please try again.");
+  }
+};
+
+
+
+
+
+// // ---------------- HANDLE QUIZ SUBMISSION ----------------
+// const handleSubmit = async () => {
+//   if (!guestReady) return alert("Guest user not ready yet. Please wait.");
+
+//   const user_id = guestId;
+//   if (!user_id) return alert("Guest user not created yet.");
+
+//   // Convert measurements and calculate BMI
+//   const { heightCm, weightKg } = convertToMetric(answers.measurements);
+//   const bmi = parseFloat(calculateBMI(answers.measurements)) || 0;
+
+//   // Flatten lifestyle if "Other" is selected
+//   let lifestyleValue = answers.lifestyle;
+//   if (
+//     typeof answers.lifestyle === "object" &&
+//     answers.lifestyle.selectedOption === "Other"
+//   ) {
+//     lifestyleValue = answers.lifestyle.otherText; // use the text input
+//   }
+
+//   const payload = {
+//     user_id,
+//     firstName: answers.firstName,
+//     age: answers.age,
+//     sex: answers.sex,
+//     is_pregnant: answers.is_pregnant === "Yes" ? true : false,
+//     height_cm: heightCm,
+//     weight_kg: weightKg,
+//     bmi,
+//     lifestyle: lifestyleValue, 
+//     diagnosedConditions: answers.diagnosedConditions
+//   };
+
+//   console.log("Submitting quiz payload:", payload);
+
+//   try {
+//     const response = await fetch("http://localhost:8000/api/onboarding-profile", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(payload),
+//     });
+
+//     if (!response.ok) {
+//       const errData = await response.json();
+//       console.error("Quiz submission error:", errData);
+//       return alert("Failed to submit quiz: " + errData.detail || "Unknown error");
+//     }
+
+//     const data = await response.json();
+//     console.log("Quiz submitted:", data);
+//     router.push("/thank-you"); // optional redirect
+//   } catch (err) {
+//     console.error("Failed to submit quiz:", err);
+//     alert("Failed to submit quiz. Please try again.");
+//   }
+// };
+
+
 
   const currentStepData = useMemo(
     () => questions.find((step) => step.id === currentStep),
@@ -143,6 +783,7 @@ export default function Questionnaire() {
       return;
     }
 
+
     const key = currentStepData.key;
     const baseAnswer = answers[key];
     const newFollowUps = [];
@@ -176,6 +817,8 @@ export default function Questionnaire() {
         });
       }
     }
+
+    
 
     // NUTRITION LOGIC 
     if (key === "dietType" && baseAnswer && conditionalFollowUps[baseAnswer]) {
@@ -427,6 +1070,7 @@ export default function Questionnaire() {
           }
         });
     }
+
 
     //  MENTAL HEALTH LOGIC
     if (key === "mh_lifeSituation" && currentLifestyle) {
@@ -792,6 +1436,8 @@ export default function Questionnaire() {
           return;
       }
 
+      
+
       const isSkippingFollowUps = (() => {
         if (currentStepData.key === "sex") {
           return !(currentSex === "Female" && currentAge > 18);
@@ -933,6 +1579,7 @@ export default function Questionnaire() {
     } else if (currentStep === totalSteps) {
       console.log("Questionnaire Complete! Final Answers:", answers);
       alert("Questionnaire Complete! Check console for final answers.");
+      handleSubmit();
       router.push("/thank-you");
     } else if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
@@ -1297,9 +1944,8 @@ export default function Questionnaire() {
     if (visibleFollowUpQuestions.length === 0) {
       return (
         <p className="text-gray-500 italic">
-          {/* No further details required based on your answer. Click 'Next' to */}
-          No further details required based on your answer. Click &apos;Next&apos; to proceed.
-          proceed.
+          {`No further details required based on your answer. Click 'Next' to
+          proceed.`}
         </p>
       );
     }
@@ -1658,8 +2304,8 @@ export default function Questionnaire() {
       <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
         <div className="flex space-x-3 mb-6">
           <div className="w-4 h-4 bg-[#C263F2] rounded-full animate-pulse-slow-1"></div>
-          <div className="w-4 h-4 bg-[#63F2C2] rounded-full animate-pulse-slow-2"></div>
-          <div className="w-4 h-4 bg-[#F263C2] rounded-full animate-pulse-slow-3"></div>
+          <div className="w-4 h-4 bg-[#C263F2] rounded-full animate-pulse-slow-2"></div>
+          <div className="w-4 h-4 bg-[#C263F2] rounded-full animate-pulse-slow-3"></div>
         </div>
 
         <div className="text-3xl font-extrabold text-gray-900 mb-2">
@@ -1800,9 +2446,7 @@ export default function Questionnaire() {
         </div>
       </div>
 
-      <div className="w-full bg-white py-3 text-center border-t border-gray-200 text-xs text-gray-500">
-        Copyright © 2025 {APP_NAME}. All rights reserved.
-      </div>
+ 
     </section>
   );
 }

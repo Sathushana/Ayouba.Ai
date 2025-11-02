@@ -1,0 +1,131 @@
+'use client';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+
+const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  // ✅ Load token when app starts (safe for SSR)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedToken =
+        localStorage.getItem('token') || sessionStorage.getItem('token');
+      if (storedToken) {
+        setToken(storedToken);
+      }
+      setLoading(false);
+    }
+  }, []);
+
+  // ✅ Login with Remember Me option
+  const login = (accessToken, rememberMe = false) => {
+    // Clear any existing tokens
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+
+    if (rememberMe) {
+      localStorage.setItem('token', accessToken); // persists after closing tab
+    } else {
+      sessionStorage.setItem('token', accessToken); // clears when tab closed
+    }
+
+    setToken(accessToken);
+
+    toast.success('Login successful! Redirecting...', {
+      style: { fontWeight: 'bold' },
+    });
+
+    // Add a short delay to allow toast to appear
+    setTimeout(() => router.push('/dashboard'), 1000);
+  };
+
+  // ✅ Logout clears both storages
+  const logout = () => {
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    setToken(null);
+
+    toast.success('Logged out successfully!', {
+      style: { fontWeight: 'bold' },
+      position: 'center',
+    });
+
+    setTimeout(() => router.push('/login'), 500);
+  };
+
+  // ✅ Authenticated fetch helper
+  const authFetch = async (url, options = {}) => {
+    if (!options.headers) options.headers = {};
+    options.headers['Authorization'] = `Bearer ${token}`;
+    const response = await fetch(url, options);
+
+    if (response.status === 401) {
+      toast.error('Session expired. Please log in again.', {
+        style: { fontWeight: 'bold' },
+        position: 'center',
+      });
+      logout();
+      throw new Error('Unauthorized');
+    }
+
+    return response;
+  };
+
+
+  // Convert guest account to full user
+  const convertGuestToUser = async ({ user_id, full_name, email, password }) => {
+    try {
+      const response = await fetch(
+        'http://localhost:8000/api/convert-guest-to-user',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id, full_name, email, password }),
+        }
+      );
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.detail || 'Failed to convert guest account');
+      }
+
+      const data = await response.json();
+      toast.success('Guest account converted successfully!', {
+        style: { fontWeight: 'bold' },
+      });
+
+      localStorage.removeItem('guestId'); // remove guestId
+      return data;
+    } catch (err) {
+      toast.error(err.message || 'Conversion failed', {
+        style: { fontWeight: 'bold' },
+      });
+      throw err;
+    }
+  };
+
+  // ✅ Wait until token is loaded before rendering
+  if (loading) return null;
+
+  return (
+    <AuthContext.Provider
+      value={{
+        token,
+        login,
+        logout,
+        authFetch,
+        convertGuestToUser,
+        loading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);
