@@ -58,11 +58,7 @@ export default function ThankYou() {
         
         <p className="text-lg text-gray-600 mb-8">
           {/* You've successfully completed the questionnaire. We now have a clear picture of your health goals and lifestyle. Your dedication means we can create the most effective {APP_NAME} plan for you! */}
-<<<<<<< HEAD
-            You&apos;ve successfully completed the questionnaire. We now have a clear picture of your health goals and lifestyle. Your dedication means we can create the most effective {APP_NAME} plan for you!
-=======
           {`You've successfully completed the questionnaire. We now have a clear picture of your health goals and lifestyle. Your dedication means we can create the most effective pointer${APP_NAME} plan for you!`}
->>>>>>> 9c22e6e193ca7451793d716d4ad131c1d5214b81
         </p>
         
         <p className="text-base text-gray-700 mb-6 font-medium">
